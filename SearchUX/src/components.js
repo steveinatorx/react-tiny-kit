@@ -9,17 +9,18 @@ export function SearchListNav (props) {
                 <div className="container-fluid">
                 <ul className="nav navbar-nav">
                 {searchFields.map (f => (
-                    <li key={f.get('id')}
-                        onClick = {clickField(f.get('id'))}>
-                        {f.get('id')}
+                    <li className="nav-item" key={f.get('id')}>
+                        <a className="nav-link" key={f.get('id')}
+                            onClick={clickField(f.get('id'))}>
+                            {f.get('id')}
+                        </a>
                     </li>
                 ))}
-                    <li>
+                    <li className="nav-item pull-right">
                         <button className="btn btn-success navbar-btn" type="button">
                         Current Results <span className="badge">4</span>
                         </button>
                     </li>
-                    <li className="pull-right">foo</li>
                 </ul>
                 </div>
             </nav>
