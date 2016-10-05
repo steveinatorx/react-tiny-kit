@@ -1,9 +1,9 @@
 import { List, Map } from 'immutable';
 
 const init = List([
-  Map({ id: 'Model', isActive: false }),
-  Map({ id: 'Body', isActive: false }),
-  Map({ id: 'Year', isActive: false }),
+  Map({ id: 'Model', isActive: false, filteredOptions: [] }),
+  Map({ id: 'Body', isActive: false, filteredOptions: [] }),
+  Map({ id: 'Year', isActive: false, filteredOptions: [] }),
 ]);
 
 export default function reducer (activeFields = init, action) {
