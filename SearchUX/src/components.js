@@ -11,6 +11,7 @@ export function SearchListNav (props) {
                 {searchFields.map (f => (
                     <li key={f.get('id')}
                         onClick = {clickField(f.get('id'))}>
+                        {f.get('id')}
                     </li>
                 ))}
                     <li>
