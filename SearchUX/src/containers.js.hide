@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 // import { searchFieldNav } from './components';
-import { setActiveField } from './actions';
+import  setActiveField  from './actions';
 
 const SearchUXContainer = React.createClass({
   /*componentDidMount: function() {

@@ -1,15 +1,20 @@
 var path = require('path');
 
 module.exports = {
-  entry: './src/app.js',
+  entry: {
+    app: ['./src/app.js']
+  },
+  devServer: { inline: true },
   output: {
-          path:  './dist',
+          path: path.resolve(__dirname, "dist"),
+          publicPath: '/dist/',
           filename: 'SearchUXBundle.js'
     },
   module: {
     loaders: [
       {
         test: /\.js$/,
+        exclude: './node_modules',
         loader: 'babel',
         query: { presets: [ 'es2015', 'react' ] }
       }
