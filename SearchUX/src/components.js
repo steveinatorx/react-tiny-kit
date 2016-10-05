@@ -1,12 +1,13 @@
 import React from 'react';
 
-export function SearchListNav(props) {
+export function SearchListNav (props) {
     const { searchFields, setActiveField } = props;
     const clickField = id => event => setActiveField(id);
     return (
-        <nav className="navbar navbar-inverse">
-            <div className="container-fluid">
-            <ul className="nav navbar-nav">
+       <div className="container">
+            <nav className="navbar navbar-inverse">
+                <div className="container-fluid">
+                <ul className="nav navbar-nav">
                 {searchFields.map (f => (
                     <li key={f.get('id')}
                         onClick = {clickField(f.get('id'))}>
@@ -18,8 +19,9 @@ export function SearchListNav(props) {
                         </button>
                     </li>
                     <li className="pull-right">foo</li>
-            </ul>
-            </div>
-        </nav>
+                </ul>
+                </div>
+            </nav>
+        </div>
         );
 }
