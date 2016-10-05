@@ -5,6 +5,7 @@
   "main": "src/app.js",
   "dependencies": {
     "react": "^15.1.0",
+    "react-bootstrap": "^0.30.5",
     "react-dom": "^15.1.0",
     "react-redux": "^4.4.5",
     "redux": "^3.6.0"
