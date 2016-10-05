@@ -29,5 +29,8 @@
     "babel-loader": "^6.2.5",
     "babel-preset-react": "^6.16.0",
     "webpack": "^1.13.2"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^1.16.1"
   }
 }
