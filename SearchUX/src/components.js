@@ -9,7 +9,7 @@ export function SearchListNav (props) {
                 <div className="container-fluid">
                 <ul className="nav navbar-nav">
                 {searchFields.map (f => (
-                    <li className="nav-item" key={f.get('id')}>
+                    <li className= {'nav-item ' + (f.get('isActive') && 'active')} key={f.get('id')}>
                         <a className="nav-link" key={f.get('id')}
                             onClick={clickField(f.get('id'))}>
                             {f.get('id')}
