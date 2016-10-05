@@ -1,0 +1,25 @@
+{
+  "extends": [
+     "keystone"
+  ],
+  "ecmaFeatures": {
+     "modules": true,
+     "experimentalObjectRestSpread": true
+  },
+  "rules": {
+    "react/jsx-no-bind": 0,
+    "react/jsx-wrap-multilines":  1
+  },
+  "globals": {
+    "_": true,
+    "$": true,
+    "after": true,
+    "afterEach": true,
+    "before": true,
+    "beforeEach": true,
+    "describe": true,
+    "it": true,
+    "jQuery": true,
+    "Keystone": true
+  }
+}
