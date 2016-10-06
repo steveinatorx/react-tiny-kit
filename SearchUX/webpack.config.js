@@ -4,7 +4,7 @@ module.exports = {
   entry: {
     app: ['./src/app.js']
   },
-  devTool: 'source-map',
+  devTool: 'eval',
   devServer: { inline: true },
   output: {
           path: path.resolve(__dirname, "dist"),
@@ -18,6 +18,10 @@ module.exports = {
         exclude: './node_modules',
         loader: 'babel',
         query: { presets: [ 'es2015', 'react' ] }
+      },
+      {
+        test: /[\/\\]src[\/\\].*\.css$/,
+        loaders: ['style', 'css']     
       }
     ]
   }
