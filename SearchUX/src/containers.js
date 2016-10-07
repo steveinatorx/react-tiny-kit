@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { SearchListNav } from './components';
+import  SearchListNav  from './components';
 import { setActiveField } from './actions';
 
 export const SearchUXContainer = connect(

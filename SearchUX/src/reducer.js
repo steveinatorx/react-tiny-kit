@@ -1,13 +1,13 @@
 import { List, Map } from 'immutable';
 
 const init = List([
-  Map({ id: 'Model', isActive: false, filteredOptions: [] }),
-  Map({ id: 'Body', isActive: false, filteredOptions: [] }),
-  Map({ id: 'Year', isActive: false, filteredOptions: [] }),
+  Map({ id: 'Model', idx: 0, isActive: false, filteredOptions: [] }),
+  Map({ id: 'Body', idx: 1, isActive: false, filteredOptions: [] }),
+  Map({ id: 'Year', idx: 2, isActive: false, filteredOptions: [] }),
 ]);
 
 export default function reducer (activeFields = init, action) {
-  console.log('in reducer', action.payload);
+  console.log('in reducer', action);
   switch (action.type) {
     case 'SET_ACTIVE_FIELD':
       return activeFields.map(f => {

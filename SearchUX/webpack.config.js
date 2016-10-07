@@ -4,7 +4,7 @@ module.exports = {
   entry: {
     app: ['./src/app.js']
   },
-  devTool: 'eval',
+  devTool: 'inline-source-map',
   devServer: { inline: true },
   output: {
           path: path.resolve(__dirname, "dist"),
