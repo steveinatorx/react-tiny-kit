@@ -1,21 +1,23 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './css/skeleton.css';
 import './css/prog-tracker.css';
 import './css/custom.css';
 import './css/normalize.css';
 
-  export default class SearchListNav extends Component {
-  constructor (props) {
+export default class SearchListNav extends React.Component {
+  constructor(props) {
     super(props);
-    const { searchFields, setActiveField } = props;
-    //const clickField = id => event => setActiveField(id);
-
+    // const { searchFields, setActiveField } = props;
+    //const clickField = id => event => setActiveField(id);      
+    console.log(props);
+    
     this.state = {
       showPreviousBtn: false,
       showNextBtn: true,
       compState: 0,
-      navState: this.getNavStates(0, { searchFields }.length),
+      navState: this.getNavStates(0, this.props.searchFields.size),
     };
+    console.log(this.props.searchFields.size);
     this.hidden = {
       display: 'none'
     };
@@ -42,8 +44,9 @@ import './css/normalize.css';
   }
 
   checkNavState(currentStep){
+    console.log('in cNavSt', this.props.searchFields.size);
     // if(currentStep > 0 && currentStep !== this.props.steps.length - 1){
-    if(currentStep > 0 && currentStep !== {searchFields}.length - 1){
+    if(currentStep > 0 && currentStep !== this.props.searchFields.size - 1){
       this.setState({
         showPreviousBtn: true,
         showNextBtn: true
@@ -64,8 +67,9 @@ import './css/normalize.css';
   }
 
   setNavState(next) {
-    this.setState({navState: this.getNavStates(next, this.props.steps.length)})
-    if (next < this.props.steps.length) {
+    console.log('in setNavState', this.props.searchFields.size);
+    this.setState({navState: this.getNavStates(next, this.props.searchFields.size)})
+    if (next < this.props.searchFields.size) {
       this.setState({compState: next})
     }
     this.checkNavState(next);
@@ -78,9 +82,10 @@ import './css/normalize.css';
   }
 
   handleOnClick (evt) {
-    if (evt.currentTarget.value === (this.props.steps.length - 1) &&
-      this.state.compState === (this.props.steps.length - 1)) {
-      this.setNavState(this.props.steps.length)
+    console.log('in hClick', this.props.searchFields.size);
+    if (evt.currentTarget.value === (this.props.searchFields.size - 1) &&
+      this.state.compState === (this.props.searchFields.size - 1)) {
+      this.setNavState(this.props.searchFields.size)
     }
     else {
       this.setNavState(evt.currentTarget.value)
@@ -98,16 +103,19 @@ import './css/normalize.css';
   }
 
   getClassName(className, i){
+    console.log('getCName', i);
+   console.log(className + "-" + this.state.navState.styles[i]);
     return className + "-" + this.state.navState.styles[i];
   }
 
   renderSteps() {
-    { searchFields.map (f => (
-      <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={i}>
+      return this.props.searchFields.map (f => (
+      /* <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}> */
+      <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}>
         <em>{f.get('idx')+1}</em>
         <span>{f.get('id')}</span>
       </li>           
-    ))}  
+    ))  
       /*
     return this.props.steps.map((s, i)=> (
       <li className={this.getClassName("progtrckr", i)} onClick={this.handleOnClick} key={i} value={i}>
@@ -122,7 +130,7 @@ import './css/normalize.css';
     return (
       <div className="container" onKeyDown={this.handleKeyDown}>
         <ol className="progtrckr">
-          {this.renderSteps()}
+          {this.renderSteps()}foo
         </ol>
         {/* render component via var name? */}
         {/* this.props.steps[this.state.compState].component */}
