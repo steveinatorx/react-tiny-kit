@@ -1,11 +1,11 @@
 var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
+  devtool: 'source-map',
   entry: {
     app: ['./src/app.js']
   },
-  devTool: 'inline-source-map',
-  devServer: { inline: true },
   output: {
           path: path.resolve(__dirname, "dist"),
           publicPath: '/dist/',
@@ -15,9 +15,12 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        exclude: './node_modules',
+        exclude: /node_modules/,
         loader: 'babel',
-        query: { presets: [ 'es2015', 'react' ] }
+        query: {
+          retainLines: true,
+          cacheDirectory: true,
+        }
       },
       {
         test: /[\/\\]src[\/\\].*\.css$/,
