@@ -5,6 +5,7 @@
   "main": "src/app.js",
   "dependencies": {
     "css-loader": "^0.25.0",
+    "history": "^4.3.0",
     "react": "^15.1.0",
     "react-bootstrap": "^0.30.5",
     "react-dom": "^15.1.0",
