@@ -9,15 +9,14 @@ export default class SearchListNav extends React.Component {
     super(props);
     // const { searchFields, setActiveField } = props;
     //const clickField = id => event => setActiveField(id);      
-    console.log(props);
-    
+    console.log(props.state.reducer);
+    var theListSize = props.state.reducer.size;
     this.state = {
       showPreviousBtn: false,
       showNextBtn: true,
       compState: 0,
-      navState: this.getNavStates(0, this.props.searchFields.size),
+      navState: this.getNavStates(0, theListSize),
     };
-    console.log(this.props.searchFields.size);
     this.hidden = {
       display: 'none'
     };
@@ -109,7 +108,10 @@ export default class SearchListNav extends React.Component {
   }
 
   renderSteps() {
-      return this.props.searchFields.map (f => (
+
+      console.log('in renderSteps');
+      console.log('in renderSteps', this.props);
+      return this.props.state.reducer.map (f => (
       /* <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}> */
       <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}>
         <em>{f.get('idx')+1}</em>
