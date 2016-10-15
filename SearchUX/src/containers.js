@@ -14,7 +14,7 @@ export const SearchUXContainer = connect(
 
 function mapStateToProps (state) {
   return {
-    searchFields: state
+    state: state
     };
   },
 
