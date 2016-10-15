@@ -43,9 +43,9 @@ export default class SearchListNav extends React.Component {
   }
 
   checkNavState(currentStep){
-    console.log('in cNavSt', this.props.searchFields.size);
+    console.log('in cNavSt', this.props.state.reducer.size);
     // if(currentStep > 0 && currentStep !== this.props.steps.length - 1){
-    if(currentStep > 0 && currentStep !== this.props.searchFields.size - 1){
+    if(currentStep > 0 && currentStep !== this.props.state.reducer.size - 1){
       this.setState({
         showPreviousBtn: true,
         showNextBtn: true
@@ -66,9 +66,10 @@ export default class SearchListNav extends React.Component {
   }
 
   setNavState(next) {
-    console.log('in setNavState', this.props.searchFields.size);
-    this.setState({navState: this.getNavStates(next, this.props.searchFields.size)})
-    if (next < this.props.searchFields.size) {
+    console.log('in setNavState', this.props.state.reducer.size);
+    var theListSize=this.props.state.reducer.size;
+    this.setState({navState: this.getNavStates(next, theListSize)});
+    if (next < theListSize) {
       this.setState({compState: next})
     }
     this.checkNavState(next);
@@ -132,7 +133,7 @@ export default class SearchListNav extends React.Component {
     return (
       <div className="container" onKeyDown={this.handleKeyDown}>
         <ol className="progtrckr">
-          {this.renderSteps()}foo
+          {this.renderSteps()}
         </ol>
         {/* render component via var name? */}
         {/* this.props.steps[this.state.compState].component */}
