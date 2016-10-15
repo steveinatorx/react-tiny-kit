@@ -1,4 +1,5 @@
 import { List, Map } from 'immutable';
+import { LOCATION_CHANGE } from 'react-router-redux';
 
 const init = List([
   Map({ id: 'Model', idx: 0, isActive: false, filteredOptions: [] }),
@@ -6,11 +7,11 @@ const init = List([
   Map({ id: 'Year', idx: 2, isActive: false, filteredOptions: [] }),
 ]);
 
-export default function reducer (activeFields = init, action) {
+export default function reducer (state = init, action) {
   console.log('in reducer', action);
   switch (action.type) {
     case 'SET_ACTIVE_FIELD':
-      return activeFields.map(f => {
+      return state.map(f => {
         // console.log('mapiing reducer->', f.get('id'));
         if(f.get('id') === action.payload) {
           return f.update('isActive', isActive => true);
@@ -24,6 +25,6 @@ export default function reducer (activeFields = init, action) {
      const [_, operation = ""] = pathname.split('/');
      return operation;
     default:
-      return activeFields;
+      return state;
   }
 };
