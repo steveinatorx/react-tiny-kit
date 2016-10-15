@@ -1,17 +1,22 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { createStore } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import reducer from './reducers/reducers';
-import routing from './reducers/routing';
+import  routerReducer  from './reducers/routing';
 import { SearchUXContainer } from './containers';
-
+import createHistory from 'history/createBrowserHistory'
 import { syncHistoryWithStore } from 'react-router-redux';
-import { createHistory } from 'history';
 //import routing from 'reducers/routing';
 
- const store = createStore(reducer);
- console.log('alive1');
+const rootReducer = combineReducers( { reducer, routing: routerReducer} );  
+
+const store = createStore(rootReducer);
+export const history = createHistory();
+
+syncHistoryWithStore( history, store );
+
+console.log('alive1');
 
 render(
   <Provider store={store} >
