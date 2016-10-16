@@ -3,6 +3,76 @@ import './css/skeleton.css';
 import './css/prog-tracker.css';
 import './css/custom.css';
 import './css/normalize.css';
+import Select from 'react-select';
+
+import './css/react-select.css';
+
+
+const FLAVOURS = [
+	{ label: 'Chocolate', value: 'chocolate' },
+	{ label: 'Vanilla', value: 'vanilla' },
+	{ label: 'Strawberry', value: 'strawberry' },
+	{ label: 'Caramel', value: 'caramel' },
+	{ label: 'Cookies and Cream', value: 'cookiescream' },
+	{ label: 'Peppermint', value: 'peppermint' },
+];
+
+const WHY_WOULD_YOU = [
+	{ label: 'Chocolate (are you crazy?)', value: 'chocolate', disabled: true },
+].concat(FLAVOURS.slice(1));
+
+var MultiSelectField = React.createClass({
+	displayName: 'MultiSelectField',
+	propTypes: {
+		label: React.PropTypes.string,
+	},
+	getInitialState () {
+    
+    
+    console.log(' in gIS MSF:', this.state);
+
+		return {
+			disabled: false,
+			crazy: false,
+			options: FLAVOURS,
+			value: [],
+		};
+	},
+	handleSelectChange (value) {
+		console.log('You\'ve selected:', value);
+		this.setState({ value });
+	},
+	toggleDisabled (e) {
+		this.setState({ disabled: e.target.checked });
+	},
+	toggleChocolate (e) {
+		let crazy = e.target.checked;
+		this.setState({
+			crazy: crazy,
+			options: crazy ? WHY_WOULD_YOU : FLAVOURS,
+		});
+	},
+	render () {
+		return (
+			<div className="section">
+				<h3 className="section-heading">{this.props.label}</h3>
+        foobar
+				<Select multi simpleValue disabled={this.state.disabled} value={this.state.value} placeholder="Select your favourite(s)" options={this.state.options} onChange={this.handleSelectChange} />
+
+				<div className="checkbox-list">
+					<label className="checkbox">
+						<input type="checkbox" className="checkbox-control" checked={this.state.disabled} onChange={this.toggleDisabled} />
+						<span className="checkbox-label">Disable the control</span>
+					</label>
+					<label className="checkbox">
+						<input type="checkbox" className="checkbox-control" checked={this.state.crazy} onChange={this.toggleChocolate} />
+						<span className="checkbox-label">I don't like Chocolate (disabled the option)</span>
+					</label>
+				</div>
+			</div>
+		);
+	}
+});
 
 export default class SearchListNav extends React.Component {
   constructor(props) {
@@ -11,11 +81,20 @@ export default class SearchListNav extends React.Component {
     //const clickField = id => event => setActiveField(id);      
     console.log(props.state.reducer);
     var theListSize = props.state.reducer.size;
+    var activeFieldObj =  props.state.reducer.map(f => {
+        console.log('f.isActive', f.get('isActive'));
+        if (f.get('isActive') === true ) {
+          return f;
+        }      
+     });
+
+     console.log('activeFObj', activeFieldObj);
     this.state = {
       showPreviousBtn: false,
       showNextBtn: true,
       compState: 0,
       navState: this.getNavStates(0, theListSize),
+      activeSearchField: this.getActiveSearchField(),
     };
     this.hidden = {
       display: 'none'
@@ -24,8 +103,12 @@ export default class SearchListNav extends React.Component {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
+    //this.getActiveSearchField = this.getActiveSearchField.bind(this);
   }
-
+  getActiveSearchField() {
+    console.log('getActiveSFMeta', this.props.state);
+    return true; 
+  }
   getNavStates(indx, length) {
     let styles = [];
     for (let i=0; i<length; i++) {
@@ -137,7 +220,8 @@ export default class SearchListNav extends React.Component {
         </ol>
         {/* render component via var name? */}
         {/* this.props.steps[this.state.compState].component */}
-        component (put these in an array so they have access to props)
+        <span>{ this.state.compState } </span>
+        <MultiSelectField/>
         <p></p>
         {/* <div style={this.props.showNavigation ? {} : this.hidden}> */}
         <div>
