@@ -1,10 +1,11 @@
 import { List, Map } from 'immutable';
 import { LOCATION_CHANGE } from 'react-router-redux';
 
+//can i just render the same component with different opts fed by this Map?
 const init = List([
-  Map({ id: 'Model', idx: 0, isActive: false, filteredOptions: [] }),
-  Map({ id: 'Body', idx: 1, isActive: false, filteredOptions: [] }),
-  Map({ id: 'Year', idx: 2, isActive: false, filteredOptions: [] }),
+  Map({ id: 'Model', idx: 0, isActive: true, opts: [], multi: false }),
+  Map({ id: 'Body', idx: 1, isActive: false, opts: [], multi: true }),
+  Map({ id: 'Year', idx: 2, isActive: false, Opts: [], multi: true }),
 ]);
 
 export default function reducer (state = init, action) {
