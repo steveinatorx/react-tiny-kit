@@ -25,19 +25,23 @@ var MultiSelectField = React.createClass({
 	displayName: 'MultiSelectField',
 	propTypes: {
 		label: React.PropTypes.string,
+		activeField: React.PropTypes.object,
 	},
 	getInitialState () {
-    
-    
-    console.log(' in gIS MSF:', this.state);
-
+    console.log(' in gIS MSF:', this.props);
 		return {
 			disabled: false,
 			crazy: false,
-			options: FLAVOURS,
+			options: this.props.activeField.opts,
 			value: [],
 		};
 	},
+  componentWillMount() {
+    console.log('CWM', this.props);  
+  },
+  componentWillReceiveProps(newProps){
+    console.log('CWRP', newProps);
+  },
 	handleSelectChange (value) {
 		console.log('You\'ve selected:', value);
 		this.setState({ value });
@@ -81,12 +85,15 @@ export default class SearchListNav extends React.Component {
     //const clickField = id => event => setActiveField(id);      
     console.log(props.state.reducer);
     var theListSize = props.state.reducer.size;
-    var activeFieldObj =  props.state.reducer.map(f => {
+    var activeFieldObj = null;
+    props.state.reducer.map(f => {
         console.log('f.isActive', f.get('isActive'));
+        console.log(f);
         if (f.get('isActive') === true ) {
-          return f;
+          console.log('active field?', f.get('id'));  
+          activeFieldObj=f.toJS();
         }      
-     });
+    });
 
      console.log('activeFObj', activeFieldObj);
     this.state = {
@@ -94,7 +101,7 @@ export default class SearchListNav extends React.Component {
       showNextBtn: true,
       compState: 0,
       navState: this.getNavStates(0, theListSize),
-      activeSearchField: this.getActiveSearchField(),
+      activeSearchField: activeFieldObj,
     };
     this.hidden = {
       display: 'none'
@@ -126,7 +133,7 @@ export default class SearchListNav extends React.Component {
   }
 
   checkNavState(currentStep){
-    console.log('in cNavSt', this.props.state.reducer.size);
+   // console.log('in cNavSt', this.props.state.reducer.size);
     // if(currentStep > 0 && currentStep !== this.props.steps.length - 1){
     if(currentStep > 0 && currentStep !== this.props.state.reducer.size - 1){
       this.setState({
@@ -165,10 +172,10 @@ export default class SearchListNav extends React.Component {
   }
 
   handleOnClick (evt) {
-    console.log('in hClick', this.props.searchFields.size);
-    if (evt.currentTarget.value === (this.props.searchFields.size - 1) &&
-      this.state.compState === (this.props.searchFields.size - 1)) {
-      this.setNavState(this.props.searchFields.size)
+    console.log('in hClick', this.props.state.reducer.size);
+    if (evt.currentTarget.value === (this.props.state.reducer.size - 1) &&
+      this.state.compState === (this.props.state.reducer.size - 1)) {
+      this.setNavState(this.props.state.reducer.size)
     }
     else {
       this.setNavState(evt.currentTarget.value)
@@ -186,15 +193,14 @@ export default class SearchListNav extends React.Component {
   }
 
   getClassName(className, i){
-    console.log('getCName', i);
-   console.log(className + "-" + this.state.navState.styles[i]);
+    // console.log('getCName', i);
+   // console.log(className + "-" + this.state.navState.styles[i]);
     return className + "-" + this.state.navState.styles[i];
   }
 
   renderSteps() {
-
-      console.log('in renderSteps');
-      console.log('in renderSteps', this.props);
+      // console.log('in renderSteps');
+      // console.log('in renderSteps', this.props);
       return this.props.state.reducer.map (f => (
       /* <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}> */
       <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}>
@@ -212,7 +218,6 @@ export default class SearchListNav extends React.Component {
   }
 
   render() {
-
     return (
       <div className="container" onKeyDown={this.handleKeyDown}>
         <ol className="progtrckr">
@@ -221,7 +226,7 @@ export default class SearchListNav extends React.Component {
         {/* render component via var name? */}
         {/* this.props.steps[this.state.compState].component */}
         <span>{ this.state.compState } </span>
-        <MultiSelectField/>
+          <MultiSelectField {...this.props} activeField={this.state.activeSearchField} />
         <p></p>
         {/* <div style={this.props.showNavigation ? {} : this.hidden}> */}
         <div>
