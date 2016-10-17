@@ -2,15 +2,17 @@
 
 import fetch from 'isomorphic-fetch'
 
-export const SET_ACTIVE_FIELD = 'SET_ACTIVE_FIELD'
-function setActiveField(id) {
+export const SET_ACTIVE_FIELD = 'SET_ACTIVE_FIELD';
+
+export function setActiveField(idx) {
   return {
     type: 'SET_ACTIVE_FIELD',
-    payload: id
+    payload: idx
   };
 }
 
 export const REQUEST_FIELDS = 'REQUEST_FIELDS'
+
 function requestFields(field) {
   return {
     type: REQUEST_FIELDS,
