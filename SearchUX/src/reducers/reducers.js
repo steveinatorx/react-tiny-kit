@@ -29,7 +29,7 @@ export default function reducer (state = init, action) {
     case 'SET_ACTIVE_FIELD':
       return state.map(f => {
         // console.log('mapiing reducer->', f.get('id'));
-        if(f.get('id') === action.payload) {
+        if(f.get('idx') === action.payload) {
           return f.update('isActive', isActive => true);
         } else {
           return f.update('isActive', isActive => false);
