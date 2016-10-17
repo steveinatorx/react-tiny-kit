@@ -18,11 +18,13 @@ var MultiSelectField = React.createClass({
 		return {
 			disabled: false,
 			options: this.props.activeField.opts,
-			value: [],
+			value: null,
+      placeholder: "Select " + this.props.activeField.id
 		};
 	},
   componentWillMount() {
-    console.log('CWM', this.props);  
+    console.log('CWM state', this.state);  
+    console.log('CWM props', this.props);  
   },
   componentWillReceiveProps(newProps){
     console.log('CWRP', newProps);
@@ -30,6 +32,7 @@ var MultiSelectField = React.createClass({
 	handleSelectChange (value) {
 		console.log('You\'ve selected:', value);
 		this.setState({ value });
+    
 	},
 	toggleDisabled (e) {
 		this.setState({ disabled: e.target.checked });
@@ -46,7 +49,7 @@ var MultiSelectField = React.createClass({
 		return (
 			<div className="section">
 				<h3 className="section-heading">{this.props.label}</h3>
-				<Select multi simpleValue disabled={this.state.disabled} value={this.state.value} placeholder="Select your favourite(s)" options={this.state.options} onChange={this.handleSelectChange} />
+				<Select simpleValue disabled={this.state.disabled} value={this.state.value} placeholder={this.state.placeholder} options={this.state.options} onChange={this.handleSelectChange} />
 			</div>
 		);
 	}
@@ -61,15 +64,15 @@ export default class SearchListNav extends React.Component {
     var theListSize = props.state.reducer.size;
     var activeFieldObj = null;
     props.state.reducer.map(f => {
-        console.log('f.isActive', f.get('isActive'));
-        console.log(f);
+        // console.log('f.isActive', f.get('isActive'));
+        // console.log(f);
         if (f.get('isActive') === true ) {
-          console.log('active field?', f.get('id'));  
+          // console.log('active field?', f.get('id'));  
           activeFieldObj=f.toJS();
         }      
     });
 
-     console.log('activeFObj', activeFieldObj);
+     // console.log('activeFObj', activeFieldObj);
     this.state = {
       showPreviousBtn: false,
       showNextBtn: true,
@@ -87,8 +90,11 @@ export default class SearchListNav extends React.Component {
     //this.getActiveSearchField = this.getActiveSearchField.bind(this);
   }
   getActiveSearchField() {
-    console.log('getActiveSFMeta', this.props.state);
+    // console.log('getActiveSFMeta', this.props.state);
     return true; 
+  }
+  handleSelectChangeMaster(value){
+    // console.log('in handleStateChngeMaster Nav', value);
   }
   getNavStates(indx, length) {
     let styles = [];
@@ -130,8 +136,12 @@ export default class SearchListNav extends React.Component {
   }
 
   setNavState(next) {
-    console.log('in setNavState', this.props.state.reducer.size);
+    console.log('in setNavState i want to move to:', next);
+    console.log('in setNavState i want to move to:', this.props);
     var theListSize=this.props.state.reducer.size;
+    
+    this.props.setActiveField(2); 
+    
     this.setState({navState: this.getNavStates(next, theListSize)});
     if (next < theListSize) {
       this.setState({compState: next})
@@ -146,7 +156,7 @@ export default class SearchListNav extends React.Component {
   }
 
   handleOnClick (evt) {
-    console.log('in hClick', this.props.state.reducer.size);
+    console.log('in hClick', evt.currentTarget.value);
     if (evt.currentTarget.value === (this.props.state.reducer.size - 1) &&
       this.state.compState === (this.props.state.reducer.size - 1)) {
       this.setNavState(this.props.state.reducer.size)
