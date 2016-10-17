@@ -20,7 +20,7 @@ function mapStateToProps (state) {
 
   function mapDispatchToProps (dispatch) {
     return {
-      setActiveField: id => dispatch(setActiveField(id)),
+      setActiveField: idx => dispatch(setActiveField(idx)),
     };
   }
 )(SearchListNav);
