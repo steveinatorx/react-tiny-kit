@@ -18,9 +18,10 @@ const init = List([
  	{ label: "GT2", value: "GT2"}, 
  	{ label: "GT2 RS", value: "GT2 RS"}, 
 	{ label: "GT3 RS 4.0", value: "GT3 RS 4.0" },
-], multi: false }),
-  Map({ id: 'Body', idx: 1, isActive: false, opts: [], multi: true }),
-  Map({ id: 'Year', idx: 2, isActive: false, Opts: [], multi: true }),
+], multi: false,
+selected: [] }),
+  Map({ id: 'Body', idx: 1, isActive: false, opts: [], multi: true, selected: [] }),
+  Map({ id: 'Year', idx: 2, isActive: false, Opts: [], multi: true, selected: [] }),
 ]);
 
 export default function reducer (state = init, action) {
