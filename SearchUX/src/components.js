@@ -23,8 +23,16 @@ var MultiSelectField = React.createClass({
       placeholder: "Select " + this.props.activeField.id
 		};
 	},
-  setActiveField : function setActiveField(){
-    console.log('in setActiveField', this.props);   
+  setActiveField : function setActiveField(newProps){
+    console.log('in setActiveField', newProps);
+      newProps.state.reducer.map(f => {
+             console.log('f.isActive', f.get('isActive'));
+             console.log(f);
+            if (f.get('isActive') === true ) {
+              console.log('setting active field=', f.get('id'));  
+              this.setState({ options: f.opts })
+            }      
+        });
   },
   componentWillMount() {
     console.log('CWM state', this.state);  
@@ -32,7 +40,7 @@ var MultiSelectField = React.createClass({
   },
   componentWillReceiveProps: function(newProps){
     console.log('CWRP', newProps);
-    this.setActiveField();    
+    this.setActiveField(newProps);
   },
 	handleSelectChange (value) {
 		console.log('You\'ve selected:', value);
@@ -54,7 +62,12 @@ var MultiSelectField = React.createClass({
 		return (
 			<div className="section">
 				<h3 className="section-heading">{this.props.label}</h3>
-				<Select simpleValue disabled={this.state.disabled} value={this.state.value} placeholder={this.state.placeholder} options={this.state.options} onChange={this.handleSelectChange} />
+				<Select simpleValue 
+          disabled={this.state.disabled} 
+          value={this.state.value}
+          placeholder={this.state.placeholder}
+          options={this.state.options}
+          onChange={this.handleSelectChange} />
 			</div>
 		);
 	}
