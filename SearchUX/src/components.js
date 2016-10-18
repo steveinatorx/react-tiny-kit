@@ -13,6 +13,7 @@ var MultiSelectField = React.createClass({
 		label: React.PropTypes.string,
 		activeField: React.PropTypes.object,
 	},
+
 	getInitialState () {
     console.log(' in gIS MSF:', this.props);
 		return {
@@ -22,12 +23,16 @@ var MultiSelectField = React.createClass({
       placeholder: "Select " + this.props.activeField.id
 		};
 	},
+  setActiveField : function setActiveField(){
+    console.log('in setActiveField', this.props);   
+  },
   componentWillMount() {
     console.log('CWM state', this.state);  
     console.log('CWM props', this.props);  
   },
-  componentWillReceiveProps(newProps){
+  componentWillReceiveProps: function(newProps){
     console.log('CWRP', newProps);
+    this.setActiveField();    
   },
 	handleSelectChange (value) {
 		console.log('You\'ve selected:', value);
