@@ -1,20 +1,25 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { createStore, combineReducers } from 'redux';
+import { applyMiddleware, createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import reducer from './reducers/reducers';
 import  routerReducer  from './reducers/routing';
 import { SearchUXContainer } from './containers';
 import createHistory from 'history/createBrowserHistory'
-import { syncHistoryWithStore } from 'react-router-redux';
+import { routerMiddleware, syncHistoryWithStore } from 'react-router-redux';
+import thunk from 'redux-thunk';
+import {browserHistory} from 'react-router';
+
 //import routing from 'reducers/routing';
 
 const rootReducer = combineReducers( { reducer, routing: routerReducer} );  
 
-const store = createStore(rootReducer);
-export const history = createHistory();
+const middleware = applyMiddleware(
+  routerMiddleware(browserHistory),
+  thunk
+);
 
-syncHistoryWithStore( history, store );
+const store = createStore(rootReducer, middleware);
 
 console.log('alive1');
 
@@ -29,5 +34,3 @@ render(
   <h1> foo </h1>, 
   document.getElementById('app')
 ); */
-
-
