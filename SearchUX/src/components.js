@@ -34,6 +34,25 @@ var MultiSelectField = React.createClass({
             }      
         });
   },
+  getActiveField : function getActiveField(){
+        var ret=null;
+        this.props.state.reducer.map(f => {
+          console.log('getActiveField', f.get('idx'));
+          console.log('getActiveField', f.get('isActive') === true);
+         if (f.get('isActive') === true ) {
+           console.log('is true', f.get('idx'));
+           ret = f.get('idx');
+         }
+        });
+        return ret;
+  },
+ 	handleSelectChange : function handleSelectChange(value) {
+		console.log('You\'ve selected:', value);
+    var activeIdx=this.getActiveField();
+    console.log('trying to set ', activeIdx);
+    this.props.setFieldSelection(activeIdx, [value]); 
+		this.setState({ value });
+	},
   componentWillMount() {
     console.log('CWM state', this.state);  
     console.log('CWM props', this.props);  
@@ -42,11 +61,6 @@ var MultiSelectField = React.createClass({
     console.log('CWRP', newProps);
     this.setActiveField(newProps);
   },
-	handleSelectChange (value) {
-		console.log('You\'ve selected:', value);
-		this.setState({ value });
-    
-	},
 	toggleDisabled (e) {
 		this.setState({ disabled: e.target.checked });
 	},
@@ -106,13 +120,6 @@ export default class SearchListNav extends React.Component {
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
     //this.getActiveSearchField = this.getActiveSearchField.bind(this);
-  }
-  getActiveSearchField() {
-    // console.log('getActiveSFMeta', this.props.state);
-    return true; 
-  }
-  handleSelectChangeMaster(value){
-    // console.log('in handleStateChngeMaster Nav', value);
   }
   getNavStates(indx, length) {
     let styles = [];
