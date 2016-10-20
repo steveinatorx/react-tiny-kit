@@ -37,6 +37,20 @@ export default function reducer (state = init, action) {
           return f.update('isActive', isActive => false);
         }
       });
+    case 'SET_FIELD_SELECTION':
+      const selection=action.payload.selection;
+      const idx = action.payload.idx;
+      var selected = [];
+      //gather all existing selections, get idx +1 id for distinct
+      state.map( f => {
+        if (f.get('idx') < (idx) ){
+            console.log('adding to selected' , f.get('selected'));
+            selected.push(...f.get('selected'));
+            
+        }         
+        
+      });
+      return selected;
     case 'LOCATION_CHANGE':
      const pathname = action.payload.pathname;
      // /redux-history-demo/:operation
