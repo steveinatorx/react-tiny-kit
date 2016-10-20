@@ -40,17 +40,29 @@ export default function reducer (state = init, action) {
     case 'SET_FIELD_SELECTION':
       const selection=action.payload.selection;
       const idx = action.payload.idx;
-      var selected = [];
+      console.log('in set_field_selection', state);
+
+      console.log('in SFS idx', idx); 
+      console.log('in SFS selection', selection); 
+      
       //gather all existing selections, get idx +1 id for distinct
-      state.map( f => {
-        if (f.get('idx') < (idx) ){
-            console.log('adding to selected' , f.get('selected'));
-            selected.push(...f.get('selected'));
-            
+      return state.map( f => {
+          console.log('looping', f);
+        if (f.get('idx') === idx ){
+          var previous=f.get('selected')
+          console.log('existing selection', previous);
+          if( Object.prototype.toString.call( previous ) === '[object Array]' ) {
+            console.log('previous obj is array proto');
+          }
+          previous= previous.concat(selection);
+          console.log('updated selection', previous);
+          return f.updateIn('selection', selection => previous);
+        }
+        else {
+          return f;
         }         
-        
       });
-      return selected;
+
     case 'LOCATION_CHANGE':
      const pathname = action.payload.pathname;
      // /redux-history-demo/:operation
