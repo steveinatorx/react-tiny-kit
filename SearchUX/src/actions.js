@@ -11,6 +11,18 @@ export function setActiveField(idx) {
   };
 }
 
+export const SET_FIELD_SELECTION = 'SET_FIELD_SELECTION';
+
+export function setFieldSelection(idx,selection) {
+  return {
+    type: 'SET_FIELD_SELECTION',
+    payload: {
+      idx: idx,
+      selection: selection
+    }
+  };
+}
+
 export const REQUEST_FIELDS = 'REQUEST_FIELDS'
 
 function requestFields(field) {
