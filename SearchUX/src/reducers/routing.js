@@ -11,6 +11,8 @@ export default function routerReducer(state = initialState, action) {
   // This LOCATION_CHANGE case is copied from react-router-redux's routerReducer
   if (action.type === LOCATION_CHANGE) {
     return { ...state, locationBeforeTransitions: action.payload }
+  } else {
+    return state;
   }
 
   // Here is our code to set the location state when the user chooses
@@ -28,6 +30,5 @@ export default function routerReducer(state = initialState, action) {
     console.log('4');
     return { ...state, locationBeforeTransitions: location };
   }*/
-
-  return state;
+  
 }
