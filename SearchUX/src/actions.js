@@ -25,57 +25,59 @@ export function setFieldSelection(idx,selection) {
 
 export const REQUEST_FIELDS = 'REQUEST_FIELDS'
 
-function requestFields(field) {
+export function requestFields(field) {
   return {
     type: REQUEST_FIELDS,
-    field
+    field,
+    selectionObj
   }
 }
 
 export const RECEIVE_FIELDS = 'RECEIVE_FIELDS'
-function receiveFields(field, json) {
+export function receiveFields(field, json) {
   return {
     type: RECEIVE_FIELDS,
     field,
-    posts: json.data.children.map(child => child.data),
+    values: json.data.children.map(child => child.data),
     receivedAt: Date.now()
   }
+}
+
+export const API_ERROR = 'API_ERROR'
+export function apiError(error){
+ return {error, type: API_ERROR}; 
 }
 
 // Meet our first thunk action creator!
 // Though its insides are different, you would use it just like any other action creator:
 // store.dispatch(fetchPosts('reactjs'))
 
-export function fetchFields(field) {
-
-  // Thunk middleware knows how to handle functions.
-  // It passes the dispatch method as an argument to the function,
-  // thus making it able to dispatch actions itself.
-
-  return function (dispatch) {
-
-    // First dispatch: the app state is updated to inform
-    // that the API call is starting.
-
-    dispatch(requestFields(fields))
-
-    // The function called by the thunk middleware can return a value,
-    // that is passed on as the return value of the dispatch method.
-
-    // In this case, we return a promise to wait for.
-    // This is not required by thunk middleware, but it is convenient for us.
-
-    return fetch(`http://cbappi.com/api/PCNACars/`)
-      .then(response => response.json())
-      .then(json =>
-
-        // We can dispatch many times!
-        // Here, we update the app state with the results of the API call.
-
-        dispatch(receiveFields(field, json))
-      )
-
-      // In a real world app, you also want to
-      // catch any error in the network call.
-  }
-}
+export function fetchFields(objectFieldIdx,selectedArr) {
+  console.log('in fetchFields', objectField );
+  console.log('in fetchFields', selectedArr );
+  
+    return dispatch =>
+        fetch('https://jsonplaceholder.typicode.com/users', {
+          method: 'post',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            distinct: objectField,
+            queryArr: selectedArr,
+          }),
+        })
+        .then(response => {
+          if (response.status >= 200 && response.status < 300) {
+            console.log(response);
+            dispatch(receiveFields(response));
+          } else {
+            const error = new Error(response.statusText);
+            error.response = response;
+            dispatch(loginError(error));
+            throw error;
+          }
+        })
+        .catch(error => { console.log('request failed', error); });
+    }
