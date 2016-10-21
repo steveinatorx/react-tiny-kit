@@ -6,8 +6,6 @@ import { SET_ACTIVE_FIELD } from '../actions';
 const initialState = { locationBeforeTransitions: null };
 
 export default function routerReducer(state = initialState, action) {
-  console.log('in router reducer', action);
-  console.log('in router reducer state=', state);
   // This LOCATION_CHANGE case is copied from react-router-redux's routerReducer
   if (action.type === LOCATION_CHANGE) {
     return { ...state, locationBeforeTransitions: action.payload }
