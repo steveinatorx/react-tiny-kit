@@ -23,9 +23,9 @@ var MultiSelectField = React.createClass({
       placeholder: "Select " + this.props.activeField.id
 		};
 	},
-  setActiveField : function setActiveField(newProps){
+  setActiveField : function setActiveField(){
     console.log('in setActiveField', newProps);
-      newProps.state.reducer.map(f => {
+      props.state.reducer.map(f => {
              console.log('f.isActive', f.get('isActive'));
              console.log(f);
             if (f.get('isActive') === true ) {
@@ -34,22 +34,39 @@ var MultiSelectField = React.createClass({
             }      
         });
   },
-  getActiveProp : function getActiveProp(){
-        var ret=null;
-        this.props.state.fieldList.map(f => {
-         if (f.get('isActive') === true ) {
-           ret = f.toJS();
-         }
-        });
-        return ret;
+  getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
+            var ret=null;
+            theProps.state.fieldList.map(f => {
+              if (f.get('isActive') === true ) {
+                ret = f.toJS();
+              }
+             });
+            return ret;
+  },
+  //todo: glom all selected values
+  getSelected : function getSelected(){
+    
+    
+    
   },
  	handleSelectChange : function handleSelectChange(value) {
 		console.log('You\'ve selected:', value);
-    var activeIdx=this.getActiveProp().idx;
+    var foo=this.getActiveFieldFromProp(this.props);
+    console.log('foo',foo);
+    var activeIdx=this.getActiveFieldFromProp(this.props).idx;
     console.log('trying to set ', activeIdx);
     this.props.setFieldSelection(activeIdx, [value]); 
 		this.setState({ value });
-
+    //maybe a thunk?
+    console.log('is multi?', this.getActiveFieldFromProp(this.props).multi != true);
+    //todo check for last field?
+    console.log('is == nul', value != null);
+    if ((value != null) && (this.getActiveFieldFromProp(this.props).multi != true)) {
+      this.props.setActiveField(activeIdx+1);
+      //next nav state
+      //todo: check for end
+    }    
+    //if this is not a multi then move to next nav
 	},
   componentWillMount() {
     console.log('CWM state', this.state);  
@@ -59,7 +76,18 @@ var MultiSelectField = React.createClass({
     console.log('CWRP', newProps);
     // this.setActiveField(newProps);
     // update opts
+    var newPropLine = this.getActiveFieldFromProp(newProps);
+    console.log('CWRP newPropLine', newPropLine);
     
+    var oldPropLine = this.getActiveFieldFromProp(this.props);
+    console.log('CWRP oldPropLine', oldPropLine);
+    this.setState({ options: newPropLine.opts});
+    //move to new nav?
+    if (newPropLine.idx != oldPropLine.idx){
+        console.log('wants a new nav');
+        this.state.placeholder="Select " + newPropLine.id; 
+    }
+        
   },
 	toggleDisabled (e) {
 		this.setState({ disabled: e.target.checked });
@@ -119,8 +147,37 @@ export default class SearchListNav extends React.Component {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
+    this.getActiveFieldFromProp = this.getActiveFieldFromProp.bind(this);
     //this.getActiveSearchField = this.getActiveSearchField.bind(this);
   }
+  getActiveFieldFromProp(theProps){
+            var ret=null;
+            theProps.state.fieldList.map(f => {
+              if (f.get('isActive') === true ) {
+                ret = f.toJS();
+              }
+             });
+             return ret;
+ 
+  }
+  componentWillReceiveProps (newProps) {
+    console.log('NAV CWRP', newProps);
+    // this.setActiveField(newProps);
+    // update opts
+    var newPropLine = this.getActiveFieldFromProp(newProps);
+    console.log('NAV CWRP newPropLine', newPropLine.idx);
+    
+    var oldPropLine = this.getActiveFieldFromProp(this.props);
+    console.log('NAV CWRP oldPropLine', oldPropLine.idx);
+    this.setState({ options: newPropLine.opts});
+    //move to new nav?
+    if (newPropLine.idx != oldPropLine.idx) {
+            console.log('new active field'); 
+            this.setNavState(newPropLine.idx);
+    }
+        
+  }
+
   getNavStates(indx, length) {
     let styles = [];
     for (let i=0; i<length; i++) {
