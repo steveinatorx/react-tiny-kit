@@ -31,7 +31,7 @@ export default function reducer (state = init, action) {
       return state.map(f => {
         console.log('mapiing reducer->', f.get('idx'));
         if(f.get('idx') === action.payload) {
-          console.log('payload match idx?', f.get('idx'));
+          console.log('GOOD payload match idx?', f.get('idx'));
           return f.update('isActive', isActive => true);
         } else {
           return f.update('isActive', isActive => false);
