@@ -9,13 +9,28 @@ import createHistory from 'history/createBrowserHistory'
 import { routerMiddleware, syncHistoryWithStore } from 'react-router-redux';
 import thunk from 'redux-thunk';
 import {browserHistory} from 'react-router';
+/*import { createDevTools } from 'redux-devtools'
+import LogMonitor from 'redux-devtools-log-monitor'
+import DockMonitor from 'redux-devtools-dock-monitor'
 
-const rootReducer = combineReducers( { fieldList: reducer, routing: routerReducer} );  
+export const DevTools = createDevTools(
+  <DockMonitor toggleVisibilityKey="ctrl-h" changePositionKey="ctrl-q">
+    <LogMonitor theme="tomorrow" preserveScrollTop={false} />
+  </DockMonitor>
+)*/
+
+
+const rootReducer = combineReducers( { reducer, routing: routerReducer} );  
 
 const middleware = applyMiddleware(
   routerMiddleware(browserHistory),
   thunk
 );
+
+  /*let devTools = []
+  if (typeof document !== 'undefined') {
+    devTools = [ DevTools.instrument() ]
+  }*/
 
 const store = createStore(rootReducer, middleware);
 console.log('alive1');
