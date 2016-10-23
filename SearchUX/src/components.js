@@ -38,6 +38,7 @@ var MultiSelectField = React.createClass({
             var ret=null;
             theProps.state.reducer.getIn(['searchFields']).map(f => {
               if (f.get('isActive') === true ) {
+                console.log('getting ative field', f.get('id'));
                 ret = f.toJS();
               }
              });
@@ -45,8 +46,15 @@ var MultiSelectField = React.createClass({
   },
   //todo: glom all selected values
   getSelected : function getSelected(){
-    
-    
+
+    var selected=[]; 
+    this.props.state.reducer.getIn(['searchFields']).map(f => {
+              if (f.get('selected').length > 0 ) {
+                selected.concat(f.get('selected'));
+              }
+    });
+
+    return selected;    
     
   },
  	handleSelectChange : function handleSelectChange(value) {
@@ -57,6 +65,11 @@ var MultiSelectField = React.createClass({
     console.log('trying to set ', activeIdx);
     this.props.setFieldSelection(activeIdx, [value]); 
 		this.setState({ value });
+
+    var selected = this.getSelected(); 
+    this.props.fetchFields(activeIdx, selected);
+    
+
     //maybe a thunk?
     console.log('is multi?', this.getActiveFieldFromProp(this.props).multi != true);
     //todo check for last field?
@@ -283,7 +296,7 @@ export default class SearchListNav extends React.Component {
           {/* this.state.compState */} 
             <div className="row">
               <div className="six columns">
-                <MultiSelectField {...this.props} activeField={this.state.activeSearchField} />
+                <MultiSelectField {...this.props} />
                   {/* <div style={this.props.showNavigation ? {} : this.hidden}> */}
                   <div>
                     <button style={this.state.showPreviousBtn ? {} : this.hidden}

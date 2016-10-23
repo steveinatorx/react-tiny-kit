@@ -53,7 +53,7 @@ export function apiError(error){
 // store.dispatch(fetchPosts('reactjs'))
 
 export function fetchFields(objectFieldIdx,selectedArr) {
-  console.log('in fetchFields', objectField );
+  console.log('in fetchFields', objectFieldIdx );
   console.log('in fetchFields', selectedArr );
   
     return dispatch =>
@@ -64,7 +64,7 @@ export function fetchFields(objectFieldIdx,selectedArr) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            distinct: objectField,
+            distinct: objectFieldIdx,
             queryArr: selectedArr,
           }),
         })

@@ -32,26 +32,27 @@ export default function reducer (state = init, action) {
   switch (action.type) {
     case 'SET_ACTIVE_FIELD':
       var newSearchFields = state.getIn(['searchFields']).map(f => {
-         console.log('mapiing reducer->', f.get('idx'));
+         // console.log('mapiing reducer->', f.get('idx'));
         if(f.get('idx') === action.payload) {
-           console.log('GOOD payload match idx?', f.get('idx'));
+           // console.log('GOOD payload match idx?', f.get('idx'));
           return f.update('isActive', isActive => true);
         } else {
           return f.update('isActive', isActive => false);
         }
       });
-      return state.setIn(['searchFields', action.payload, 'isActive'], true); 
+      //return state.setIn(['searchFields', action.payload, 'isActive'], true); 
+      return state.setIn(['searchFields'], newSearchFields); 
       
       
     case 'SET_FIELD_SELECTION':
       const selection=action.payload.selection;
       const idx = action.payload.idx;
-      console.log('in set_field_selection', state);
+      // console.log('in set_field_selection', state);
 
-      console.log('in SFS idx', idx); 
-      console.log('in SFS selection', selection); 
+      // console.log('in SFS idx', idx); 
+      // console.log('in SFS selection', selection); 
       
-      console.log('get selected?:', state.getIn(['searchFields', idx, 'selected']));
+      //  console.log('get selected?:', state.getIn(['searchFields', idx, 'selected']));
       var previous = state.getIn(['searchFields', idx, 'selected']);
       //gather all existing selections, get idx +1 id for distinct
       return state.setIn(['searchFields', idx, 'selected'], previous.concat(selection));
