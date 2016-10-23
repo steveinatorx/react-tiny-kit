@@ -52,19 +52,18 @@ export function apiError(error){
 // Though its insides are different, you would use it just like any other action creator:
 // store.dispatch(fetchPosts('reactjs'))
 
-export function fetchFields(objectFieldIdx,selectedArr) {
-  console.log('in fetchFields', objectFieldIdx );
+export function fetchFields(objectFieldId,selectedArr) {
+  console.log('in fetchFields', objectFieldId );
   console.log('in fetchFields', selectedArr );
   
     return dispatch =>
-        fetch('https://jsonplaceholder.typicode.com/users', {
+        fetch('http://localhost:3000/api/pcnacarsmeta', {
           method: 'post',
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            distinct: objectFieldIdx,
+            distinct: objectFieldId,
             queryArr: selectedArr,
           }),
         })
