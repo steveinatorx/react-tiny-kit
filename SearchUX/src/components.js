@@ -15,12 +15,12 @@ var MultiSelectField = React.createClass({
 	},
 
 	getInitialState () {
-    console.log(' in gIS MSF:', this.props);
+    console.log(' in gIS MSF:', this.props.state.reducer.getIn(['searchFields', 0, 'id']));
 		return {
 			disabled: false,
-			options: this.props.activeField.opts,
+			options: this.props.state.reducer.getIn(['searchFields', 0, 'opts']),
 			value: null,
-      placeholder: "Select " + this.props.activeField.id
+      placeholder: "Select " + this.props.state.reducer.getIn(['searchFields',0, 'id']),
 		};
 	},
   setActiveField : function setActiveField(){
@@ -36,7 +36,7 @@ var MultiSelectField = React.createClass({
   },
   getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
             var ret=null;
-            theProps.state.fieldList.map(f => {
+            theProps.state.reducer.getIn(['searchFields']).map(f => {
               if (f.get('isActive') === true ) {
                 ret = f.toJS();
               }
@@ -121,24 +121,13 @@ export default class SearchListNav extends React.Component {
     // const { searchFields, setActiveField } = props;
     //const clickField = id => event => setActiveField(id);      
     console.log('PROPS', props);
-    var theListSize = props.state.fieldList.size;
-    var activeFieldObj = null;
-    props.state.fieldList.map(f => {
-        // console.log('f.isActive', f.get('isActive'));
-        // console.log(f);
-        if (f.get('isActive') === true ) {
-          // console.log('active field?', f.get('id'));  
-          activeFieldObj=f.toJS();
-        }      
-    });
-
-     // console.log('activeFObj', activeFieldObj);
+    var theListSize = props.state.reducer.getIn(['searchFields']).size;
+    // console.log('activeFObj', activeFieldObj);
     this.state = {
       showPreviousBtn: false,
       showNextBtn: true,
       compState: 0,
-      navState: this.getNavStates(0, theListSize),
-      activeSearchField: activeFieldObj,
+      navState: this.getNavStates(0, theListSize)
     };
     this.hidden = {
       display: 'none'
@@ -152,7 +141,7 @@ export default class SearchListNav extends React.Component {
   }
   getActiveFieldFromProp(theProps){
             var ret=null;
-            theProps.state.fieldList.map(f => {
+            theProps.state.reducer.getIn(['searchFields']).map(f => {
               if (f.get('isActive') === true ) {
                 ret = f.toJS();
               }
@@ -197,7 +186,7 @@ export default class SearchListNav extends React.Component {
   checkNavState(currentStep){
    // console.log('in cNavSt', this.props.state.reducer.size);
     // if(currentStep > 0 && currentStep !== this.props.steps.length - 1){
-    if(currentStep > 0 && currentStep !== this.props.state.fieldList.size - 1){
+   if(currentStep > 0 && currentStep !== this.props.state.reducer.getIn(['searchFields']).size - 1){
       this.setState({
         showPreviousBtn: true,
         showNextBtn: true
@@ -220,7 +209,7 @@ export default class SearchListNav extends React.Component {
   setNavState(next) {
     console.log('in setNavState i want to move to:', next);
     console.log('in setNavState i want to move to:', this.props);
-    var theListSize=this.props.state.fieldList.size;
+    var theListSize = this.props.state.reducer.getIn(['searchFields']).size;
     
     this.props.setActiveField(next); 
     
@@ -267,7 +256,7 @@ export default class SearchListNav extends React.Component {
   renderSteps() {
       // console.log('in renderSteps');
       console.log('in renderSteps', this.props);
-      return this.props.state.fieldList.map (f => (
+      return this.props.state.reducer.getIn(['searchFields']).map (f => (
       /* <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}> */
       <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}>
         <em>{f.get('idx')+1}</em>
