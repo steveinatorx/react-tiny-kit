@@ -49,8 +49,17 @@ var MultiSelectField = React.createClass({
 
     var selected=[]; 
     this.props.state.reducer.getIn(['searchFields']).map(f => {
-              if (f.get('selected').length > 0 ) {
+      
+              var thisSegment={};
+              //multi
+              if (f.get('selected').length > 1 ) {
+                
                 selected.concat(f.get('selected'));
+
+              } else if (f.get('selected').length>0){
+                
+                selected.concat(f.get('selected'));
+
               }
     });
 
@@ -67,8 +76,9 @@ var MultiSelectField = React.createClass({
 		this.setState({ value });
 
     var selected = this.getSelected(); 
-    this.props.fetchFields(activeIdx, selected);
-    
+    console.log('selected= ', selected);
+
+    this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1]).id, selected);
 
     //maybe a thunk?
     console.log('is multi?', this.getActiveFieldFromProp(this.props).multi != true);
