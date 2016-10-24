@@ -26,10 +26,10 @@ var MultiSelectField = React.createClass({
   setActiveField : function setActiveField(){
     console.log('in setActiveField', newProps);
       props.state.reducer.map(f => {
-             console.log('f.isActive', f.get('isActive'));
-             console.log(f);
+             // console.log('f.isActive', f.get('isActive'));
+             // console.log(f);
             if (f.get('isActive') === true ) {
-              console.log('setting active field=', f.get('id'));  
+              // console.log('setting active field=', f.get('id'));  
               this.setState({ options: f.opts })
             }      
         });
@@ -38,7 +38,7 @@ var MultiSelectField = React.createClass({
             var ret=null;
             theProps.state.reducer.getIn(['searchFields']).map(f => {
               if (f.get('isActive') === true ) {
-                console.log('getting ative field', f.get('id'));
+                // console.log('getting ative field', f.get('id'));
                 ret = f.toJS();
               }
              });
@@ -47,11 +47,13 @@ var MultiSelectField = React.createClass({
   //todo: glom all selected values
   getSelected : function getSelected(){
 
+    console.log('in selected', this.props.state.reducer.getIn(['searchFields']));
     var selected=[]; 
     this.props.state.reducer.getIn(['searchFields']).map(f => {
       
               var thisSegment={};
               //multi
+              console.log(f.get('id') + ' selected lenght ', f.get('selected'));
               if (f.get('selected').length > 1 ) {
                 
                 selected.concat(f.get('selected'));
@@ -68,17 +70,19 @@ var MultiSelectField = React.createClass({
   },
  	handleSelectChange : function handleSelectChange(value) {
 		console.log('You\'ve selected:', value);
-    var foo=this.getActiveFieldFromProp(this.props);
-    console.log('foo',foo);
     var activeIdx=this.getActiveFieldFromProp(this.props).idx;
     console.log('trying to set ', activeIdx);
     this.props.setFieldSelection(activeIdx, [value]); 
 		this.setState({ value });
-
-    var selected = this.getSelected(); 
-    console.log('selected= ', selected);
-
-    this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1]).id, selected);
+    //todo: do we care? cant i just send the value out?
+    // var selected = this.getSelected(); 
+    // console.log('selected= ', selected);
+    var selectQueryKey = this.props.state.reducer.getIn(['searchFields',activeIdx,'id']);
+    var selectQueryObj = {};
+    selectQueryObj[selectQueryKey] =  value ;
+    console.log(' im looking for a distinct: ',  this.props.state.reducer.getIn(['searchFields',activeIdx+1,'id']));
+    console.log(' my query=  ',  selectQueryObj);
+    this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1, 'id']), selectQueryObj);
 
     //maybe a thunk?
     console.log('is multi?', this.getActiveFieldFromProp(this.props).multi != true);
@@ -92,8 +96,8 @@ var MultiSelectField = React.createClass({
     //if this is not a multi then move to next nav
 	},
   componentWillMount() {
-    console.log('CWM state', this.state);  
-    console.log('CWM props', this.props);  
+    // console.log('CWM state', this.state);  
+    // console.log('CWM props', this.props);  
   },
   componentWillReceiveProps (newProps) {
     console.log('CWRP', newProps);
@@ -107,7 +111,7 @@ var MultiSelectField = React.createClass({
     this.setState({ options: newPropLine.opts});
     //move to new nav?
     if (newPropLine.idx != oldPropLine.idx){
-        console.log('wants a new nav');
+      //   console.log('wants a new nav');
         this.state.placeholder="Select " + newPropLine.id; 
     }
         
@@ -177,10 +181,10 @@ export default class SearchListNav extends React.Component {
     // this.setActiveField(newProps);
     // update opts
     var newPropLine = this.getActiveFieldFromProp(newProps);
-    console.log('NAV CWRP newPropLine', newPropLine.idx);
+    // console.log('NAV CWRP newPropLine', newPropLine.idx);
     
     var oldPropLine = this.getActiveFieldFromProp(this.props);
-    console.log('NAV CWRP oldPropLine', oldPropLine.idx);
+    // console.log('NAV CWRP oldPropLine', oldPropLine.idx);
     this.setState({ options: newPropLine.opts});
     //move to new nav?
     if (newPropLine.idx != oldPropLine.idx) {
@@ -230,8 +234,8 @@ export default class SearchListNav extends React.Component {
   }
 
   setNavState(next) {
-    console.log('in setNavState i want to move to:', next);
-    console.log('in setNavState i want to move to:', this.props);
+    // console.log('in setNavState i want to move to:', next);
+    // console.log('in setNavState i want to move to:', this.props);
     var theListSize = this.props.state.reducer.getIn(['searchFields']).size;
     
     this.props.setActiveField(next); 
@@ -278,7 +282,7 @@ export default class SearchListNav extends React.Component {
 
   renderSteps() {
       // console.log('in renderSteps');
-      console.log('in renderSteps', this.props);
+      // console.log('in renderSteps', this.props);
       return this.props.state.reducer.getIn(['searchFields']).map (f => (
       /* <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}> */
       <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}>
