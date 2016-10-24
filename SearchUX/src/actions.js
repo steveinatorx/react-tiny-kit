@@ -1,6 +1,6 @@
 // const uid = () => Math.random().toString(34).slice(2);
 
-import fetch from 'isomorphic-fetch'
+import axios from 'axios';
 
 export const SET_ACTIVE_FIELD = 'SET_ACTIVE_FIELD';
 
@@ -34,16 +34,19 @@ export function requestFields(field) {
 }
 
 export const RECEIVE_FIELDS = 'RECEIVE_FIELDS'
-export function receiveFields(field, json) {
+export function receiveFields(field, valArr) {
   return {
     type: RECEIVE_FIELDS,
-    field,
-    values: json.data.children.map(child => child.data),
-    receivedAt: Date.now()
+    payload: {
+      field: field,
+      values: valArr,
+      receivedAt: Date.now()
+    }
   }
 }
 
 export const API_ERROR = 'API_ERROR'
+//todo: alert
 export function apiError(error){
  return {error, type: API_ERROR}; 
 }
@@ -52,31 +55,22 @@ export function apiError(error){
 // Though its insides are different, you would use it just like any other action creator:
 // store.dispatch(fetchPosts('reactjs'))
 
-export function fetchFields(objectFieldId,selectedArr) {
+export function fetchFields(objectFieldId, queryObj) {
   console.log('in fetchFields', objectFieldId );
-  console.log('in fetchFields', selectedArr );
+  console.log('in fetchFields', queryObj );
   
     return dispatch =>
-        fetch('http://localhost:3000/api/pcnacarsmeta', {
-          method: 'post',
-          headers: {
-            'Accept': 'application/json',
-          },
-          body: JSON.stringify({
+        axios.post('http://localhost:3000/api/pcnacarsmeta', 
+          {
             distinct: objectFieldId,
-            queryArr: selectedArr,
-          }),
-        })
-        .then(response => {
-          if (response.status >= 200 && response.status < 300) {
-            console.log(response);
-            dispatch(receiveFields(response));
-          } else {
-            const error = new Error(response.statusText);
-            error.response = response;
-            dispatch(loginError(error));
-            throw error;
-          }
-        })
-        .catch(error => { console.log('request failed', error); });
-    }
+            queryObj: queryObj,
+                        
+          }).then(res => {
+            console.log(res);
+            dispatch(receiveFields(objectFieldId, res.data.values));
+          }).catch(err => {
+            dispatch(apiError(err));
+          });
+    
+
+}
