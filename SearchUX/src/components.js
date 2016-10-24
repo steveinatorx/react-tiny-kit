@@ -1,4 +1,5 @@
 import React from 'react';
+import sortBy from 'lodash'; 
 import './css/skeleton.css';
 import './css/prog-tracker.css';
 import './css/custom.css';
@@ -9,20 +10,21 @@ import './css/react-select.css';
 
 var MultiSelectField = React.createClass({
 	displayName: 'MultiSelectField',
-	propTypes: {
+	/*propTypes: {
 		label: React.PropTypes.string,
 		activeField: React.PropTypes.object,
-	},
+	},*/
 
 	getInitialState () {
     console.log(' in gIS MSF:', this.props.state.reducer.getIn(['searchFields', 0, 'id']));
 		return {
+      multi: false,
 			disabled: false,
 			options: this.props.state.reducer.getIn(['searchFields', 0, 'opts']),
 			value: null,
       placeholder: "Select " + this.props.state.reducer.getIn(['searchFields',0, 'id']),
 		};
-	},
+	},/*
   setActiveField : function setActiveField(){
     console.log('in setActiveField', newProps);
       props.state.reducer.map(f => {
@@ -33,20 +35,20 @@ var MultiSelectField = React.createClass({
               this.setState({ options: f.opts })
             }      
         });
-  },
+  },*/
   getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
-            var ret=null;
-            theProps.state.reducer.getIn(['searchFields']).map(f => {
-              if (f.get('isActive') === true ) {
-                // console.log('getting ative field', f.get('id'));
-                ret = f.toJS();
-              }
-             });
-            return ret;
+    var ret=null;
+    theProps.state.reducer.getIn(['searchFields']).map(f => {
+      if (f.get('isActive') === true ) {
+        // console.log('getting ative field', f.get('id'));
+        ret = f.toJS();
+      }
+      });
+    return ret;
   },
   //todo: glom all selected values
   getSelected : function getSelected(){
-
+    
     console.log('in selected', this.props.state.reducer.getIn(['searchFields']));
     var selected=[]; 
     this.props.state.reducer.getIn(['searchFields']).map(f => {
@@ -69,30 +71,57 @@ var MultiSelectField = React.createClass({
     
   },
  	handleSelectChange : function handleSelectChange(value) {
+    console.log('THIS PROPS', this.props);
 		console.log('You\'ve selected:', value);
     var activeIdx=this.getActiveFieldFromProp(this.props).idx;
-    console.log('trying to set ', activeIdx);
-    this.props.setFieldSelection(activeIdx, [value]); 
-		this.setState({ value });
+    console.log('trying to set field idx', activeIdx);
+    console.log('typeof selection', typeof value);
+
+      if (value === null) {
+        this.setState({ value }); 
+      }
+      else {
+
+        this.setState({ value }); 
+      }
+    // on remove dont set fields?   
+    if (value !=="" && value !== null) {
+      console.log('in settingFIeldSelection block');
+      this.props.setFieldSelection(activeIdx, [value]); 
+    
+		// this.setState({ value:value });
     //todo: do we care? cant i just send the value out?
     // var selected = this.getSelected(); 
     // console.log('selected= ', selected);
-    var selectQueryKey = this.props.state.reducer.getIn(['searchFields',activeIdx,'id']);
-    var selectQueryObj = {};
-    selectQueryObj[selectQueryKey] =  value ;
-    console.log(' im looking for a distinct: ',  this.props.state.reducer.getIn(['searchFields',activeIdx+1,'id']));
-    console.log(' my query=  ',  selectQueryObj);
-    this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1, 'id']), selectQueryObj);
+    
+    //dont fetch on last field
+    if (activeIdx < (this.props.state.reducer.getIn(['searchFields']).size-1)){ 
+      console.log('fetching next field vals...');
+      var selectQueryKey = this.props.state.reducer.getIn(['searchFields',activeIdx,'id']);
+      var selectQueryObj = {};
+      selectQueryObj[selectQueryKey] =  value ;
+      console.log(' im looking for a distinct: ',  this.props.state.reducer.getIn(['searchFields',activeIdx+1,'id']));
+      console.log(' my query=  ',  selectQueryObj);
+      this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1, 'id']), selectQueryObj);      
 
-    //maybe a thunk?
-    console.log('is multi?', this.getActiveFieldFromProp(this.props).multi != true);
+    }
+    console.log('is multi?', this.getActiveFieldFromProp(this.props).multi);
     //todo check for last field?
-    console.log('is == nul', value != null);
+    console.log('is != nul', value != null);
+    console.log('is single opt?', this.getActiveFieldFromProp(this.props).opts.length===1);
+
     if ((value != null) && (this.getActiveFieldFromProp(this.props).multi != true)) {
       this.props.setActiveField(activeIdx+1);
       //next nav state
       //todo: check for end
-    }    
+    }
+    // bump if only 1 opts
+    if ((value != null) && (this.getActiveFieldFromProp(this.props).opts.length===1)) {
+      this.props.setActiveField(activeIdx+1);
+    }
+    
+    
+    }//end block dont do on remove
     //if this is not a multi then move to next nav
 	},
   componentWillMount() {
@@ -100,19 +129,53 @@ var MultiSelectField = React.createClass({
     // console.log('CWM props', this.props);  
   },
   componentWillReceiveProps (newProps) {
-    console.log('CWRP', newProps);
+    console.log('SELECT CWRP', newProps);
     // this.setActiveField(newProps);
     // update opts
     var newPropLine = this.getActiveFieldFromProp(newProps);
-    console.log('CWRP newPropLine', newPropLine);
+    console.log('SELECT CWRP newPropLine', newPropLine);
     
     var oldPropLine = this.getActiveFieldFromProp(this.props);
-    console.log('CWRP oldPropLine', oldPropLine);
-    this.setState({ options: newPropLine.opts});
+    console.log('SELECT CWRP oldPropLine', oldPropLine);
+    
+    var sortedOpts= _.sortBy(newPropLine.opts, 'label');
+    this.setState({ options: sortedOpts});
+
+    console.log(newPropLine);
+
+    if (newPropLine.opts.length>1 && newPropLine.multi===true){
+      console.log('setting multi to TRUE');
+      this.setState({ multi:true});
+    }
+    else {
+      this.setState({ multi:false});
+    }
     //move to new nav?
     if (newPropLine.idx != oldPropLine.idx){
       //   console.log('wants a new nav');
         this.state.placeholder="Select " + newPropLine.id; 
+    }
+
+    console.log('Does this guy have a selection? ',newPropLine.selected.length);
+
+    if (newPropLine.selected.length>0){
+
+      console.log('this.state.multi ===', this.state.multi);
+      console.log('in setting the select value to', newPropLine.selected[0]);
+      console.log('props.val=',this.props);
+        if (this.state.multi === true) {
+          var mySelected=newPropLine.selected;
+          console.log('typeof opts?', typeof this.props.state.reducer.getIn(['searchFields',newPropLine.idx, 'opts'])[0].value);
+          console.log('opts[0]?', this.props.state.reducer.getIn(['searchFields',newPropLine.idx, 'opts'])[0]);
+
+          console.log('trying to set to', mySelected[0]);
+          console.log('typeof myselect',typeof mySelected[0]);
+          this.setState({mySelected});
+       }
+        else{
+
+         this.setState({value:newPropLine.selected[0]});
+        } 
     }
         
   },
@@ -130,13 +193,16 @@ var MultiSelectField = React.createClass({
 	render () {
 		return (
 			<div className="section">
-				<h3 className="section-heading">{this.props.label}</h3>
-				<Select simpleValue 
+				<h3 className="section-heading">{(this.state.multi) ? "select one or more" : "select one"}</h3>
+				<Select simpleValue
+          multi={this.state.multi} 
           disabled={this.state.disabled} 
           value={this.state.value}
           placeholder={this.state.placeholder}
           options={this.state.options}
-          onChange={this.handleSelectChange} />
+          onChange={this.handleSelectChange} 
+          clearable={true}
+          />
 			</div>
 		);
 	}
