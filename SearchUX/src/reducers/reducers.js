@@ -42,7 +42,24 @@ export default function reducer (state = init, action) {
       });
       //return state.setIn(['searchFields', action.payload, 'isActive'], true); 
       return state.setIn(['searchFields'], newSearchFields); 
+    case 'RECEIVE_FIELDS':
+      var objId = state.getIn(['searchFields']).filter( f=>{
+        if (f.get('id') === action.payload.field){
+          return true;
+        } else { 
+          return false;
+        }
+      });
       
+      //convert to multiselect object
+      var optObjs = action.payload.values.map( o => {
+            return { label: o, value: o} 
+      });
+      
+      console.log(optObjs);
+      
+      console.log('receive fields idx', objId.toJS()[0].idx);
+      return state.setIn(['searchFields',objId.toJS()[0].idx,'opts'],optObjs);
       
     case 'SET_FIELD_SELECTION':
       const selection=action.payload.selection;
