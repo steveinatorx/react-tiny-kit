@@ -75,15 +75,25 @@ var MultiSelectField = React.createClass({
 		console.log('You\'ve selected:', value);
     var activeIdx=this.getActiveFieldFromProp(this.props).idx;
     console.log('trying to set field idx', activeIdx);
-    console.log('typeof selection', typeof value);
+      console.log('typeof selection', typeof value);
 
-      if (value === null) {
+        if (value === null) {
+          this.setState({ value }); 
+        }
+              //special case all
+        else if (value === 'all') {
+          console.log('ALL -- setting value to', this.getActiveFieldFromProp(this.props).opts);
+          value=this.getActiveFieldFromProp(this.props).opts.map( o => {
+          if (o.label !== 'all') {
+            return o.label; 
+        }
+      }).join(',');
         this.setState({ value }); 
-      }
-      else {
-
+    }
+    else {
         this.setState({ value }); 
-      }
+    }
+     
     // on remove dont set fields?   
     if (value !=="" && value !== null) {
       console.log('in settingFIeldSelection block');

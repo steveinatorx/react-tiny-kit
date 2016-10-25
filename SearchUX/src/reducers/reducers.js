@@ -23,7 +23,7 @@ const init = new Map({
   ], multi: false,
   selected: [] }),
     Map({ id: 'Body', idx: 1, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Year', idx: 2, isActive: false, Opts: [], multi: true, selected: [] }),
+    Map({ id: 'Year', idx: 2, isActive: false, opts: [], multi: true, selected: [] }),
   ])
 });
 
@@ -43,6 +43,7 @@ export default function reducer (state = init, action) {
       //return state.setIn(['searchFields', action.payload, 'isActive'], true); 
       return state.setIn(['searchFields'], newSearchFields); 
     case 'RECEIVE_FIELDS':
+    
       var objId = state.getIn(['searchFields']).filter( f=>{
         if (f.get('id') === action.payload.field){
           return true;
@@ -51,13 +52,17 @@ export default function reducer (state = init, action) {
         }
       });
       
-      //convert to multiselect object
+      //convert to multiselect object and strings?
       var optObjs = action.payload.values.map( o => {
-            return { label: o, value: o} 
+            return { label: o.toString(), value: o.toString()} 
       });
       
-      console.log(optObjs);
-      
+      console.log('RECEIVEFIELDS this is multi? ', objId.toJS()[0].multi);
+      if ((objId.toJS()[0].multi === true) && ( action.payload.values.length > 1 )) {
+        console.log('detected MULTI so add "all" to selections');
+        optObjs.push({ label: 'all', value: 'all'});
+      }
+       
       console.log('receive fields idx', objId.toJS()[0].idx);
       return state.setIn(['searchFields',objId.toJS()[0].idx,'opts'],optObjs);
       
@@ -71,6 +76,8 @@ export default function reducer (state = init, action) {
       
       //  console.log('get selected?:', state.getIn(['searchFields', idx, 'selected']));
       var previous = state.getIn(['searchFields', idx, 'selected']);
+      console.log('reducer previous? ', previous);
+      
       //gather all existing selections, get idx +1 id for distinct
       return state.setIn(['searchFields', idx, 'selected'], previous.concat(selection));
       //return state;
