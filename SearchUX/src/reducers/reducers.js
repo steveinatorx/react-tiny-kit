@@ -14,7 +14,7 @@ const init = new Map({
     { label: "Turbo 3.6", value: "Turbo 3.6" },
     { label: "Turbo 3.8", value: "Turbo 3.8" },
     { label: "Turbo S 3.8", value: "Turbo S 3.8" },
-    { label: "997 Speedster", value: "997 Sppedster" },
+    { label: "997 Speedster", value: "997 Speedster" },
     { label: "GT2", value: "GT2" },
     { label: "918 Spyder", value: "918 Spyder" },
     { label: "GT2", value: "GT2"}, 
@@ -26,6 +26,9 @@ const init = new Map({
     Map({ id: 'Year', label: 'Year', idx: 2, isActive: false, opts: [], multi: true, selected: [] }),
     Map({ id: 'Country', label: 'Country', idx: 3, isActive: false, opts: [], multi: true, selected: [] }),
     Map({ id: 'Transmission', label: 'Transmission', idx: 4, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Ext1', label: 'Ext1', idx: 5, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Int1', label: 'Int1', idx: 6, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Opts', label: 'Options', idx: 7, isActive: false, opts: [], multi: true, selected: [] }),
   ])
 });
 
@@ -78,10 +81,16 @@ export default function reducer (state = init, action) {
       
       //  console.log('get selected?:', state.getIn(['searchFields', idx, 'selected']));
       var previous = state.getIn(['searchFields', idx, 'selected']);
-      console.log('reducer previous? ', previous);
-      
+      console.log('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGreducer previous? ', previous);
+      console.log('GGGGGGGGGGGGGGGGGGGGGGGGGreducer selection? ', action.payload.selection);
+
+      if (previous.length>0) {
+        var previousArr = previous[0].split(',');
+        console.log('GGGGGGGGGreducerArr previous? ', previousArr);
+      }
+           
       //gather all existing selections, get idx +1 id for distinct
-      return state.setIn(['searchFields', idx, 'selected'], previous.concat(selection));
+      return state.setIn(['searchFields', idx, 'selected'], action.payload.selection);
       //return state;
 
     case 'LOCATION_CHANGE':

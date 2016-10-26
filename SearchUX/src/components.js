@@ -8,6 +8,50 @@ import Select from 'react-select';
 
 import './css/react-select.css';
 
+var SelectionTable = React.createClass({
+
+	getInitialState () {
+    var keys = this.props.state.reducer.getIn(['searchFields']).map (f =>  {
+
+                  
+      
+    });
+    
+    return ({
+      
+      selections: null     
+    });
+  },
+  componentWillReceiveProps (newProps) {
+    console.log('in SELECTIONTABLE CWRP', newProps);    
+    this.setState({ selections: this.props.state.reducer.getIn(['searchFields'])});
+  },
+  render () {
+        return (      
+          <table className="u-full-width">
+      <thead>
+        <tr>
+          <th>Criteria</th>
+          <th>Selection</th>
+        </tr>
+      </thead>
+      <tbody>
+
+  { this.props.state.reducer.getIn(['searchFields']).map(f => {
+        return (
+        <tr key={f.get('idx')}>
+          <td>{f.get('label')}</td>
+          <td>{f.get('selected')}x</td>
+        </tr>
+        )
+  })}
+      </tbody>
+    </table>
+    )
+    }  
+});//end class
+
+
 var MultiSelectField = React.createClass({
 	displayName: 'MultiSelectField',
 	/*propTypes: {
@@ -24,18 +68,7 @@ var MultiSelectField = React.createClass({
 			value: null,
       placeholder: "Select " + this.props.state.reducer.getIn(['searchFields',0, 'id']),
 		};
-	},/*
-  setActiveField : function setActiveField(){
-    console.log('in setActiveField', newProps);
-      props.state.reducer.map(f => {
-             // console.log('f.isActive', f.get('isActive'));
-             // console.log(f);
-            if (f.get('isActive') === true ) {
-              // console.log('setting active field=', f.get('id'));  
-              this.setState({ options: f.opts })
-            }      
-        });
-  },*/
+	},
   getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
     var ret=null;
     theProps.state.reducer.getIn(['searchFields']).map(f => {
@@ -48,7 +81,6 @@ var MultiSelectField = React.createClass({
   },
   //todo: glom all selected values
   getSelected : function getSelected(){
-    
     console.log('in selected', this.props.state.reducer.getIn(['searchFields']));
     var selected=[]; 
     this.props.state.reducer.getIn(['searchFields']).map(f => {
@@ -92,7 +124,15 @@ var MultiSelectField = React.createClass({
     else {
         this.setState({ value }); 
     }
-     
+
+    if (value === "") {
+      console.log('SELECTED {}{}{}{}{}{}{}{}{}NULL{}{}{}{}{}{}{}{}');
+      console.log('in settingFIeldSelection block SETTING REDUCER STATE TO ', []);
+      this.props.setFieldSelection(activeIdx, []); 
+    }
+
+
+
     // on remove dont set fields?   
     if (value !=="" && value !== null) {
       console.log('in settingFIeldSelection block SETTING REDUCER STATE TO ', [value]);
@@ -130,7 +170,6 @@ var MultiSelectField = React.createClass({
             else{
               console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
               var theValue = f.get('selected'); 
-              
             }
             console.log('theValue=', theValue);
 
@@ -141,7 +180,11 @@ var MultiSelectField = React.createClass({
                 queryRoot[f.get('id')]=theObj;
               }
               else {
-                queryRoot[f.get('id')] = theValue;
+                if (f.get('id') === 'Year') {
+                  queryRoot[f.get('id')] = parseInt(theValue);
+                } else {
+                  queryRoot[f.get('id')] = theValue;
+                }
               }
           }
                 
@@ -445,6 +488,9 @@ export default class SearchListNav extends React.Component {
                             className="multistep__btn--next"
                             onClick={this.next}>Next</button>
                   </div>
+              </div>
+              <div className="six columns">
+               <SelectionTable {...this.props} />
               </div>
             </div>
       </div>
