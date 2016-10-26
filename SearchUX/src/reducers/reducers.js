@@ -5,7 +5,7 @@ const init = new Map({
   email: null,
   searchCode: null,
   searchFields: new List([
-    Map({ id: 'Model', idx: 0, isActive: true, opts: [
+    Map({ id: 'Model', label: 'Model', idx: 0, isActive: true, opts: [
     { label: "980 Carrera GT", value: "980 Carrera GT"},
     { label: "GT3 3.6", value: "GT3 3.6"},
     { label: "GT3 RS 3.6", value: "GT3 RS 3.6" },
@@ -22,8 +22,10 @@ const init = new Map({
     { label: "GT3 RS 4.0", value: "GT3 RS 4.0" },
   ], multi: false,
   selected: [] }),
-    Map({ id: 'Body', idx: 1, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Year', idx: 2, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Body', label: 'Body', idx: 1, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Year', label: 'Year', idx: 2, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Country', label: 'Country', idx: 3, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Transmission', label: 'Transmission', idx: 4, isActive: false, opts: [], multi: true, selected: [] }),
   ])
 });
 

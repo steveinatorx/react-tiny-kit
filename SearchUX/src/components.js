@@ -76,18 +76,17 @@ var MultiSelectField = React.createClass({
     var activeIdx=this.getActiveFieldFromProp(this.props).idx;
     console.log('trying to set field idx', activeIdx);
       console.log('typeof selection', typeof value);
-
         if (value === null) {
           this.setState({ value }); 
         }
               //special case all
         else if (value === 'all') {
-          console.log('ALL -- setting value to', this.getActiveFieldFromProp(this.props).opts);
           value=this.getActiveFieldFromProp(this.props).opts.map( o => {
           if (o.label !== 'all') {
             return o.label; 
         }
       }).join(',');
+        console.log('setting value to ----->', value)
         this.setState({ value }); 
     }
     else {
@@ -96,7 +95,8 @@ var MultiSelectField = React.createClass({
      
     // on remove dont set fields?   
     if (value !=="" && value !== null) {
-      console.log('in settingFIeldSelection block');
+      console.log('in settingFIeldSelection block SETTING REDUCER STATE TO ', [value]);
+      
       this.props.setFieldSelection(activeIdx, [value]); 
     
 		// this.setState({ value:value });
@@ -106,13 +106,49 @@ var MultiSelectField = React.createClass({
     
     //dont fetch on last field
     if (activeIdx < (this.props.state.reducer.getIn(['searchFields']).size-1)){ 
-      console.log('fetching next field vals...');
-      var selectQueryKey = this.props.state.reducer.getIn(['searchFields',activeIdx,'id']);
-      var selectQueryObj = {};
-      selectQueryObj[selectQueryKey] =  value ;
+      console.log('fetching next field vals...' , activeIdx);
+      var queryRoot = {};
+      this.props.state.reducer.getIn(['searchFields']).map(f => {
+          console.log('*******getting f.idx', f.get('idx'));
+          if ( f.get('idx') < activeIdx +1 ) {
+
+            //theValue = ( f.get('idx') === activeIdx ) ? [value] : f.get('selected'); 
+            if ( f.get('idx') === activeIdx ) {
+              //single value 
+             if( Object.prototype.toString.call( value ) === '[object Array]' ) {
+               var theValue = value;
+             } else if (value.match(/,/)) {
+               var theValue = value.split(',');
+               theValue=theValue.splice(0,theValue.length - 1);
+               console.log('splitting', theValue);
+             } else {
+               theValue = [value];
+             }
+             
+            }
+            //from selected
+            else{
+              console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
+              var theValue = f.get('selected'); 
+              
+            }
+            console.log('theValue=', theValue);
+
+            if( theValue.length > 1) {
+                console.log('mutli selection');
+                var theObj = {};
+                theObj.$in=theValue;
+                queryRoot[f.get('id')]=theObj;
+              }
+              else {
+                queryRoot[f.get('id')] = theValue;
+              }
+          }
+                
+      });
       console.log(' im looking for a distinct: ',  this.props.state.reducer.getIn(['searchFields',activeIdx+1,'id']));
-      console.log(' my query=  ',  selectQueryObj);
-      this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1, 'id']), selectQueryObj);      
+      console.log(' my query=  ',  queryRoot);
+      this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1, 'id']), queryRoot);      
 
     }
     console.log('is multi?', this.getActiveFieldFromProp(this.props).multi);
@@ -151,10 +187,10 @@ var MultiSelectField = React.createClass({
     var sortedOpts= _.sortBy(newPropLine.opts, 'label');
     this.setState({ options: sortedOpts});
 
-    console.log(newPropLine);
+    //console.log(newPropLine);
 
     if (newPropLine.opts.length>1 && newPropLine.multi===true){
-      console.log('setting multi to TRUE');
+      // console.log('setting multi to TRUE');
       this.setState({ multi:true});
     }
     else {
@@ -169,7 +205,6 @@ var MultiSelectField = React.createClass({
     console.log('Does this guy have a selection? ',newPropLine.selected.length);
 
     if (newPropLine.selected.length>0){
-
       console.log('this.state.multi ===', this.state.multi);
       console.log('in setting the select value to', newPropLine.selected[0]);
       console.log('props.val=',this.props);
@@ -178,9 +213,22 @@ var MultiSelectField = React.createClass({
           console.log('typeof opts?', typeof this.props.state.reducer.getIn(['searchFields',newPropLine.idx, 'opts'])[0].value);
           console.log('opts[0]?', this.props.state.reducer.getIn(['searchFields',newPropLine.idx, 'opts'])[0]);
 
-          console.log('trying to set to', mySelected[0]);
-          console.log('typeof myselect',typeof mySelected[0]);
-          this.setState({mySelected});
+          console.log('trying to set to', mySelected);
+          //so stupid what a dumb design with this react-select component
+          console.log('myselect', mySelected[0].match(/,/));
+          
+          if (mySelected[0].match(/,/)) {
+               var theSelected = mySelected[0].replace(/,$/,'');
+              //var theSelected = mySelected[0].toString();
+             // var theSelected = ["2007,2008"];
+              console.log('HEYYYYYYYYYY ', theSelected);
+              // var selectedList = 
+              this.setState({ value: theSelected});
+            
+            
+          } else {
+            this.setState({mySelected});
+          }
        }
         else{
 
