@@ -9,16 +9,10 @@ import Select from 'react-select';
 import './css/react-select.css';
 
 var SelectionTable = React.createClass({
-
 	getInitialState () {
     var keys = this.props.state.reducer.getIn(['searchFields']).map (f =>  {
-
-                  
-      
     });
-    
     return ({
-      
       selections: null     
     });
   },
@@ -41,7 +35,7 @@ var SelectionTable = React.createClass({
         return (
         <tr key={f.get('idx')}>
           <td>{f.get('label')}</td>
-          <td>{f.get('selected')}x</td>
+          <td>{ f.get('selected')}</td>
         </tr>
         )
   })}
@@ -111,8 +105,8 @@ var MultiSelectField = React.createClass({
         if (value === null) {
           this.setState({ value }); 
         }
-              //special case all
-        else if (value === 'all') {
+        //special case all - match all after previous selections
+        else if (value.match(/all/)) {
           value=this.getActiveFieldFromProp(this.props).opts.map( o => {
           if (o.label !== 'all') {
             return o.label; 
@@ -148,6 +142,7 @@ var MultiSelectField = React.createClass({
     if (activeIdx < (this.props.state.reducer.getIn(['searchFields']).size-1)){ 
       console.log('fetching next field vals...' , activeIdx);
       var queryRoot = {};
+      
       this.props.state.reducer.getIn(['searchFields']).map(f => {
           console.log('*******getting f.idx', f.get('idx'));
           if ( f.get('idx') < activeIdx +1 ) {
@@ -170,8 +165,16 @@ var MultiSelectField = React.createClass({
             else{
               console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
               var theValue = f.get('selected'); 
+              //coding around that fucking react-select API inconsistency.....
+              if (theValue[0].match(/,/)){
+                console.log('this is a $IN query obj');
+                theValue = theValue[0].split(',');
+               theValue=theValue.splice(0,theValue.length - 1);
+               console.log('FROM SELECTED STATE splitting', theValue);
+              }
             }
-            console.log('theValue=', theValue);
+            console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVtheValue=', theValue);
+            console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVtheValue length?=', theValue.length);
 
             if( theValue.length > 1) {
                 console.log('mutli selection');
@@ -190,7 +193,7 @@ var MultiSelectField = React.createClass({
                 
       });
       console.log(' im looking for a distinct: ',  this.props.state.reducer.getIn(['searchFields',activeIdx+1,'id']));
-      console.log(' my query=  ',  queryRoot);
+      console.log('BBBBBBBBBBBBBBBBBBBBBBBBBB my query=  ',  queryRoot);
       this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1, 'id']), queryRoot);      
 
     }
@@ -242,7 +245,9 @@ var MultiSelectField = React.createClass({
     //move to new nav?
     if (newPropLine.idx != oldPropLine.idx){
       //   console.log('wants a new nav');
-        this.state.placeholder="Select " + newPropLine.id; 
+        var placeMod = (newPropLine.multi) ? 'one or more ' : 'one ';
+        console.log('PLACEMODDDDDDD', placeMod);
+        this.setState({ placeholder : "Select " + placeMod + newPropLine.id });
     }
 
     console.log('Does this guy have a selection? ',newPropLine.selected.length);
@@ -294,7 +299,7 @@ var MultiSelectField = React.createClass({
 	render () {
 		return (
 			<div className="section">
-				<h3 className="section-heading">{(this.state.multi) ? "select one or more" : "select one"}</h3>
+				{/* <h3 className="section-heading">{(this.state.multi) ? "select one or more" : "select one"}</h3> */}
 				<Select simpleValue
           multi={this.state.multi} 
           disabled={this.state.disabled} 
@@ -319,7 +324,7 @@ export default class SearchListNav extends React.Component {
     // console.log('activeFObj', activeFieldObj);
     this.state = {
       showPreviousBtn: false,
-      showNextBtn: true,
+      showNextBtn: false,
       compState: 0,
       navState: this.getNavStates(0, theListSize)
     };
@@ -358,7 +363,17 @@ export default class SearchListNav extends React.Component {
             console.log('new active field'); 
             this.setNavState(newPropLine.idx);
     }
-        
+    
+    console.log('NAV CWRPPPPPPPPPPPPPPPPPPPPPPPP--------> is anything selected?', typeof newPropLine.selected[0] !== 'undefined');       
+    console.log('NAV CWRPPPPPPPPPPPPPPPPPPPPPPPP--------> is anything selected?', newPropLine.selected);       
+    if (typeof newPropLine.selected[0] !=='undefined') {
+      console.log('SHOW NEXT BTN');
+      this.setState({ showNextBtn: true}); 
+    } else {
+
+      console.log('HIDE NEXT BTN');
+       this.setState({ showNextBtn: false}); 
+    }
   }
 
   getNavStates(indx, length) {
@@ -477,18 +492,20 @@ export default class SearchListNav extends React.Component {
           {/* this.state.compState */} 
             <div className="row">
               <div className="six columns">
-                <MultiSelectField {...this.props} />
-                  {/* <div style={this.props.showNavigation ? {} : this.hidden}> */}
-                  <div>
+              <div>
                     <button style={this.state.showPreviousBtn ? {} : this.hidden}
                             className="multistep__btn--prev"
-                            onClick={this.previous}>Previous</button>
+                            onClick={this.previous}>Previous Criteria</button>
 
                     <button style={this.state.showNextBtn ? {} : this.hidden}
-                            className="multistep__btn--next"
-                            onClick={this.next}>Next</button>
+                            className="multistep__btn--next button-primary u-pull-right"
+                            onClick={this.next}>Next Criteria</button>
                   </div>
-              </div>
+ 
+
+                <MultiSelectField {...this.props} />
+                  {/* <div style={this.props.showNavigation ? {} : this.hidden}> */}
+                               </div>
               <div className="six columns">
                <SelectionTable {...this.props} />
               </div>
