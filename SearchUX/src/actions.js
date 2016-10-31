@@ -34,7 +34,7 @@ export function requestFields(field) {
 }
 
 export const RECEIVE_FIELDS = 'RECEIVE_FIELDS'
-export function receiveFields(field, valArr) {
+export function receiveFields(field, valArr, count) {
   return {
     type: RECEIVE_FIELDS,
     payload: {
@@ -44,6 +44,17 @@ export function receiveFields(field, valArr) {
     }
   }
 }
+
+export const RECEIVE_COUNT = 'RECEIVE_COUNT'
+export function receiveCount(count) {
+  return {
+    type: RECEIVE_COUNT,
+    payload: {
+      count: count,
+    }
+  }
+}
+
 
 export const API_ERROR = 'API_ERROR'
 //todo: alert
@@ -64,13 +75,11 @@ export function fetchFields(objectFieldId, queryObj) {
           {
             distinct: objectFieldId,
             queryObj: queryObj,
-                        
           }).then(res => {
-            console.log(res);
+            console.log('RESRESRESRESRESRESRESRES', res);
             dispatch(receiveFields(objectFieldId, res.data.values));
+            dispatch(receiveCount(res.data.count));
           }).catch(err => {
             dispatch(apiError(err));
           });
-    
-
 }
