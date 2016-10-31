@@ -4,6 +4,7 @@ import { LOCATION_CHANGE } from 'react-router-redux';
 const init = new Map({
   email: null,
   searchCode: null,
+  resultsCount: 0,
   searchFields: new List([
     Map({ id: 'Model', label: 'Model', idx: 0, isActive: true, opts: [
     { label: "980 Carrera GT", value: "980 Carrera GT"},
@@ -46,9 +47,12 @@ export default function reducer (state = init, action) {
         }
       });
       //return state.setIn(['searchFields', action.payload, 'isActive'], true); 
-      return state.setIn(['searchFields'], newSearchFields); 
+      return state.setIn(['searchFields'], newSearchFields);
+    case 'RECEIVE_COUNT':
+      console.log('setting count', action.payload.count);
+      return state.set('resultsCount', action.payload.count);
     case 'RECEIVE_FIELDS':
-    
+
       var objId = state.getIn(['searchFields']).filter( f=>{
         if (f.get('id') === action.payload.field){
           return true;
@@ -81,12 +85,12 @@ export default function reducer (state = init, action) {
       
       //  console.log('get selected?:', state.getIn(['searchFields', idx, 'selected']));
       var previous = state.getIn(['searchFields', idx, 'selected']);
-      console.log('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGreducer previous? ', previous);
-      console.log('GGGGGGGGGGGGGGGGGGGGGGGGGreducer selection? ', action.payload.selection);
+      // console.log('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGreducer previous? ', previous);
+      // console.log('GGGGGGGGGGGGGGGGGGGGGGGGGreducer selection? ', action.payload.selection);
 
       if (previous.length>0) {
         var previousArr = previous[0].split(',');
-        console.log('GGGGGGGGGreducerArr previous? ', previousArr);
+        // console.log('GGGGGGGGGreducerArr previous? ', previousArr);
       }
            
       //gather all existing selections, get idx +1 id for distinct
