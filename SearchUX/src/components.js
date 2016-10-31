@@ -17,11 +17,15 @@ var SelectionTable = React.createClass({
     });
   },
   componentWillReceiveProps (newProps) {
-    console.log('in SELECTIONTABLE CWRP', newProps);    
+    console.log('in SELECTIONTABLE CWRP', newProps.state.reducer);    
     this.setState({ selections: this.props.state.reducer.getIn(['searchFields'])});
+    this.setState({ count: newProps.state.reducer.get('resultsCount')});
   },
   render () {
-        return (      
+        return (
+          <div>      
+          <p>Total Results: {this.state.count}
+          </p>
           <table className="u-full-width">
       <thead>
         <tr>
@@ -41,6 +45,7 @@ var SelectionTable = React.createClass({
   })}
       </tbody>
     </table>
+    </div>
     )
     }  
 });//end class
@@ -144,7 +149,7 @@ var MultiSelectField = React.createClass({
       var queryRoot = {};
       
       this.props.state.reducer.getIn(['searchFields']).map(f => {
-          console.log('*******getting f.idx', f.get('idx'));
+          // console.log('*******getting f.idx', f.get('idx'));
           if ( f.get('idx') < activeIdx +1 ) {
 
             //theValue = ( f.get('idx') === activeIdx ) ? [value] : f.get('selected'); 
@@ -155,7 +160,7 @@ var MultiSelectField = React.createClass({
              } else if (value.match(/,/)) {
                var theValue = value.split(',');
                theValue=theValue.splice(0,theValue.length - 1);
-               console.log('splitting', theValue);
+               // console.log('splitting', theValue);
              } else {
                theValue = [value];
              }
@@ -163,21 +168,21 @@ var MultiSelectField = React.createClass({
             }
             //from selected
             else{
-              console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
+              // console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
               var theValue = f.get('selected'); 
               //coding around that fucking react-select API inconsistency.....
               if (theValue[0].match(/,/)){
-                console.log('this is a $IN query obj');
+                // console.log('this is a $IN query obj');
                 theValue = theValue[0].split(',');
                theValue=theValue.splice(0,theValue.length - 1);
-               console.log('FROM SELECTED STATE splitting', theValue);
+               // console.log('FROM SELECTED STATE splitting', theValue);
               }
             }
-            console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVtheValue=', theValue);
-            console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVtheValue length?=', theValue.length);
+            // console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVtheValue=', theValue);
+            // console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVtheValue length?=', theValue.length);
 
             if( theValue.length > 1) {
-                console.log('mutli selection');
+               //  console.log('mutli selection');
                 var theObj = {};
                 theObj.$in=theValue;
                 queryRoot[f.get('id')]=theObj;
@@ -192,15 +197,15 @@ var MultiSelectField = React.createClass({
           }
                 
       });
-      console.log(' im looking for a distinct: ',  this.props.state.reducer.getIn(['searchFields',activeIdx+1,'id']));
-      console.log('BBBBBBBBBBBBBBBBBBBBBBBBBB my query=  ',  queryRoot);
+      // console.log(' im looking for a distinct: ',  this.props.state.reducer.getIn(['searchFields',activeIdx+1,'id']));
+      // console.log('BBBBBBBBBBBBBBBBBBBBBBBBBB my query=  ',  queryRoot);
       this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1, 'id']), queryRoot);      
 
     }
-    console.log('is multi?', this.getActiveFieldFromProp(this.props).multi);
+    // console.log('is multi?', this.getActiveFieldFromProp(this.props).multi);
     //todo check for last field?
-    console.log('is != nul', value != null);
-    console.log('is single opt?', this.getActiveFieldFromProp(this.props).opts.length===1);
+    // console.log('is != nul', value != null);
+    // console.log('is single opt?', this.getActiveFieldFromProp(this.props).opts.length===1);
 
     if ((value != null) && (this.getActiveFieldFromProp(this.props).multi != true)) {
       this.props.setActiveField(activeIdx+1);
