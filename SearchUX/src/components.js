@@ -13,7 +13,8 @@ var SelectionTable = React.createClass({
     var keys = this.props.state.reducer.getIn(['searchFields']).map (f =>  {
     });
     return ({
-      selections: null     
+      selections: null,
+      count: 0     
     });
   },
   componentWillReceiveProps (newProps) {
@@ -24,8 +25,7 @@ var SelectionTable = React.createClass({
   render () {
         return (
           <div>      
-          <p>Total Results: {this.state.count}
-          </p>
+          <pre><code>Total Vehicles Found: {this.state.count}</code></pre>
           <table className="u-full-width">
       <thead>
         <tr>
@@ -144,7 +144,7 @@ var MultiSelectField = React.createClass({
     // console.log('selected= ', selected);
     
     //dont fetch on last field
-    if (activeIdx < (this.props.state.reducer.getIn(['searchFields']).size-1)){ 
+    //if (activeIdx < (this.props.state.reducer.getIn(['searchFields']).size-1)){ 
       console.log('fetching next field vals...' , activeIdx);
       var queryRoot = {};
       
@@ -199,9 +199,16 @@ var MultiSelectField = React.createClass({
       });
       // console.log(' im looking for a distinct: ',  this.props.state.reducer.getIn(['searchFields',activeIdx+1,'id']));
       // console.log('BBBBBBBBBBBBBBBBBBBBBBBBBB my query=  ',  queryRoot);
-      this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1, 'id']), queryRoot);      
 
+    if (activeIdx < (this.props.state.reducer.getIn(['searchFields']).size-1)){ 
+      console.log('++++++++++++++++++++++++++++++++++++++++++CALLING FETCH FIELDS');
+      this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1, 'id']), queryRoot);      
+    } else {
+      // keep getting remaining count on opts selections
+      console.log('+++++++++++++++++++++++++++++++++++++++++CALLING FETCH COUNT'); 
+      this.props.fetchCount(queryRoot);      
     }
+    
     // console.log('is multi?', this.getActiveFieldFromProp(this.props).multi);
     //todo check for last field?
     // console.log('is != nul', value != null);
@@ -226,14 +233,14 @@ var MultiSelectField = React.createClass({
     // console.log('CWM props', this.props);  
   },
   componentWillReceiveProps (newProps) {
-    console.log('SELECT CWRP', newProps);
+    // console.log('SELECT CWRP', newProps);
     // this.setActiveField(newProps);
     // update opts
     var newPropLine = this.getActiveFieldFromProp(newProps);
-    console.log('SELECT CWRP newPropLine', newPropLine);
+    // console.log('SELECT CWRP newPropLine', newPropLine);
     
     var oldPropLine = this.getActiveFieldFromProp(this.props);
-    console.log('SELECT CWRP oldPropLine', oldPropLine);
+    // console.log('SELECT CWRP oldPropLine', oldPropLine);
     
     var sortedOpts= _.sortBy(newPropLine.opts, 'label');
     this.setState({ options: sortedOpts});
@@ -251,30 +258,30 @@ var MultiSelectField = React.createClass({
     if (newPropLine.idx != oldPropLine.idx){
       //   console.log('wants a new nav');
         var placeMod = (newPropLine.multi) ? 'one or more ' : 'one ';
-        console.log('PLACEMODDDDDDD', placeMod);
+        // console.log('PLACEMODDDDDDD', placeMod);
         this.setState({ placeholder : "Select " + placeMod + newPropLine.id });
     }
 
-    console.log('Does this guy have a selection? ',newPropLine.selected.length);
+    // console.log('Does this guy have a selection? ',newPropLine.selected.length);
 
     if (newPropLine.selected.length>0){
-      console.log('this.state.multi ===', this.state.multi);
-      console.log('in setting the select value to', newPropLine.selected[0]);
-      console.log('props.val=',this.props);
+      // console.log('this.state.multi ===', this.state.multi);
+      // console.log('in setting the select value to', newPropLine.selected[0]);
+      // console.log('props.val=',this.props);
         if (this.state.multi === true) {
           var mySelected=newPropLine.selected;
-          console.log('typeof opts?', typeof this.props.state.reducer.getIn(['searchFields',newPropLine.idx, 'opts'])[0].value);
-          console.log('opts[0]?', this.props.state.reducer.getIn(['searchFields',newPropLine.idx, 'opts'])[0]);
+          // console.log('typeof opts?', typeof this.props.state.reducer.getIn(['searchFields',newPropLine.idx, 'opts'])[0].value);
+          // console.log('opts[0]?', this.props.state.reducer.getIn(['searchFields',newPropLine.idx, 'opts'])[0]);
 
-          console.log('trying to set to', mySelected);
+          // console.log('trying to set to', mySelected);
           //so stupid what a dumb design with this react-select component
-          console.log('myselect', mySelected[0].match(/,/));
+          // console.log('myselect', mySelected[0].match(/,/));
           
           if (mySelected[0].match(/,/)) {
                var theSelected = mySelected[0].replace(/,$/,'');
               //var theSelected = mySelected[0].toString();
              // var theSelected = ["2007,2008"];
-              console.log('HEYYYYYYYYYY ', theSelected);
+              // console.log('HEYYYYYYYYYY ', theSelected);
               // var selectedList = 
               this.setState({ value: theSelected});
             
@@ -324,7 +331,7 @@ export default class SearchListNav extends React.Component {
     super(props);
     // const { searchFields, setActiveField } = props;
     //const clickField = id => event => setActiveField(id);      
-    console.log('PROPS', props);
+    //console.log('PROPS', props);
     var theListSize = props.state.reducer.getIn(['searchFields']).size;
     // console.log('activeFObj', activeFieldObj);
     this.state = {
@@ -354,7 +361,7 @@ export default class SearchListNav extends React.Component {
  
   }
   componentWillReceiveProps (newProps) {
-    console.log('NAV CWRP', newProps);
+    //console.log('NAV CWRP', newProps);
     // this.setActiveField(newProps);
     // update opts
     var newPropLine = this.getActiveFieldFromProp(newProps);
@@ -369,14 +376,14 @@ export default class SearchListNav extends React.Component {
             this.setNavState(newPropLine.idx);
     }
     
-    console.log('NAV CWRPPPPPPPPPPPPPPPPPPPPPPPP--------> is anything selected?', typeof newPropLine.selected[0] !== 'undefined');       
-    console.log('NAV CWRPPPPPPPPPPPPPPPPPPPPPPPP--------> is anything selected?', newPropLine.selected);       
+    //console.log('NAV CWRPPPPPPPPPPPPPPPPPPPPPPPP--------> is anything selected?', typeof newPropLine.selected[0] !== 'undefined');       
+    //console.log('NAV CWRPPPPPPPPPPPPPPPPPPPPPPPP--------> is anything selected?', newPropLine.selected);       
     if (typeof newPropLine.selected[0] !=='undefined') {
-      console.log('SHOW NEXT BTN');
+      //console.log('SHOW NEXT BTN');
       this.setState({ showNextBtn: true}); 
     } else {
 
-      console.log('HIDE NEXT BTN');
+      //console.log('HIDE NEXT BTN');
        this.setState({ showNextBtn: false}); 
     }
   }
