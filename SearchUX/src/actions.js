@@ -55,7 +55,6 @@ export function receiveCount(count) {
   }
 }
 
-
 export const API_ERROR = 'API_ERROR'
 //todo: alert
 export function apiError(error){
@@ -78,6 +77,21 @@ export function fetchFields(objectFieldId, queryObj) {
           }).then(res => {
             console.log('RESRESRESRESRESRESRESRES', res);
             dispatch(receiveFields(objectFieldId, res.data.values));
+            dispatch(receiveCount(res.data.count));
+          }).catch(err => {
+            dispatch(apiError(err));
+          });
+}
+
+export function fetchCount(queryObj) {
+  console.log('in fetchCount', queryObj );
+  
+    return dispatch =>
+        axios.post('http://localhost:3000/api/pcnacarscount', 
+          {
+            queryObj: queryObj,
+          }).then(res => {
+            console.log('RESRESRESRESRESRESRESRES', res);
             dispatch(receiveCount(res.data.count));
           }).catch(err => {
             dispatch(apiError(err));
