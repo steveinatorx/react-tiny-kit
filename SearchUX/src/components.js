@@ -52,11 +52,6 @@ var SelectionTable = React.createClass({
 
 var MultiSelectField = React.createClass({
 	displayName: 'MultiSelectField',
-	/*propTypes: {
-		label: React.PropTypes.string,
-		activeField: React.PropTypes.object,
-	},*/
-
 	getInitialState () {
     console.log(' in gIS MSF:', this.props.state.reducer.getIn(['searchFields', 0, 'id']));
 		return {
@@ -360,7 +355,10 @@ export default class SearchListNav extends React.Component {
 
   previous() {
     if (this.state.compState > 0) {
-      this.setNavState(this.state.compState - 1)
+      console.log('REFS', this.refs);
+      this.refs.multiSelect.handleSelectChange('');
+      this.setNavState(this.state.compState - 1);
+      
     }
   }
 
@@ -384,9 +382,6 @@ export default class SearchListNav extends React.Component {
           <ol className="progtrckr">
             {this.renderSteps()}
           </ol>
-          {/* render component via var name? */}
-          {/* this.props.steps[this.state.compState].component */}
-          {/* this.state.compState */} 
             <div className="row">
               <div className="six columns">
               <div>
@@ -400,7 +395,7 @@ export default class SearchListNav extends React.Component {
                   </div>
  
 
-                <MultiSelectField {...this.props} />
+                <MultiSelectField ref="multiSelect" {...this.props} />
                   {/* <div style={this.props.showNavigation ? {} : this.hidden}> */}
                                </div>
               <div className="six columns">
