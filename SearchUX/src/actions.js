@@ -41,7 +41,7 @@ var buildQueryObj = function buildQueryObj(state){
              //coding around that fucking react-select API inconsistency.....
              if (theValue[0].match(/,/)){
                theValue = theValue[0].split(',');
-               theValue=theValue.splice(0,theValue.length - 1);
+               //theValue=theValue.splice(0,theValue.length - 1);
               }
 
             if( theValue.length > 1) {
@@ -52,7 +52,18 @@ var buildQueryObj = function buildQueryObj(state){
               }
               else {
                 if (f.get('id') === 'Year') {
+                  console.log('detected YEAR', theValue);
+                  if (theValue[0].match(/,/)) {
+                    console.log('multiple year');
+                    var years = theValue[0].split(',');                       
+                      year = years.map(function(v){
+                        return parseInt(f);
+                      });  
+                  queryRoot[f.get('id')] = years;
+                  } else {
                   queryRoot[f.get('id')] = parseInt(theValue);
+                  }
+                  
                 } else {
                   queryRoot[f.get('id')] = theValue;
                 }
@@ -75,6 +86,8 @@ var buildQueryObj = function buildQueryObj(state){
                 queryRoot[theField] = theObj;  
             }   
 
+      } else if (theValue.length === 0){
+        console.log('no value set')
       }
       
       }) 
@@ -84,6 +97,7 @@ var buildQueryObj = function buildQueryObj(state){
 
 export function setFieldSelectionAndFetchData(idx,selection){
   return function (dispatch, getState) {
+    console.log('in sFSAFD what is my selection????', selection);
     dispatch(setFieldSelection(idx,selection));
     var state=getState();
     var qObj = buildQueryObj(state);
@@ -100,11 +114,6 @@ export function setFieldSelectionAndFetchData(idx,selection){
     }
   } 
 }//endfunc
-
-
-
-
-
 
 export const REQUEST_FIELDS = 'REQUEST_FIELDS'
 export function requestFields(field) {
