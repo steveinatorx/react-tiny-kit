@@ -68,7 +68,7 @@ export default function reducer (state = init, action) {
       });
       
       console.log('RECEIVEFIELDS this is multi? ', objId.toJS()[0].multi);
-      if ((objId.toJS()[0].multi === true) && ( action.payload.values.length > 1 )) {
+      if ((action.payload.field !== 'Opts') && (objId.toJS()[0].multi === true) && ( action.payload.values.length > 1 )) {
         console.log('detected MULTI so add "all" to selections');
         optObjs.push({ label: 'all', value: 'all'});
       }
