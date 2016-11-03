@@ -61,6 +61,7 @@ var buildQueryObj = function buildQueryObj(state){
         console.log('detected opts', theValue);
             if (theValue[0].match(/,/)){
                 //trim damn API inconsistency
+                
 
                var theObj={};
                var theValueArr = theValue[0].split(',');
