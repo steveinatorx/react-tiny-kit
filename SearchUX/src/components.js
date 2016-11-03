@@ -148,23 +148,25 @@ var MultiSelectField = React.createClass({
           this.setState({ value }); 
         }
         //special case all - match all after previous selections
-        else if (value.match(/^all$/)) {
+        else if (value.match(/^all$/) || value.match(/,all/)) {
           value=this.getActiveFieldFromProp(this.props).opts.map( o => {
           if (o.label !== 'all') {
             return o.label; 
         }
       }).join(',');
-        console.log('setting value to ----->', value)
+        //not sure why this appends a closing comma
+        console.log('setting value to ----->', value.replace(/,$/,''));
+        value = value.replace(/,$/,'');
         this.setState({ value }); 
     }
     else {
         this.setState({ value }); 
     }
 
-    if (value === "") {
+    if (value === "" || typeof value === 'undefined') {
       console.log('SELECTED {}{}{}{}{}{}{}{}{}NULL{}{}{}{}{}{}{}{}');
-      console.log('in settingFIeldSelection block SETTING REDUCER STATE TO ', []);
-      this.props.setFieldSelection(activeIdx, []); 
+      console.log('in settingFIeldSelection block SETTING REDUCER STATE TO', [] );
+      this.props.setFieldSelectionAndFetchData(activeIdx, []); 
     }
 
     // on remove dont set fields?   
@@ -338,7 +340,7 @@ export default class SearchListNav extends React.Component {
     // this.setActiveField(newProps);
     // update opts
     var newPropLine = this.getActiveFieldFromProp(newProps);
-    console.log('NAV CWRP newPropLine', newPropLine);
+    //console.log('NAV CWRP newPropLine', newPropLine);
     
     var oldPropLine = this.getActiveFieldFromProp(this.props);
     // console.log('NAV CWRP oldPropLine', oldPropLine.idx);
