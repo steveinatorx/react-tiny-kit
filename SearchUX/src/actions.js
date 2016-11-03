@@ -32,8 +32,8 @@ var buildQueryObj = function buildQueryObj(state){
 
  var queryRoot = {};
           state.reducer.getIn(['searchFields']).map(f => {
-          console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
-          console.log('i&&^&^&^&^&^^&^& ujsingField', f.get('id'));
+          //console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
+          //console.log('i&&^&^&^&^&^^&^& ujsingField', f.get('id'));
           var theValue = f.get('selected');
           var theField = f.get('id');
           
