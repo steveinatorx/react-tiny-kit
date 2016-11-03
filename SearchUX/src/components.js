@@ -77,46 +77,7 @@ var MultiSelectField = React.createClass({
       });
     return ret;
   },
-  //todo: glom all selected values
-  /*getQueryRoot : function getQueryRoot(){
-      var queryRoot = {};
-      var activeIdx=this.getActiveFieldFromProp(this.props).idx;
-      this.props.state.reducer.getIn(['searchFields']).map(f => {
-          // console.log('*******getting f.idx', f.get('idx'));
-
-              console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
-              var theValue = f.get('selected');
-
-              if(theValue.length > 0) {
-              //coding around that fucking react-select API inconsistency.....
-              if (theValue[0].match(/,/)){
-                // console.log('this is a $IN query obj');
-                theValue = theValue[0].split(',');
-               theValue=theValue.splice(0,theValue.length - 1);
-               // console.log('FROM SELECTED STATE splitting', theValue);
-              }
-            // console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVtheValue=', theValue);
-            // console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVtheValue length?=', theValue.length);
-
-            if( theValue.length > 1) {
-               //  console.log('mutli selection');
-                var theObj = {};
-                theObj.$in=theValue;
-                queryRoot[f.get('id')]=theObj;
-              }
-              else {
-                if (f.get('id') === 'Year') {
-                  queryRoot[f.get('id')] = parseInt(theValue);
-                } else {
-                  queryRoot[f.get('id')] = theValue;
-                }
-              }
-      }
-      });
-                
-      return queryRoot;
-  }*/
-  getSelected : function getSelected(){
+    getSelected : function getSelected(){
     console.log('in selected', this.props.state.reducer.getIn(['searchFields']));
     var selected=[]; 
     this.props.state.reducer.getIn(['searchFields']).map(f => {
@@ -197,10 +158,10 @@ var MultiSelectField = React.createClass({
     // this.setActiveField(newProps);
     // update opts
     var newPropLine = this.getActiveFieldFromProp(newProps);
-    console.log('SELECT CWRP newPropLine', newPropLine);
+    //console.log('SELECT CWRP newPropLine', newPropLine);
     
     var oldPropLine = this.getActiveFieldFromProp(this.props);
-    console.log('SELECT CWRP oldPropLine', oldPropLine);
+    //console.log('SELECT CWRP oldPropLine', oldPropLine);
     
     var sortedOpts= _.sortBy(newPropLine.opts, 'label');
     this.setState({ options: sortedOpts});
@@ -222,30 +183,14 @@ var MultiSelectField = React.createClass({
         this.setState({ placeholder : "Select " + placeMod + newPropLine.id });
     }
 
-    // console.log('Does this guy have a selection? ',newPropLine.selected.length);
 
     if (newPropLine.selected.length>0){
-      // console.log('this.state.multi ===', this.state.multi);
-      // console.log('in setting the select value to', newPropLine.selected[0]);
-      // console.log('props.val=',this.props);
         if (this.state.multi === true) {
           var mySelected=newPropLine.selected;
-          // console.log('typeof opts?', typeof this.props.state.reducer.getIn(['searchFields',newPropLine.idx, 'opts'])[0].value);
-          // console.log('opts[0]?', this.props.state.reducer.getIn(['searchFields',newPropLine.idx, 'opts'])[0]);
-
-          // console.log('trying to set to', mySelected);
-          //so stupid what a dumb design with this react-select component
-          // console.log('myselect', mySelected[0].match(/,/));
           
           if (mySelected[0].match(/,/)) {
                var theSelected = mySelected[0].replace(/,$/,'');
-              //var theSelected = mySelected[0].toString();
-             // var theSelected = ["2007,2008"];
-              // console.log('HEYYYYYYYYYY ', theSelected);
-              // var selectedList = 
               this.setState({ value: theSelected});
-            
-            
           } else {
             this.setState({mySelected});
           }
@@ -254,35 +199,11 @@ var MultiSelectField = React.createClass({
          this.setState({value:newPropLine.selected[0]});
         } 
     }
-      //always call this?
-      /*var queryRoot=this.getQueryRoot();
-      console.log('calling fetchFields or FetchCount', queryRoot);
-
-      var activeIdx=this.getActiveFieldFromProp(this.props).idx;
-      
-      //do not fetch data on only a navigation change...
-      if (newPropLine.idx != oldPropLine.idx) {
-        if (activeIdx < (this.props.state.reducer.getIn(['searchFields']).size-1)){ 
-        console.log('++++++++++++++++++++++++++++++++++++++++++CALLING FETCH FIELDS');
-        // this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1, 'id']), queryRoot);      
-        } else {
-         // this.props.fetchCount(queryRoot);      
-        }
-      }
-      */
   },
 	toggleDisabled (e) {
 		this.setState({ disabled: e.target.checked });
 	},
-  /*
-	toggleChocolate (e) {
-		let crazy = e.target.checked;
-		this.setState({
-			crazy: crazy,
-			options: crazy ? WHY_WOULD_YOU : FLAVOURS,
-		});
-	},*/
-	render () {
+ 	render () {
 		return (
 			<div className="section">
 				{/* <h3 className="section-heading">{(this.state.multi) ? "select one or more" : "select one"}</h3> */}
@@ -444,14 +365,10 @@ export default class SearchListNav extends React.Component {
   }
 
   getClassName(className, i){
-    // console.log('getCName', i);
-   // console.log(className + "-" + this.state.navState.styles[i]);
     return className + "-" + this.state.navState.styles[i];
   }
 
   renderSteps() {
-      // console.log('in renderSteps');
-      // console.log('in renderSteps', this.props);
       return this.props.state.reducer.getIn(['searchFields']).map (f => (
       /* <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}> */
       <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}>
@@ -459,13 +376,6 @@ export default class SearchListNav extends React.Component {
         <span>{f.get('id')}</span>
       </li>           
     ))  
-      /*
-    return this.props.steps.map((s, i)=> (
-      <li className={this.getClassName("progtrckr", i)} onClick={this.handleOnClick} key={i} value={i}>
-        <em>{i+1}</em>
-        <span>{this.props.steps[i].name}</span>
-      </li>
-    ));*/
   }
 
   render() {
