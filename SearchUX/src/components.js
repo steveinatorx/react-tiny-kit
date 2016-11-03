@@ -50,7 +50,6 @@ var SelectionTable = React.createClass({
     }  
 });//end class
 
-
 var MultiSelectField = React.createClass({
 	displayName: 'MultiSelectField',
 	/*propTypes: {
@@ -79,6 +78,44 @@ var MultiSelectField = React.createClass({
     return ret;
   },
   //todo: glom all selected values
+  /*getQueryRoot : function getQueryRoot(){
+      var queryRoot = {};
+      var activeIdx=this.getActiveFieldFromProp(this.props).idx;
+      this.props.state.reducer.getIn(['searchFields']).map(f => {
+          // console.log('*******getting f.idx', f.get('idx'));
+
+              console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
+              var theValue = f.get('selected');
+
+              if(theValue.length > 0) {
+              //coding around that fucking react-select API inconsistency.....
+              if (theValue[0].match(/,/)){
+                // console.log('this is a $IN query obj');
+                theValue = theValue[0].split(',');
+               theValue=theValue.splice(0,theValue.length - 1);
+               // console.log('FROM SELECTED STATE splitting', theValue);
+              }
+            // console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVtheValue=', theValue);
+            // console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVtheValue length?=', theValue.length);
+
+            if( theValue.length > 1) {
+               //  console.log('mutli selection');
+                var theObj = {};
+                theObj.$in=theValue;
+                queryRoot[f.get('id')]=theObj;
+              }
+              else {
+                if (f.get('id') === 'Year') {
+                  queryRoot[f.get('id')] = parseInt(theValue);
+                } else {
+                  queryRoot[f.get('id')] = theValue;
+                }
+              }
+      }
+      });
+                
+      return queryRoot;
+  }*/
   getSelected : function getSelected(){
     console.log('in selected', this.props.state.reducer.getIn(['searchFields']));
     var selected=[]; 
@@ -111,7 +148,7 @@ var MultiSelectField = React.createClass({
           this.setState({ value }); 
         }
         //special case all - match all after previous selections
-        else if (value.match(/all/)) {
+        else if (value.match(/^all$/)) {
           value=this.getActiveFieldFromProp(this.props).opts.map( o => {
           if (o.label !== 'all') {
             return o.label; 
@@ -130,95 +167,16 @@ var MultiSelectField = React.createClass({
       this.props.setFieldSelection(activeIdx, []); 
     }
 
-
-
     // on remove dont set fields?   
     if (value !=="" && value !== null) {
       console.log('in settingFIeldSelection block SETTING REDUCER STATE TO ', [value]);
-      
-      this.props.setFieldSelection(activeIdx, [value]); 
-    
-		// this.setState({ value:value });
-    //todo: do we care? cant i just send the value out?
-    // var selected = this.getSelected(); 
-    // console.log('selected= ', selected);
-    
-    //dont fetch on last field
-    //if (activeIdx < (this.props.state.reducer.getIn(['searchFields']).size-1)){ 
-      console.log('fetching next field vals...' , activeIdx);
-      var queryRoot = {};
-      
-      this.props.state.reducer.getIn(['searchFields']).map(f => {
-          // console.log('*******getting f.idx', f.get('idx'));
-          if ( f.get('idx') < activeIdx +1 ) {
-
-            //theValue = ( f.get('idx') === activeIdx ) ? [value] : f.get('selected'); 
-            if ( f.get('idx') === activeIdx ) {
-              //single value 
-             if( Object.prototype.toString.call( value ) === '[object Array]' ) {
-               var theValue = value;
-             } else if (value.match(/,/)) {
-               var theValue = value.split(',');
-               theValue=theValue.splice(0,theValue.length - 1);
-               // console.log('splitting', theValue);
-             } else {
-               theValue = [value];
-             }
-             
-            }
-            //from selected
-            else{
-              // console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
-              var theValue = f.get('selected'); 
-              //coding around that fucking react-select API inconsistency.....
-              if (theValue[0].match(/,/)){
-                // console.log('this is a $IN query obj');
-                theValue = theValue[0].split(',');
-               theValue=theValue.splice(0,theValue.length - 1);
-               // console.log('FROM SELECTED STATE splitting', theValue);
-              }
-            }
-            // console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVtheValue=', theValue);
-            // console.log('VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVtheValue length?=', theValue.length);
-
-            if( theValue.length > 1) {
-               //  console.log('mutli selection');
-                var theObj = {};
-                theObj.$in=theValue;
-                queryRoot[f.get('id')]=theObj;
-              }
-              else {
-                if (f.get('id') === 'Year') {
-                  queryRoot[f.get('id')] = parseInt(theValue);
-                } else {
-                  queryRoot[f.get('id')] = theValue;
-                }
-              }
-          }
-                
-      });
-      // console.log(' im looking for a distinct: ',  this.props.state.reducer.getIn(['searchFields',activeIdx+1,'id']));
-      // console.log('BBBBBBBBBBBBBBBBBBBBBBBBBB my query=  ',  queryRoot);
-
-    if (activeIdx < (this.props.state.reducer.getIn(['searchFields']).size-1)){ 
-      console.log('++++++++++++++++++++++++++++++++++++++++++CALLING FETCH FIELDS');
-      this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1, 'id']), queryRoot);      
-    } else {
-      // keep getting remaining count on opts selections
-      console.log('+++++++++++++++++++++++++++++++++++++++++CALLING FETCH COUNT'); 
-      this.props.fetchCount(queryRoot);      
-    }
-    
-    // console.log('is multi?', this.getActiveFieldFromProp(this.props).multi);
-    //todo check for last field?
-    // console.log('is != nul', value != null);
-    // console.log('is single opt?', this.getActiveFieldFromProp(this.props).opts.length===1);
-
-    if ((value != null) && (this.getActiveFieldFromProp(this.props).multi != true)) {
+      this.props.setFieldSelectionAndFetchData(activeIdx, [value]); 
+     
+    if ((activeIdx!=7) && (value != null) && (this.getActiveFieldFromProp(this.props).multi != true)) {
       this.props.setActiveField(activeIdx+1);
       //next nav state
       //todo: check for end
-    }
+    } else 
     // bump if only 1 opts
     if ((value != null) && (this.getActiveFieldFromProp(this.props).opts.length===1)) {
       this.props.setActiveField(activeIdx+1);
@@ -237,10 +195,10 @@ var MultiSelectField = React.createClass({
     // this.setActiveField(newProps);
     // update opts
     var newPropLine = this.getActiveFieldFromProp(newProps);
-    // console.log('SELECT CWRP newPropLine', newPropLine);
+    console.log('SELECT CWRP newPropLine', newPropLine);
     
     var oldPropLine = this.getActiveFieldFromProp(this.props);
-    // console.log('SELECT CWRP oldPropLine', oldPropLine);
+    console.log('SELECT CWRP oldPropLine', oldPropLine);
     
     var sortedOpts= _.sortBy(newPropLine.opts, 'label');
     this.setState({ options: sortedOpts});
@@ -291,11 +249,25 @@ var MultiSelectField = React.createClass({
           }
        }
         else{
-
          this.setState({value:newPropLine.selected[0]});
         } 
     }
-        
+      //always call this?
+      /*var queryRoot=this.getQueryRoot();
+      console.log('calling fetchFields or FetchCount', queryRoot);
+
+      var activeIdx=this.getActiveFieldFromProp(this.props).idx;
+      
+      //do not fetch data on only a navigation change...
+      if (newPropLine.idx != oldPropLine.idx) {
+        if (activeIdx < (this.props.state.reducer.getIn(['searchFields']).size-1)){ 
+        console.log('++++++++++++++++++++++++++++++++++++++++++CALLING FETCH FIELDS');
+        // this.props.fetchFields(this.props.state.reducer.getIn(['searchFields',activeIdx+1, 'id']), queryRoot);      
+        } else {
+         // this.props.fetchCount(queryRoot);      
+        }
+      }
+      */
   },
 	toggleDisabled (e) {
 		this.setState({ disabled: e.target.checked });
@@ -361,15 +333,16 @@ export default class SearchListNav extends React.Component {
  
   }
   componentWillReceiveProps (newProps) {
-    //console.log('NAV CWRP', newProps);
+    console.log('------------------------------------------NAV CWRP', newProps);
+    
     // this.setActiveField(newProps);
     // update opts
     var newPropLine = this.getActiveFieldFromProp(newProps);
-    // console.log('NAV CWRP newPropLine', newPropLine.idx);
+    console.log('NAV CWRP newPropLine', newPropLine);
     
     var oldPropLine = this.getActiveFieldFromProp(this.props);
     // console.log('NAV CWRP oldPropLine', oldPropLine.idx);
-    this.setState({ options: newPropLine.opts});
+    this.setState({ options: newPropLine.Opts});
     //move to new nav?
     if (newPropLine.idx != oldPropLine.idx) {
             console.log('new active field'); 
@@ -432,7 +405,7 @@ export default class SearchListNav extends React.Component {
     // console.log('in setNavState i want to move to:', this.props);
     var theListSize = this.props.state.reducer.getIn(['searchFields']).size;
     
-    this.props.setActiveField(next); 
+     this.props.setActiveField(next); 
     
     this.setState({navState: this.getNavStates(next, theListSize)});
     if (next < theListSize) {

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import  SearchListNav  from './components';
-import { setActiveField, setFieldSelection, fetchFields, fetchCount } from './actions';
+import { setActiveField, setFieldSelection, setFieldSelectionAndFetchData, fetchFields, fetchCount } from './actions';
 
 export const SearchUXContainer = connect(
   /*componentDidMount: function() {
@@ -22,6 +22,7 @@ function mapStateToProps (state) {
     return {
       setActiveField: idx => dispatch(setActiveField(idx)),
       setFieldSelection: (idx, selection) => dispatch(setFieldSelection(idx,selection)),
+      setFieldSelectionAndFetchData: (idx, selection) => dispatch(setFieldSelectionAndFetchData(idx,selection)),
       fetchFields: (idx, queryObj) => dispatch(fetchFields(idx, queryObj)),
       fetchCount: (queryObj) => dispatch(fetchCount(queryObj)),
     };
