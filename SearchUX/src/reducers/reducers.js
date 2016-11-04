@@ -7,7 +7,7 @@ const init = new Map({
   resultsCount: 0,
   lastAction: null,
   searchFields: new List([
-    Map({ id: 'Model', label: 'Model', idx: 0, isActive: true, opts: [
+    Map({ id: 'Model', navLabel: 'model', label: 'model', idx: 0, isActive: true, opts: [
     { label: "980 Carrera GT", value: "980 Carrera GT"},
     { label: "GT3 3.6", value: "GT3 3.6"},
     { label: "GT3 RS 3.6", value: "GT3 RS 3.6" },
@@ -24,13 +24,13 @@ const init = new Map({
     { label: "GT3 RS 4.0", value: "GT3 RS 4.0" },
   ], multi: false,
   selected: [] }),
-    Map({ id: 'Body', label: 'Body', idx: 1, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Year', label: 'Year', idx: 2, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Country', label: 'Country', idx: 3, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Transmission', label: 'Transmission', idx: 4, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Ext1', label: 'Ext1', idx: 5, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Int1', label: 'Int1', idx: 6, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Opts', label: 'Options', idx: 7, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Body', navLabel: 'body', label: 'body', idx: 1, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Year', navLabel: 'year', label: 'year', idx: 2, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Country', navLabel: 'country', label: 'country', idx: 3, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Transmission', navLabel: 'transmission', label: 'transmission', idx: 4, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Ext1', navLabel: 'ext color', label: 'exterior color', idx: 5, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Int1', navLabel: 'int color', label: 'interior color', idx: 6, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Opts', navLabel: 'options', label: 'options', idx: 7, isActive: false, opts: [], multi: true, selected: [] }),
   ])
 });
 
