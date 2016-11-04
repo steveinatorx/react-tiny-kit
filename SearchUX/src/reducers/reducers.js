@@ -37,6 +37,8 @@ const init = new Map({
 export default function reducer (state = init, action) {
   console.log('in reducer', action);
   switch (action.type) {
+    case 'CLEAR_ALL':
+      return init;
     case 'SET_ACTIVE_FIELD':
       var newSearchFields = state.getIn(['searchFields']).map(f => {
          // console.log('mapiing reducer->', f.get('idx'));
