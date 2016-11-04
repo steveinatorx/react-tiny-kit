@@ -1,8 +1,8 @@
 // const uid = () => Math.random().toString(34).slice(2);
 
 import axios from 'axios';
-
 export const SET_ACTIVE_FIELD = 'SET_ACTIVE_FIELD';
+var __CONFIG__ = require('__CONFIG__');
 
 export function setActiveField(idx) {
   return {
@@ -165,9 +165,12 @@ export function apiError(error){
 export function fetchFields(objectFieldId, queryObj) {
   console.log('in fetchFields', objectFieldId );
   console.log('in fetchFields', queryObj );
+  console.log( __CONFIG__ );
   
+  
+
     return dispatch =>
-        axios.post('http://localhost:3000/api/pcnacarsmeta', 
+        axios.post( __CONFIG__.apiHost + '/api/pcnacarsmeta', 
           {
             distinct: objectFieldId,
             queryObj: queryObj,
@@ -184,7 +187,7 @@ export function fetchCount(queryObj) {
   console.log('in fetchCount', queryObj );
   
     return dispatch =>
-        axios.post('http://localhost:3000/api/pcnacarscount', 
+        axios.post( __CONFIG__.apiHost + '/api/pcnacarscount', 
           {
             queryObj: queryObj,
           }).then(res => {
