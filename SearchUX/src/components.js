@@ -25,7 +25,7 @@ var SelectionTable = React.createClass({
   render () {
         return (
           <div>      
-          <pre><code>Total Vehicles Found: {this.state.count}</code></pre>
+          <pre><code>{this.state.count} Vehicles Match Your Selections</code></pre>
           <table className="u-full-width">
       <thead>
         <tr>
