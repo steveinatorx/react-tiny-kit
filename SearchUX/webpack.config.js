@@ -27,5 +27,10 @@ module.exports = {
         loaders: ['style', 'css']     
       }
     ]
+  },
+  resolve: {
+      alias: {
+          __CONFIG__: path.join(__dirname, 'config', process.env.REACT_ENV)
+      }
   }
 };
