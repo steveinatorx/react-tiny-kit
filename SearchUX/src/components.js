@@ -231,12 +231,16 @@ export default class SearchListNav extends React.Component {
       navState: this.getNavStates(0, theListSize)
     };
     this.hidden = {
-      display: 'none'
+      visibility: 'hidden'
+    };
+    this.btnStyle = {
+      marginRight: '5px' 
     };
     this.handleOnClick = this.handleOnClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
+    this.startOver = this.startOver.bind(this);
     this.getActiveFieldFromProp = this.getActiveFieldFromProp.bind(this);
     //this.getActiveSearchField = this.getActiveSearchField.bind(this);
   }
@@ -248,11 +252,9 @@ export default class SearchListNav extends React.Component {
               }
              });
              return ret;
- 
   }
   componentWillReceiveProps (newProps) {
     console.log('------------------------------------------NAV CWRP', newProps);
-    
     // this.setActiveField(newProps);
     // update opts
     var newPropLine = this.getActiveFieldFromProp(newProps);
@@ -301,19 +303,22 @@ export default class SearchListNav extends React.Component {
    if(currentStep > 0 && currentStep !== this.props.state.reducer.getIn(['searchFields']).size - 1){
       this.setState({
         showPreviousBtn: true,
-        showNextBtn: true
+        showNextBtn: true,
+        showStartOverBtn: true,
       })
     }
     else if(currentStep === 0) {
       this.setState({
         showPreviousBtn: false,
-        showNextBtn: true
+        showNextBtn: true,
+        showStartOverBtn: false,
       })
     }
     else {
       this.setState({
         showPreviousBtn: true,
-        showNextBtn: false
+        showNextBtn: false,
+        showStartOverBtn: true,
       })
     }
   }
@@ -361,6 +366,13 @@ export default class SearchListNav extends React.Component {
       
     }
   }
+  
+  startOver() {
+    //this.refs.multiSelect.handleSelectChange('');
+    console.log(this.props);
+      this.props.clearAll();
+      this.setNavState(0);
+  }
 
   getClassName(className, i){
     return className + "-" + this.state.navState.styles[i];
@@ -371,7 +383,7 @@ export default class SearchListNav extends React.Component {
       /* <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}> */
       <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}>
         <em>{f.get('idx')+1}</em>
-        <span>{f.get('id')}</span>
+        <span>{f.get('navLabel')}</span>
       </li>           
     ))  
   }
@@ -385,6 +397,10 @@ export default class SearchListNav extends React.Component {
             <div className="row">
               <div className="six columns">
               <div>
+                   <button style={Object.assign({}, this.state.showStartOverBtn ? {} : this.hidden ,this.btnStyle)}
+                            className="multistep__btn--prev"
+                            onClick={this.startOver}>Clear All</button>
+ 
                     <button style={this.state.showPreviousBtn ? {} : this.hidden}
                             className="multistep__btn--prev"
                             onClick={this.previous}>Previous Field</button>
@@ -393,8 +409,6 @@ export default class SearchListNav extends React.Component {
                             className="multistep__btn--next button-primary u-pull-right"
                             onClick={this.next}>Next Field</button>
                   </div>
- 
-
                 <MultiSelectField ref="multiSelect" {...this.props} />
                   {/* <div style={this.props.showNavigation ? {} : this.hidden}> */}
                                </div>
