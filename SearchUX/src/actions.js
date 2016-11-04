@@ -11,6 +11,12 @@ export function setActiveField(idx) {
   };
 }
 
+export const CLEAR_ALL = 'CLEAR_ALL';
+export function clearAll() {
+  return {
+    type: 'CLEAR_ALL'
+  };
+}
 
 export const SET_FIELD_SELECTION = 'SET_FIELD_SELECTION';
 export function setFieldSelection(idx,selection) {
