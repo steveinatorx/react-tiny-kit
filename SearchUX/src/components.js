@@ -29,8 +29,8 @@ var SelectionTable = React.createClass({
           <table className="u-full-width">
       <thead>
         <tr>
-          <th>Criteria</th>
-          <th>Selection</th>
+          <th>Field</th>
+          <th>Your Selections</th>
         </tr>
       </thead>
       <tbody>
@@ -59,7 +59,7 @@ var MultiSelectField = React.createClass({
 			disabled: false,
 			options: this.props.state.reducer.getIn(['searchFields', 0, 'opts']),
 			value: null,
-      placeholder: "Select " + this.props.state.reducer.getIn(['searchFields',0, 'id']),
+      placeholder: "select " + this.props.state.reducer.getIn(['searchFields',0, 'label']),
 		};
 	},
   getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
@@ -175,7 +175,7 @@ var MultiSelectField = React.createClass({
       //   console.log('wants a new nav');
         var placeMod = (newPropLine.multi) ? 'one or more ' : 'one ';
         // console.log('PLACEMODDDDDDD', placeMod);
-        this.setState({ placeholder : "Select " + placeMod + newPropLine.id });
+        this.setState({ placeholder : "select " + placeMod + newPropLine.label });
     }
 
 
@@ -387,11 +387,11 @@ export default class SearchListNav extends React.Component {
               <div>
                     <button style={this.state.showPreviousBtn ? {} : this.hidden}
                             className="multistep__btn--prev"
-                            onClick={this.previous}>Previous Criteria</button>
+                            onClick={this.previous}>Previous Field</button>
 
                     <button style={this.state.showNextBtn ? {} : this.hidden}
                             className="multistep__btn--next button-primary u-pull-right"
-                            onClick={this.next}>Next Criteria</button>
+                            onClick={this.next}>Next Field</button>
                   </div>
  
 
