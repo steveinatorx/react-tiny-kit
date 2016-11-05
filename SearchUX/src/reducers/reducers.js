@@ -26,7 +26,7 @@ const init = new Map({
     Map({ id: 'Body', navLabel: 'body', label: 'body', idx: 1, isActive: false, opts: [], multi: true, selected: [] }),
     Map({ id: 'Year', navLabel: 'year', label: 'year', idx: 2, isActive: false, opts: [], multi: true, selected: [] }),
     Map({ id: 'Country', navLabel: 'country', label: 'country', idx: 3, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Transmission', navLabel: 'transmission', label: 'transmission', idx: 4, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Transmission', navLabel: 'trans', label: 'transmission', idx: 4, isActive: false, opts: [], multi: true, selected: [] }),
     Map({ id: 'Ext1', navLabel: 'ext color', label: 'exterior color', idx: 5, isActive: false, opts: [], multi: true, selected: [] }),
     Map({ id: 'Int1', navLabel: 'int color', label: 'interior color', idx: 6, isActive: false, opts: [], multi: true, selected: [] }),
     Map({ id: 'Opts', navLabel: 'options', label: 'options', idx: 7, isActive: false, opts: [], multi: true, selected: [] }),
@@ -34,10 +34,14 @@ const init = new Map({
 });
 
 export default function reducer (state = init, action) {
-  console.log('in reducer', action);
+  console.log('in reducer---->', action);
   switch (action.type) {
     case 'CLEAR_ALL':
       return init;
+    
+    
+
+    
     case 'SET_ACTIVE_FIELD':
       var newSearchFields = state.getIn(['searchFields']).map(f => {
          // console.log('mapiing reducer->', f.get('idx'));
@@ -51,7 +55,7 @@ export default function reducer (state = init, action) {
       //return state.setIn(['searchFields', action.payload, 'isActive'], true); 
       return state.setIn(['searchFields'], newSearchFields);
     case 'RECEIVE_COUNT':
-      console.log('setting count', action.payload.count);
+      //console.log('setting count', action.payload.count);
       return state.set('resultsCount', action.payload.count);
     case 'RECEIVE_FIELDS':
 
@@ -70,11 +74,14 @@ export default function reducer (state = init, action) {
       
       console.log('RECEIVEFIELDS this is multi? ', objId.toJS()[0].multi);
       if ((action.payload.field !== 'Opts') && (objId.toJS()[0].multi === true) && ( action.payload.values.length > 1 )) {
-        console.log('detected MULTI so add "all" to selections');
-        optObjs.push({ label: 'all', value: 'all'});
+        //console.log('detected MULTI so add "all" to selections');
+        optObjs.unshift({ label: 'All', value: 'all'});
       }
        
-      console.log('receive fields idx', objId.toJS()[0].idx);
+        //console.log('RECEIVEFIELDS arr?', optObjs);
+       
+
+      //console.log('receive fields idx', objId.toJS()[0].idx);
       return state.setIn(['searchFields',objId.toJS()[0].idx,'opts'],optObjs);
       
     case 'SET_FIELD_SELECTION':
