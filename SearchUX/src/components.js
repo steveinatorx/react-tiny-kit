@@ -5,7 +5,7 @@ import './css/prog-tracker.css';
 import './css/custom.css';
 import './css/normalize.css';
 import Select from 'react-select';
-
+var classNames = require('classnames');
 import './css/react-select.css';
 
 var SelectionTable = React.createClass({
@@ -13,19 +13,38 @@ var SelectionTable = React.createClass({
     var keys = this.props.state.reducer.getIn(['searchFields']).map (f =>  {
     });
     return ({
-      selections: null,
+      selections: [],
       count: 0     
     });
   },
   componentWillReceiveProps (newProps) {
-    console.log('in SELECTIONTABLE CWRP', newProps.state.reducer);    
+    //console.log('in SELECTIONTABLE CWRP', newProps.state.reducer);    
     this.setState({ selections: this.props.state.reducer.getIn(['searchFields'])});
     this.setState({ count: newProps.state.reducer.get('resultsCount')});
   },
   render () {
+    var hiddenStyle = {
+      visibility: 'hidden',      
+    };
+    const resultsBoxStyle = {
+      backgroundColor : '#BAF084',
+      fontSize: '1.5em',
+      fontWeight: 'bold',
+      borderRadius: '5px',
+      borderWidth: '1px',
+      borderColor: 'black',
+      borderStyle: 'solid',
+      margin: '10px',
+      padding: '10px',
+    };
+    
+    //console.log('in multi render ', this.state.selections );
+    var myClass = classNames ({ 'hidden' : this.state.count === 0});
         return (
-          <div>      
-          <pre><code>{this.state.count} Vehicles Match Your Selections</code></pre>
+          <div>
+            <div style={resultsBoxStyle} className={myClass}>      
+              {this.state.count} Vehicles Match Your Selections
+            </div>
           <table className="u-full-width">
       <thead>
         <tr>
@@ -53,7 +72,7 @@ var SelectionTable = React.createClass({
 var MultiSelectField = React.createClass({
 	displayName: 'MultiSelectField',
 	getInitialState () {
-    console.log(' in gIS MSF:', this.props.state.reducer.getIn(['searchFields', 0, 'id']));
+    //console.log(' in gIS MSF:', this.props.state.reducer.getIn(['searchFields', 0, 'id']));
 		return {
       multi: false,
 			disabled: false,
@@ -95,25 +114,31 @@ var MultiSelectField = React.createClass({
     
   },
  	handleSelectChange : function handleSelectChange(value) {
-    console.log('THIS PROPS', this.props);
-		console.log('You\'ve selected:', value);
+    //console.log('THIS PROPS', this.props);
+		//console.log('You\'ve selected:', value);
+    var allFlag = false;
     var activeIdx=this.getActiveFieldFromProp(this.props).idx;
-    console.log('trying to set field idx', activeIdx);
-      console.log('typeof selection', typeof value);
+    //console.log('trying to set field idx', activeIdx);
+     // console.log('typeof selection', typeof value);
+     // console.log('does selection === null??', value === null);
         if (value === null) {
-          this.setState({ value }); 
+          this.setState({ value });
         }
         //special case all - match all after previous selections
         else if (value.match(/^all$/) || value.match(/,all/)) {
+          var allFlag = true;
+          
           value=this.getActiveFieldFromProp(this.props).opts.map( o => {
-          if (o.label !== 'all') {
+          if (o.label !== 'All') {
             return o.label; 
         }
       }).join(',');
         //not sure why this appends a closing comma
-        console.log('setting value to ----->', value.replace(/,$/,''));
+        //console.log('setting value to ----->', value.replace(/,$/,''));
         value = value.replace(/,$/,'');
+        value = value.replace(/^,/,'');
         this.setState({ value }); 
+
     }
     else {
         this.setState({ value }); 
@@ -122,6 +147,12 @@ var MultiSelectField = React.createClass({
     if (value === "" || typeof value === 'undefined') {
       console.log('SELECTED {}{}{}{}{}{}{}{}{}NULL{}{}{}{}{}{}{}{}');
       console.log('in settingFIeldSelection block SETTING REDUCER STATE TO', [] );
+      console.log('this.state.multi', this.state.multi);
+      if(this.state.multi === true) {
+        this.setState({ value:''});
+      } else {
+        this.setState({ value:[]});
+      }
       this.props.setFieldSelectionAndFetchData(activeIdx, []); 
     }
 
@@ -130,19 +161,18 @@ var MultiSelectField = React.createClass({
       console.log('in settingFIeldSelection block SETTING REDUCER STATE TO ', [value]);
       this.props.setFieldSelectionAndFetchData(activeIdx, [value]); 
      
-    if ((activeIdx!=7) && (value != null) && (this.getActiveFieldFromProp(this.props).multi != true)) {
-      this.props.setActiveField(activeIdx+1);
-      //next nav state
-      //todo: check for end
-    } else 
-    // bump if only 1 opts
-    if ((value != null) && (this.getActiveFieldFromProp(this.props).opts.length===1)) {
-      this.props.setActiveField(activeIdx+1);
+      if ((activeIdx!=7) && (value != null) && (this.getActiveFieldFromProp(this.props).multi != true)) {
+        this.props.setActiveField(activeIdx+1);
+      } else 
+      // bump if only 1 opts
+      if ((value != null) && (this.getActiveFieldFromProp(this.props).opts.length===1)) {
+        this.props.setActiveField(activeIdx+1);
+      } else 
+      // bump if All
+      if ( allFlag === true) {
+        this.props.setActiveField(activeIdx+1);
+      }
     }
-    
-    
-    }//end block dont do on remove
-    //if this is not a multi then move to next nav
 	},
   componentWillMount() {
     // console.log('CWM state', this.state);  
@@ -153,7 +183,7 @@ var MultiSelectField = React.createClass({
     // this.setActiveField(newProps);
     // update opts
     var newPropLine = this.getActiveFieldFromProp(newProps);
-    //console.log('SELECT CWRP newPropLine', newPropLine);
+    console.log('SELECT CWRP newPropLine', newPropLine);
     
     var oldPropLine = this.getActiveFieldFromProp(this.props);
     //console.log('SELECT CWRP oldPropLine', oldPropLine);
@@ -236,7 +266,7 @@ export default class SearchListNav extends React.Component {
     this.btnStyle = {
       marginRight: '5px' 
     };
-    this.handleOnClick = this.handleOnClick.bind(this);
+    //this.handleOnClick = this.handleOnClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
@@ -254,7 +284,7 @@ export default class SearchListNav extends React.Component {
              return ret;
   }
   componentWillReceiveProps (newProps) {
-    console.log('------------------------------------------NAV CWRP', newProps);
+    //console.log('------------------------------------------NAV CWRP', newProps);
     // this.setActiveField(newProps);
     // update opts
     var newPropLine = this.getActiveFieldFromProp(newProps);
@@ -343,7 +373,7 @@ export default class SearchListNav extends React.Component {
     }
   }
 
-  handleOnClick (evt) {
+  /*handleOnClick (evt) {
     console.log('in hClick', evt.currentTarget.value);
     if (evt.currentTarget.value === (this.props.state.reducer.size - 1) &&
       this.state.compState === (this.props.state.reducer.size - 1)) {
@@ -352,7 +382,7 @@ export default class SearchListNav extends React.Component {
     else {
       this.setNavState(evt.currentTarget.value)
     }
-  }
+  }*/
 
   next() {
     this.setNavState(this.state.compState + 1)
@@ -381,7 +411,7 @@ export default class SearchListNav extends React.Component {
   renderSteps() {
       return this.props.state.reducer.getIn(['searchFields']).map (f => (
       /* <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}> */
-      <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}>
+      <li className={this.getClassName("progtrckr", f.get('idx'))} key={f.get('idx')} value={f.get('id')}>
         <em>{f.get('idx')+1}</em>
         <span>{f.get('navLabel')}</span>
       </li>           

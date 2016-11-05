@@ -34,7 +34,7 @@ export function setFieldSelection(idx,selection) {
 
 
 var buildQueryObj = function buildQueryObj(state){
-    console.log('in buildQ actions', state.reducer);
+    //console.log('in buildQ actions', state.reducer);
 
  var queryRoot = {};
           state.reducer.getIn(['searchFields']).map(f => {
@@ -60,7 +60,7 @@ var buildQueryObj = function buildQueryObj(state){
                 if (f.get('id') === 'Year') {
                   console.log('detected YEAR', theValue);
                   if (theValue[0].match(/,/)) {
-                    console.log('multiple year');
+                    // console.log('multiple year');
                     var years = theValue[0].split(',');                       
                       year = years.map(function(v){
                         return parseInt(f);
@@ -82,7 +82,7 @@ var buildQueryObj = function buildQueryObj(state){
 
                var theObj={};
                var theValueArr = theValue[0].split(',');
-               console.log('theValueArr', theValueArr);
+               //console.log('theValueArr', theValueArr);
                theObj.$in=theValueArr;
                queryRoot[theField] = theObj;  
             } else
@@ -93,7 +93,7 @@ var buildQueryObj = function buildQueryObj(state){
             }   
 
       } else if (theValue.length === 0){
-        console.log('no value set')
+        //console.log('no value set')
       }
       
       }) 
@@ -103,7 +103,7 @@ var buildQueryObj = function buildQueryObj(state){
 
 export function setFieldSelectionAndFetchData(idx,selection){
   return function (dispatch, getState) {
-    console.log('in sFSAFD what is my selection????', selection);
+    //console.log('in sFSAFD what is my selection????', selection);
     dispatch(setFieldSelection(idx,selection));
     var state=getState();
     var qObj = buildQueryObj(state);
@@ -111,11 +111,11 @@ export function setFieldSelectionAndFetchData(idx,selection){
     var nextFieldMap = state.reducer.getIn(['searchFields',idx+1]);
     if (idx!=7){
       var nextId = nextFieldMap.get('id');
-      console.log('now fetch fields for ->', nextId);
-      console.log('using ->', qObj);
+      //console.log('now fetch fields for ->', nextId);
+      //console.log('using ->', qObj);
       dispatch(fetchFields(nextId, qObj));
     } else {
-      console.log('using ->', qObj);
+      //console.log('using ->', qObj);
       dispatch(fetchCount(qObj))      
     }
   } 
@@ -163,9 +163,9 @@ export function apiError(error){
 // store.dispatch(fetchPosts('reactjs'))
 
 export function fetchFields(objectFieldId, queryObj) {
-  console.log('in fetchFields', objectFieldId );
+  /*console.log('in fetchFields', objectFieldId );
   console.log('in fetchFields', queryObj );
-  console.log( __CONFIG__ );
+  console.log( __CONFIG__ );*/
   
   
 
@@ -175,7 +175,7 @@ export function fetchFields(objectFieldId, queryObj) {
             distinct: objectFieldId,
             queryObj: queryObj,
           }).then(res => {
-            console.log('RESRESRESRESRESRESRESRES', res);
+            //console.log('RESRESRESRESRESRESRESRES', res);
             dispatch(receiveFields(objectFieldId, res.data.values));
             dispatch(receiveCount(res.data.count));
           }).catch(err => {
@@ -191,7 +191,7 @@ export function fetchCount(queryObj) {
           {
             queryObj: queryObj,
           }).then(res => {
-            console.log('RESRESRESRESRESRESRESRES', res);
+            //console.log('RESRESRESRESRESRESRESRES', res);
             dispatch(receiveCount(res.data.count));
           }).catch(err => {
             dispatch(apiError(err));
