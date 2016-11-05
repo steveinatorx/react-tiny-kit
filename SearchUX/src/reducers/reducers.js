@@ -10,6 +10,7 @@ const init = new Map({
     Map({ id: 'Model', navLabel: 'model', label: 'model', idx: 0, isActive: true, opts: [
     { label: "918 Spyder", value: "918 Spyder" },
     { label: "980 Carrera GT", value: "980 Carrera GT"},
+    { label: "997 Speedster", value: "997 Speedster" },
     { label: "GT2", value: "GT2"}, 
     { label: "GT2 RS", value: "GT2 RS"}, 
     { label: "GT3 3.6", value: "GT3 3.6"},
@@ -20,7 +21,6 @@ const init = new Map({
     { label: "Turbo 3.6", value: "Turbo 3.6" },
     { label: "Turbo 3.8", value: "Turbo 3.8" },
     { label: "Turbo S 3.8", value: "Turbo S 3.8" },
-    { label: "997 Speedster", value: "997 Speedster" },
   ], multi: false,
   selected: [] }),
     Map({ id: 'Body', navLabel: 'body', label: 'body', idx: 1, isActive: false, opts: [], multi: true, selected: [] }),
@@ -77,8 +77,7 @@ export default function reducer (state = init, action) {
         //console.log('detected MULTI so add "all" to selections');
         optObjs.unshift({ label: 'All', value: 'all'});
       }
-       
-        //console.log('RECEIVEFIELDS arr?', optObjs);
+      console.log('RECEIVEFIELDS arr?', optObjs);
        
 
       //console.log('receive fields idx', objId.toJS()[0].idx);
