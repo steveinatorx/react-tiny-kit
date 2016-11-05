@@ -4,6 +4,7 @@ import './css/skeleton.css';
 import './css/prog-tracker.css';
 import './css/custom.css';
 import './css/normalize.css';
+import './css/skeleton-alerts.css';
 import Select from 'react-select';
 var classNames = require('classnames');
 import './css/react-select.css';
@@ -234,6 +235,7 @@ var MultiSelectField = React.createClass({
 				{/* <h3 className="section-heading">{(this.state.multi) ? "select one or more" : "select one"}</h3> */}
 				<Select simpleValue
           multi={this.state.multi} 
+          autofocus={true}
           disabled={this.state.disabled} 
           value={this.state.value}
           placeholder={this.state.placeholder}
@@ -258,14 +260,23 @@ export default class SearchListNav extends React.Component {
       showPreviousBtn: false,
       showNextBtn: false,
       compState: 0,
-      navState: this.getNavStates(0, theListSize)
+      navState: this.getNavStates(0, theListSize),
+      init: true,
     };
-    this.hidden = {
+    this.hiddenStyle = {
       visibility: 'hidden'
+    };
+    this.noDisplayStyle = {
+      display: 'none'
     };
     this.btnStyle = {
       marginRight: '5px' 
     };
+    this.controlBoxStyle = {
+      height: '30px' 
+    };
+    
+
     //this.handleOnClick = this.handleOnClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.next = this.next.bind(this);
@@ -284,9 +295,13 @@ export default class SearchListNav extends React.Component {
              return ret;
   }
   componentWillReceiveProps (newProps) {
-    //console.log('------------------------------------------NAV CWRP', newProps);
+    console.log('------------------------------------------NAV CWRP', newProps);
     // this.setActiveField(newProps);
     // update opts
+    
+    var isInit = (newProps.state.reducer.getIn(['searchFields', 0 , 'selected']).length > 1) ? true : false;
+    this.setState({ init: isInit});
+    
     var newPropLine = this.getActiveFieldFromProp(newProps);
     //console.log('NAV CWRP newPropLine', newPropLine);
     
@@ -402,6 +417,7 @@ export default class SearchListNav extends React.Component {
     console.log(this.props);
       this.props.clearAll();
       this.setNavState(0);
+      this.setState({ init: true });
   }
 
   getClassName(className, i){
@@ -426,19 +442,18 @@ export default class SearchListNav extends React.Component {
           </ol>
             <div className="row">
               <div className="six columns">
-              <div>
-                   <button style={Object.assign({}, this.state.showStartOverBtn ? {} : this.hidden ,this.btnStyle)}
+              <div style={this.controlBoxStyle}>
+                   <button style={Object.assign({}, this.state.showStartOverBtn ? {} : this.noDisplayStyle ,this.btnStyle)}
                             className="multistep__btn--prev"
                             onClick={this.startOver}>Clear All</button>
- 
-                    <button style={this.state.showPreviousBtn ? {} : this.hidden}
+                    <button style={this.state.showPreviousBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--prev"
                             onClick={this.previous}>Previous Field</button>
-
-                    <button style={this.state.showNextBtn ? {} : this.hidden}
+                    <button style={this.state.showNextBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--next button-primary u-pull-right"
                             onClick={this.next}>Next Field</button>
-                  </div>
+                    <span style={this.state.init ? {} : this.noDisplayStyle} className="skeleton-alert alert-info"><strong>Select a Model Below to Start the Search!</strong></span>
+              </div>
                 <MultiSelectField ref="multiSelect" {...this.props} />
                   {/* <div style={this.props.showNavigation ? {} : this.hidden}> */}
                                </div>
