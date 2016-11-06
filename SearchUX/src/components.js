@@ -39,7 +39,6 @@ var SelectionTable = React.createClass({
       padding: '10px',
     };
     
-    //console.log('in multi render ', this.state.selections );
     var myClass = classNames ({ 'hidden' : this.state.count === 0});
         return (
           <div>
@@ -75,13 +74,16 @@ var MultiSelectField = React.createClass({
 	getInitialState () {
     //console.log(' in gIS MSF:', this.props.state.reducer.getIn(['searchFields', 0, 'id']));
 		return {
-      multi: false,
+      multi: true,
 			disabled: false,
 			options: this.props.state.reducer.getIn(['searchFields', 0, 'opts']),
 			value: null,
       placeholder: "select " + this.props.state.reducer.getIn(['searchFields',0, 'label']),
 		};
 	},
+  setFocus : function setFocus() {
+    //this.refs.theMultiSelect.focus(); 
+  },
   getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
     var ret=null;
     theProps.state.reducer.getIn(['searchFields']).map(f => {
@@ -98,8 +100,7 @@ var MultiSelectField = React.createClass({
     this.props.state.reducer.getIn(['searchFields']).map(f => {
       
               var thisSegment={};
-              //multi
-              console.log(f.get('id') + ' selected lenght ', f.get('selected'));
+              console.log(f.get('id') + ' selected length ', f.get('selected'));
               if (f.get('selected').length > 1 ) {
                 
                 selected.concat(f.get('selected'));
@@ -149,11 +150,7 @@ var MultiSelectField = React.createClass({
       console.log('SELECTED {}{}{}{}{}{}{}{}{}NULL{}{}{}{}{}{}{}{}');
       console.log('in settingFIeldSelection block SETTING REDUCER STATE TO', [] );
       console.log('this.state.multi', this.state.multi);
-      if(this.state.multi === true) {
         this.setState({ value:''});
-      } else {
-        this.setState({ value:[]});
-      }
       this.props.setFieldSelectionAndFetchData(activeIdx, []); 
     }
 
@@ -162,7 +159,7 @@ var MultiSelectField = React.createClass({
       console.log('in settingFIeldSelection block SETTING REDUCER STATE TO ', [value]);
       this.props.setFieldSelectionAndFetchData(activeIdx, [value]); 
      
-      if ((activeIdx!=7) && (value != null) && (this.getActiveFieldFromProp(this.props).multi != true)) {
+      if ((activeIdx!=7) && (value != null) && (this.getActiveFieldFromProp(this.props).metaMulti != true)) {
         this.props.setActiveField(activeIdx+1);
       } else 
       // bump if only 1 opts
@@ -189,42 +186,42 @@ var MultiSelectField = React.createClass({
     var oldPropLine = this.getActiveFieldFromProp(this.props);
     //console.log('SELECT CWRP oldPropLine', oldPropLine);
     
-    var sortedOpts= _.sortBy(newPropLine.opts, 'label');
+    if (newPropLine.id !== 'Year') {    
+      var sortedOpts= _.sortBy(newPropLine.opts, 'label');
+    } else {
+      var sortedOpts=newPropLine.opts;
+    }
+    
+    //console.log('setting Opts to------------->>>>>>>>>>', sortedOpts);
+    //console.log('setting VALUE to', newPropLine.selected[0]);
+
+    if (typeof newPropLine.selected[0] !== 'undefined' && newPropLine.selected[0].match(',')){
+      var selectedArr=newPropLine.selected[0].split(',');
+      if(selectedArr.length > 0 && selectedArr.length === (sortedOpts.length -1)){
+        console.log('remove all from opts');
+        sortedOpts = sortedOpts.filter( function(obj) {
+          return obj.label != 'All'
+        });
+        
+      } 
+    }  
+       
     this.setState({ options: sortedOpts});
-
-    //console.log(newPropLine);
-
-    if (newPropLine.opts.length>1 && newPropLine.multi===true){
-      // console.log('setting multi to TRUE');
-      this.setState({ multi:true});
-    }
-    else {
-      this.setState({ multi:false});
-    }
+   
     //move to new nav?
     if (newPropLine.idx != oldPropLine.idx){
       //   console.log('wants a new nav');
-        var placeMod = (newPropLine.multi) ? 'one or more ' : 'one ';
+        var placeMod = (newPropLine.metaMulti) ? 'one or more ' : 'one ';
         // console.log('PLACEMODDDDDDD', placeMod);
         this.setState({ placeholder : "select " + placeMod + newPropLine.label });
     }
-
-
-    if (newPropLine.selected.length>0){
-        if (this.state.multi === true) {
-          var mySelected=newPropLine.selected;
-          
-          if (mySelected[0].match(/,/)) {
-               var theSelected = mySelected[0].replace(/,$/,'');
-              this.setState({ value: theSelected});
-          } else {
-            this.setState({mySelected});
-          }
-       }
-        else{
-         this.setState({value:newPropLine.selected[0]});
-        } 
-    }
+     this.setState({value:newPropLine.selected[0]});
+     
+     //console.log(this.refs.theMultiSelect.focused);
+     
+     this.setFocus();
+     
+     
   },
 	toggleDisabled (e) {
 		this.setState({ disabled: e.target.checked });
@@ -232,8 +229,8 @@ var MultiSelectField = React.createClass({
  	render () {
 		return (
 			<div className="section">
-				{/* <h3 className="section-heading">{(this.state.multi) ? "select one or more" : "select one"}</h3> */}
 				<Select simpleValue
+          ref="theMultiSelect"
           multi={this.state.multi} 
           autofocus={true}
           disabled={this.state.disabled} 
@@ -299,7 +296,9 @@ export default class SearchListNav extends React.Component {
     // this.setActiveField(newProps);
     // update opts
     
-    var isInit = (newProps.state.reducer.getIn(['searchFields', 0 , 'selected']).length > 1) ? true : false;
+    console.log(' selected length of 0 idx?', newProps.state.reducer.getIn(['searchFields', 0 , 'selected']).length);
+    var isInit = (newProps.state.reducer.getIn(['searchFields', 0 , 'selected']).length === 0) ? true: false;
+    console.log('isInit>>' , isInit);
     this.setState({ init: isInit});
     
     var newPropLine = this.getActiveFieldFromProp(newProps);
@@ -307,7 +306,7 @@ export default class SearchListNav extends React.Component {
     
     var oldPropLine = this.getActiveFieldFromProp(this.props);
     // console.log('NAV CWRP oldPropLine', oldPropLine.idx);
-    this.setState({ options: newPropLine.Opts});
+
     //move to new nav?
     if (newPropLine.idx != oldPropLine.idx) {
             console.log('new active field'); 
@@ -380,6 +379,7 @@ export default class SearchListNav extends React.Component {
       this.setState({compState: next})
     }
     this.checkNavState(next);
+    this.refs.multiSelect.setFocus();
   }
 
   handleKeyDown (evt) {
@@ -400,7 +400,8 @@ export default class SearchListNav extends React.Component {
   }*/
 
   next() {
-    this.setNavState(this.state.compState + 1)
+    this.setNavState(this.state.compState + 1);
+    this.refs.multiSelect.setFocus();
   }
 
   previous() {
@@ -408,16 +409,18 @@ export default class SearchListNav extends React.Component {
       console.log('REFS', this.refs);
       this.refs.multiSelect.handleSelectChange('');
       this.setNavState(this.state.compState - 1);
-      
+      this.refs.multiSelect.setFocus();
     }
   }
   
   startOver() {
-    //this.refs.multiSelect.handleSelectChange('');
-    console.log(this.props);
+   console.log(this.props);
       this.props.clearAll();
       this.setNavState(0);
-      this.setState({ init: true });
+      this.setState({ init: true});
+      this.refs.multiSelect.setState({ value: ''});
+      this.refs.multiSelect.setFocus();
+
   }
 
   getClassName(className, i){
