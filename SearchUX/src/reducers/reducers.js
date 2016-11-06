@@ -21,15 +21,15 @@ const init = new Map({
     { label: "Turbo 3.6", value: "Turbo 3.6" },
     { label: "Turbo 3.8", value: "Turbo 3.8" },
     { label: "Turbo S 3.8", value: "Turbo S 3.8" },
-  ], multi: false,
+  ], metaMulti: false,
   selected: [] }),
-    Map({ id: 'Body', navLabel: 'body', label: 'body', idx: 1, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Year', navLabel: 'year', label: 'year', idx: 2, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Country', navLabel: 'country', label: 'country', idx: 3, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Transmission', navLabel: 'trans', label: 'transmission', idx: 4, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Ext1', navLabel: 'ext color', label: 'exterior color', idx: 5, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Int1', navLabel: 'int color', label: 'interior color', idx: 6, isActive: false, opts: [], multi: true, selected: [] }),
-    Map({ id: 'Opts', navLabel: 'options', label: 'options', idx: 7, isActive: false, opts: [], multi: true, selected: [] }),
+    Map({ id: 'Body', navLabel: 'body', label: 'body', idx: 1, isActive: false, opts: [], metaMulti: true, selected: [] }),
+    Map({ id: 'Year', navLabel: 'year', label: 'year', idx: 2, isActive: false, opts: [], metaMulti: true, selected: [] }),
+    Map({ id: 'Country', navLabel: 'country', label: 'country', idx: 3, isActive: false, opts: [], metaMulti: true, selected: [] }),
+    Map({ id: 'Transmission', navLabel: 'trans', label: 'transmission', idx: 4, isActive: false, opts: [], metaMulti: true, selected: [] }),
+    Map({ id: 'Ext1', navLabel: 'ext color', label: 'exterior color', idx: 5, isActive: false, opts: [], metaMulti: true, selected: [] }),
+    Map({ id: 'Int1', navLabel: 'int color', label: 'interior color', idx: 6, isActive: false, opts: [], metaMulti: true, selected: [] }),
+    Map({ id: 'Opts', navLabel: 'options', label: 'options', idx: 7, isActive: false, opts: [], metaMulti: true, selected: [] }),
   ])
 });
 
@@ -73,7 +73,7 @@ export default function reducer (state = init, action) {
       });
       
       console.log('RECEIVEFIELDS this is multi? ', objId.toJS()[0].multi);
-      if ((action.payload.field !== 'Opts') && (objId.toJS()[0].multi === true) && ( action.payload.values.length > 1 )) {
+      if ((action.payload.field !== 'Opts') && (objId.toJS()[0].metaMulti === true) && ( action.payload.values.length > 1 )) {
         //console.log('detected MULTI so add "all" to selections');
         optObjs.unshift({ label: 'All', value: 'all'});
       }
