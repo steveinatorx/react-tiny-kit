@@ -82,7 +82,7 @@ var MultiSelectField = React.createClass({
 		};
 	},
   setFocus : function setFocus() {
-    //this.refs.theMultiSelect.focus(); 
+    this.refs.theMultiSelect.focus(); 
   },
   getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
     var ret=null;
@@ -239,6 +239,7 @@ var MultiSelectField = React.createClass({
           options={this.state.options}
           onChange={this.handleSelectChange} 
           clearable={true}
+          openAfterFocus={true}
           />
 			</div>
 		);
