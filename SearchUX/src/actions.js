@@ -53,7 +53,11 @@ var buildQueryObj = function buildQueryObj(state){
             if( theValue.length > 1) {
                //  console.log('mutli selection');
                 var theObj = {};
-                theObj.$in=theValue;
+                if(f.get('id') === 'Opts'){
+                  theObj.$and=theValue;
+                } else {
+                  theObj.$in=theValue;
+                }
                 queryRoot[f.get('id')]=theObj;
               }
               else {
