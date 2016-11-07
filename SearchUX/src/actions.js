@@ -53,11 +53,7 @@ var buildQueryObj = function buildQueryObj(state){
             if( theValue.length > 1) {
                //  console.log('mutli selection');
                 var theObj = {};
-                if(f.get('id') === 'Opts'){
-                  theObj.$and=theValue;
-                } else {
-                  theObj.$in=theValue;
-                }
+                theObj.$in=theValue;
                 queryRoot[f.get('id')]=theObj;
               }
               else {
@@ -82,12 +78,10 @@ var buildQueryObj = function buildQueryObj(state){
         console.log('detected opts', theValue);
             if (theValue[0].match(/,/)){
                 //trim damn API inconsistency
-                
-
                var theObj={};
                var theValueArr = theValue[0].split(',');
                //console.log('theValueArr', theValueArr);
-               theObj.$in=theValueArr;
+               theObj.$all=theValueArr;
                queryRoot[theField] = theObj;  
             } else
             {
@@ -95,10 +89,7 @@ var buildQueryObj = function buildQueryObj(state){
                 theObj.$in=theValue;
                 queryRoot[theField] = theObj;  
             }   
-
-      } else if (theValue.length === 0){
-        //console.log('no value set')
-      }
+      } 
       
       }) 
 
@@ -111,6 +102,7 @@ export function setFieldSelectionAndFetchData(idx,selection){
     dispatch(setFieldSelection(idx,selection));
     var state=getState();
     var qObj = buildQueryObj(state);
+
     //only get new count on Opts selection
     var nextFieldMap = state.reducer.getIn(['searchFields',idx+1]);
     if (idx!=7){
