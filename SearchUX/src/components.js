@@ -178,22 +178,16 @@ var MultiSelectField = React.createClass({
   },
   componentWillReceiveProps (newProps) {
     // console.log('SELECT CWRP', newProps);
-    // this.setActiveField(newProps);
-    // update opts
     var newPropLine = this.getActiveFieldFromProp(newProps);
     console.log('SELECT CWRP newPropLine', newPropLine);
     
     var oldPropLine = this.getActiveFieldFromProp(this.props);
-    //console.log('SELECT CWRP oldPropLine', oldPropLine);
     
     if (newPropLine.id !== 'Year') {    
       var sortedOpts= _.sortBy(newPropLine.opts, 'label');
     } else {
       var sortedOpts=newPropLine.opts;
     }
-    
-    //console.log('setting Opts to------------->>>>>>>>>>', sortedOpts);
-    //console.log('setting VALUE to', newPropLine.selected[0]);
 
     if (typeof newPropLine.selected[0] !== 'undefined' && newPropLine.selected[0].match(',')){
       var selectedArr=newPropLine.selected[0].split(',');
@@ -206,22 +200,18 @@ var MultiSelectField = React.createClass({
       } 
     }  
        
-    this.setState({ options: sortedOpts});
+    if (typeof sortedOpts !== 'undefined') {
+      this.setState({ options: sortedOpts});
+    }
    
-    //move to new nav?
     if (newPropLine.idx != oldPropLine.idx){
-      //   console.log('wants a new nav');
         var placeMod = (newPropLine.metaMulti) ? 'one or more ' : 'one ';
-        // console.log('PLACEMODDDDDDD', placeMod);
         this.setState({ placeholder : "select " + placeMod + newPropLine.label });
     }
+    if (typeof newPropLine.selected[0] !== 'undefined') {
      this.setState({value:newPropLine.selected[0]});
-     
-     //console.log(this.refs.theMultiSelect.focused);
-     
+    }
      this.setFocus();
-     
-     
   },
 	toggleDisabled (e) {
 		this.setState({ disabled: e.target.checked });
@@ -240,6 +230,7 @@ var MultiSelectField = React.createClass({
           onChange={this.handleSelectChange} 
           clearable={true}
           openAfterFocus={true}
+          noResultsText={false}
           />
 			</div>
 		);
