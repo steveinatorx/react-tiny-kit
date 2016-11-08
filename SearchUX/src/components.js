@@ -28,15 +28,16 @@ var SelectionTable = React.createClass({
       visibility: 'hidden',      
     };
     const resultsBoxStyle = {
-      backgroundColor : '#BAF084',
+      backgroundColor : '#5cb85c',
       fontSize: '1.5em',
       fontWeight: 'bold',
       borderRadius: '5px',
       borderWidth: '1px',
-      borderColor: 'black',
+      borderColor: '#4cae4c',
       borderStyle: 'solid',
       margin: '10px',
       padding: '10px',
+      color: 'white',
     };
     
     var myClass = classNames ({ 'hidden' : this.state.count === 0});
@@ -144,6 +145,19 @@ var MultiSelectField = React.createClass({
     }
     else {
         this.setState({ value }); 
+        
+        if (activeIdx === 0){
+         console.log('selected model - disable opts?');
+         console.log(this.state.options);
+         var newOpts=this.state.options.map(function(obj){
+           return obj['disabled']=true;
+         });
+         this.setState({options: newOpts});
+         
+
+          
+        }
+        
     }
 
     if (value === "" || typeof value === 'undefined') {
@@ -151,6 +165,21 @@ var MultiSelectField = React.createClass({
       console.log('in settingFIeldSelection block SETTING REDUCER STATE TO', [] );
       console.log('this.state.multi', this.state.multi);
         this.setState({ value:''});
+
+        if (activeIdx === 0){
+         console.log('selected model - disable opts?');
+         console.log(this.state.options);
+         var newOpts=this.state.options.map(function(obj){
+           return obj['disabled']=false;
+         });
+         this.setState({options: newOpts});
+         
+
+          
+        }
+
+        
+
       this.props.setFieldSelectionAndFetchData(activeIdx, []); 
     }
 
@@ -159,7 +188,7 @@ var MultiSelectField = React.createClass({
       console.log('in settingFIeldSelection block SETTING REDUCER STATE TO ', [value]);
       this.props.setFieldSelectionAndFetchData(activeIdx, [value]); 
      
-      if ((activeIdx!=7) && (value != null) && (this.getActiveFieldFromProp(this.props).metaMulti != true)) {
+      /*if ((activeIdx!=7) && (value != null) && (this.getActiveFieldFromProp(this.props).metaMulti != true)) {
         this.props.setActiveField(activeIdx+1);
       } else 
       // bump if only 1 opts
@@ -169,7 +198,7 @@ var MultiSelectField = React.createClass({
       // bump if All
       if ( allFlag === true) {
         this.props.setActiveField(activeIdx+1);
-      }
+      }*/
     }
 	},
   componentWillMount() {
@@ -447,7 +476,7 @@ export default class SearchListNav extends React.Component {
                     <button style={this.state.showNextBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--next button-primary u-pull-right"
                             onClick={this.next}>Next Field</button>
-                    <span style={this.state.init ? {} : this.noDisplayStyle} className="skeleton-alert alert-info"><strong>Select a Model Below to Start the Search!</strong></span>
+                    <span style={this.state.init ? {} : this.noDisplayStyle} className="skeleton-alert alert-warning"><strong><center>Select a Model Below to Start the Search!</center></strong></span>
               </div>
                 <MultiSelectField ref="multiSelect" {...this.props} />
                   {/* <div style={this.props.showNavigation ? {} : this.hidden}> */}
