@@ -81,7 +81,7 @@ var buildQueryObj = function buildQueryObj(state){
                var theObj={};
                var theValueArr = theValue[0].split(',');
                //console.log('theValueArr', theValueArr);
-               theObj.$in=theValueArr;
+               theObj.$all=theValueArr;
                queryRoot[theField] = theObj;  
             } else
             {
