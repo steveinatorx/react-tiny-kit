@@ -8,6 +8,9 @@ import './css/skeleton-alerts.css';
 import Select from 'react-select';
 var classNames = require('classnames');
 import './css/react-select.css';
+var Radium = require('radium');
+
+
 
 const resultsBoxCountStyle = {
       backgroundColor : '#5cb85c',
@@ -302,7 +305,7 @@ var MultiSelectField = React.createClass({
 	}
 });
 
-export default class SearchListNav extends React.Component {
+@Radium export default class SearchListNav extends React.Component {
   constructor(props) {
     super(props);
     // const { searchFields, setActiveField } = props;
