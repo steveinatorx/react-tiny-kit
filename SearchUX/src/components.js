@@ -5,6 +5,7 @@ import './css/prog-tracker.css';
 import './css/custom.css';
 import './css/normalize.css';
 import './css/skeleton-alerts.css';
+var MediaQuery = require('react-responsive');
 
 import styles from './style.js';
 
@@ -13,9 +14,9 @@ var classNames = require('classnames');
 import './css/react-select.css';
 var Radium = require('radium');
 
-
-
-console.log(styles);
+const cntQuery={
+    
+};
 
 
 
@@ -56,7 +57,12 @@ var SelectionTable = React.createClass({
         return (
           <div>
             <div style={this.getResultsBoxStyle()} >
-              {this.state.count} Vehicles Match Your Selections
+            <MediaQuery query='(max-width: 550px)'>
+                {this.state.count} Vehicles Match
+              </MediaQuery>
+              <MediaQuery query='(min-width: 551px)'>
+                {this.state.count} Vehicles Match Your Selections
+              </MediaQuery>
             </div>
           <table className="u-full-width">
       <thead>
@@ -165,9 +171,6 @@ var MultiSelectField = React.createClass({
            return obj['disabled']=true;
          });
          this.setState({options: newOpts});
-         
-
-          
         }
         
     }
@@ -479,16 +482,69 @@ var MultiSelectField = React.createClass({
           </ol>
             <div className="row">
               <div className="six columns">
+
               <div style={this.controlBoxStyle}>
+            <MediaQuery query='(max-width: 400px)'>
+                   <button style={Object.assign({}, this.state.showStartOverBtn ? {} : this.noDisplayStyle ,this.btnStyle)}
+                            className="multistep__btn--prev"
+                            onClick={this.startOver}>Clear</button>
+                   <button style={this.state.showPreviousBtn ? {} : this.noDisplayStyle}
+                            className="multistep__btn--prev"
+                            onClick={this.previous}>Prev
+                   </button>
+                   <button style={this.state.showNextBtn ? {} : this.noDisplayStyle}
+                            className="multistep__btn--next button-primary u-pull-right"
+                            onClick={this.next}>Next</button>
+                   </MediaQuery>
+
+            <MediaQuery query='(min-width: 401px)'>
+            <MediaQuery query='(max-width:800px)'>
+                   <button style={Object.assign({}, this.state.showStartOverBtn ? {} : this.noDisplayStyle ,this.btnStyle)}
+                            className="multistep__btn--prev"
+                            onClick={this.startOver}>x</button>
+                   <button style={this.state.showPreviousBtn ? {} : this.noDisplayStyle}
+                            className="multistep__btn--prev"
+                            onClick={this.previous}>&lt;
+                   </button>
+                   <button style={this.state.showNextBtn ? {} : this.noDisplayStyle}
+                            className="multistep__btn--next button-primary u-pull-right"
+                            onClick={this.next}>&gt;</button>
+            </MediaQuery>
+            </MediaQuery>
+             <MediaQuery query='(min-width: 801px)'>
+            <MediaQuery query='(max-width:1199px)'>
+                    <button style={Object.assign({}, this.state.showStartOverBtn ? {} : this.noDisplayStyle ,this.btnStyle)}
+                            className="multistep__btn--prev"
+                            onClick={this.startOver}>Clear</button>
+                   <button style={this.state.showPreviousBtn ? {} : this.noDisplayStyle}
+                            className="multistep__btn--prev"
+                            onClick={this.previous}>Prev
+                   </button>
+                   <button style={this.state.showNextBtn ? {} : this.noDisplayStyle}
+                            className="multistep__btn--next button-primary u-pull-right"
+                            onClick={this.next}>Next</button>
+           
+            
+            
+            
+            
+            
+            </MediaQuery>
+            </MediaQuery>
+            <MediaQuery query='(min-width: 1200px)'>
                    <button style={Object.assign({}, this.state.showStartOverBtn ? {} : this.noDisplayStyle ,this.btnStyle)}
                             className="multistep__btn--prev"
                             onClick={this.startOver}>Clear All</button>
-                    <button style={this.state.showPreviousBtn ? {} : this.noDisplayStyle}
+                   <button style={this.state.showPreviousBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--prev"
-                            onClick={this.previous}>Previous Field</button>
-                    <button style={this.state.showNextBtn ? {} : this.noDisplayStyle}
+                            onClick={this.previous}>Previous Field
+                   </button>
+                   <button style={this.state.showNextBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--next button-primary u-pull-right"
                             onClick={this.next}>Next Field</button>
+            </MediaQuery>
+
+
                     <span style={this.state.init ? {} : this.noDisplayStyle} className="skeleton-alert alert-warning"><strong><center>Select a Model Below to Start the Search!</center></strong></span>
               </div>
                 <MultiSelectField ref="multiSelect" {...this.props} />
