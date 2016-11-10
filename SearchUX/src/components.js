@@ -9,25 +9,7 @@ import Select from 'react-select';
 var classNames = require('classnames');
 import './css/react-select.css';
 
-var SelectionTable = React.createClass({
-	getInitialState () {
-    var keys = this.props.state.reducer.getIn(['searchFields']).map (f =>  {
-    });
-    return ({
-      selections: [],
-      count: 0     
-    });
-  },
-  componentWillReceiveProps (newProps) {
-    //console.log('in SELECTIONTABLE CWRP', newProps.state.reducer);    
-    this.setState({ selections: this.props.state.reducer.getIn(['searchFields'])});
-    this.setState({ count: newProps.state.reducer.get('resultsCount')});
-  },
-  render () {
-    var hiddenStyle = {
-      visibility: 'hidden',      
-    };
-    const resultsBoxStyle = {
+const resultsBoxCountStyle = {
       backgroundColor : '#5cb85c',
       fontSize: '1.5em',
       fontWeight: 'bold',
@@ -39,11 +21,64 @@ var SelectionTable = React.createClass({
       padding: '10px',
       color: 'white',
     };
+const resultsBoxNoCountStyle = {
+      backgroundColor : 'red',
+      fontSize: '1.5em',
+      fontWeight: 'bold',
+      borderRadius: '5px',
+      borderWidth: '1px',
+      borderColor: '#4cae4c',
+      borderStyle: 'solid',
+      margin: '10px',
+      padding: '10px',
+      color: 'white',
+    };
+    const hiddenStyle ={
+     visibility: 'hidden' 
+    };
+
+var SelectionTable = React.createClass({
+	getInitialState () {
+    var keys = this.props.state.reducer.getIn(['searchFields']).map (f =>  {
+    });
+    return ({
+      selections: [],
+      count: 0,
+      activeIdx: 0,     
+    });
+  },
+  getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
+    var ret=null;
+    theProps.state.reducer.getIn(['searchFields']).map(f => {
+      if (f.get('isActive') === true ) {
+        // console.log('getting ative field', f.get('id'));
+        ret = f.toJS();
+      }
+      });
+    return ret;
+  },
+  componentWillReceiveProps (newProps) {
+    //console.log('in SELECTIONTABLE CWRP', newProps.state.reducer);    
+    var activeLine=this.getActiveFieldFromProp(newProps);    
     
-    var myClass = classNames ({ 'hidden' : this.state.count === 0});
+    this.setState({ selections: this.props.state.reducer.getIn(['searchFields'])});
+    this.setState({ activeIdx: activeLine.idx});
+    this.setState({ count: newProps.state.reducer.get('resultsCount')});
+  },
+  getResultsBoxStyle : function getResultsBoxStyle(){
+    if (this.state.activeIdx ===0 && this.state.count === 0 ) {
+     return hiddenStyle;
+    }
+    return (this.state.count > 0) ? resultsBoxCountStyle : resultsBoxNoCountStyle;
+ },  
+  render () {
+    var hiddenStyle = {
+      visibility: 'hidden',      
+    };
+       
         return (
           <div>
-            <div style={resultsBoxStyle} className={myClass}>      
+            <div style={this.getResultsBoxStyle()} >
               {this.state.count} Vehicles Match Your Selections
             </div>
           <table className="u-full-width">
@@ -260,6 +295,7 @@ var MultiSelectField = React.createClass({
           clearable={true}
           openAfterFocus={true}
           noResultsText={false}
+          searchable={false}
           />
 			</div>
 		);
