@@ -18,9 +18,9 @@
 }
 
 .alert-warning {
-    background-color: #FCF3CF;
-    border-left-color: #F1C40F;
-    color: #F1C40F;
+    background-color: #FCF8E2;
+    border-left-color:#FCF8E2;
+    color:black;
 }
 
 .alert-error {
