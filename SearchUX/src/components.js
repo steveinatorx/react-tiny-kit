@@ -5,6 +5,9 @@ import './css/prog-tracker.css';
 import './css/custom.css';
 import './css/normalize.css';
 import './css/skeleton-alerts.css';
+
+import styles from './style.js';
+
 import Select from 'react-select';
 var classNames = require('classnames');
 import './css/react-select.css';
@@ -12,33 +15,9 @@ var Radium = require('radium');
 
 
 
-const resultsBoxCountStyle = {
-      backgroundColor : '#5cb85c',
-      fontSize: '1.5em',
-      fontWeight: 'bold',
-      borderRadius: '5px',
-      borderWidth: '1px',
-      borderColor: '#4cae4c',
-      borderStyle: 'solid',
-      margin: '10px',
-      padding: '10px',
-      color: 'white',
-    };
-const resultsBoxNoCountStyle = {
-      backgroundColor : 'red',
-      fontSize: '1.5em',
-      fontWeight: 'bold',
-      borderRadius: '5px',
-      borderWidth: '1px',
-      borderColor: '#4cae4c',
-      borderStyle: 'solid',
-      margin: '10px',
-      padding: '10px',
-      color: 'white',
-    };
-    const hiddenStyle ={
-     visibility: 'hidden' 
-    };
+console.log(styles);
+
+
 
 var SelectionTable = React.createClass({
 	getInitialState () {
@@ -63,22 +42,17 @@ var SelectionTable = React.createClass({
   componentWillReceiveProps (newProps) {
     //console.log('in SELECTIONTABLE CWRP', newProps.state.reducer);    
     var activeLine=this.getActiveFieldFromProp(newProps);    
-    
     this.setState({ selections: this.props.state.reducer.getIn(['searchFields'])});
     this.setState({ activeIdx: activeLine.idx});
     this.setState({ count: newProps.state.reducer.get('resultsCount')});
   },
   getResultsBoxStyle : function getResultsBoxStyle(){
     if (this.state.activeIdx ===0 && this.state.count === 0 ) {
-     return hiddenStyle;
+     return styles.hidden;
     }
-    return (this.state.count > 0) ? resultsBoxCountStyle : resultsBoxNoCountStyle;
+    return (this.state.count > 0) ? Object.assign({},styles.resultsBox,styles.resultsBoxGreen) : [styles.resultsBoxNoCount,styles.resultsBoxRed];
  },  
   render () {
-    var hiddenStyle = {
-      visibility: 'hidden',      
-    };
-       
         return (
           <div>
             <div style={this.getResultsBoxStyle()} >
@@ -96,7 +70,7 @@ var SelectionTable = React.createClass({
   { this.props.state.reducer.getIn(['searchFields']).map(f => {
         return (
         <tr key={f.get('idx')}>
-          <td>{f.get('label')}</td>
+          <td style={styles.selectionTd}>{f.get('label')}</td>
           <td>{ f.get('selected')}</td>
         </tr>
         )
