@@ -14,9 +14,6 @@ var classNames = require('classnames');
 import './css/react-select.css';
 var Radium = require('radium');
 
-const cntQuery={
-    
-};
 
 
 
