@@ -21,7 +21,6 @@ export const DevTools = createDevTools(
 
 
 const rootReducer = combineReducers( { reducer, routing: routerReducer} );  
-
 const middleware = applyMiddleware(
   routerMiddleware(browserHistory),
   thunk
