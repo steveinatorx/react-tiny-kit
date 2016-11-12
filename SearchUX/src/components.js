@@ -51,7 +51,7 @@ var SelectionTable = React.createClass({
     if (this.state.activeIdx ===0 && this.state.count === 0 ) {
      return styles.hidden;
     }
-    return (this.state.count > 0) ? Object.assign({},styles.resultsBox,styles.resultsBoxGreen) : [styles.resultsBoxNoCount,styles.resultsBoxRed];
+    return (this.state.count > 0) ? Object.assign({},styles.resultsBox,styles.resultsBoxGreen) : Object.assign({},styles.resultsBox,styles.resultsBoxRed);
  },  
   render () {
         return (
@@ -114,22 +114,11 @@ var MultiSelectField = React.createClass({
     return ret;
   },
   clearDisabledOpts: function () {
-    
-    console.log('in clearDisOpts');
     var newOpts = this.state.options.map(function(obj){
             obj['disabled'] = false;
-            console.log(obj);
             return obj;
          });
-         
-
-         
-         
-         
-
     this.setState({options: newOpts});
-    
-    
   },
   getSelected : function getSelected(){
     console.log('in selected', this.props.state.reducer.getIn(['searchFields']));
@@ -139,13 +128,9 @@ var MultiSelectField = React.createClass({
               var thisSegment={};
               console.log(f.get('id') + ' selected length ', f.get('selected'));
               if (f.get('selected').length > 1 ) {
-                
                 selected.concat(f.get('selected'));
-
               } else if (f.get('selected').length>0){
-                
                 selected.concat(f.get('selected'));
-
               }
     });
 
