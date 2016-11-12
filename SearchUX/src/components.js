@@ -113,7 +113,25 @@ var MultiSelectField = React.createClass({
       });
     return ret;
   },
-    getSelected : function getSelected(){
+  clearDisabledOpts: function () {
+    
+    console.log('in clearDisOpts');
+    var newOpts = this.state.options.map(function(obj){
+            obj['disabled'] = false;
+            console.log(obj);
+            return obj;
+         });
+         
+
+         
+         
+         
+
+    this.setState({options: newOpts});
+    
+    
+  },
+  getSelected : function getSelected(){
     console.log('in selected', this.props.state.reducer.getIn(['searchFields']));
     var selected=[]; 
     this.props.state.reducer.getIn(['searchFields']).map(f => {
@@ -329,14 +347,19 @@ var MultiSelectField = React.createClass({
              return ret;
   }
   componentWillReceiveProps (newProps) {
-    console.log('------------------------------------------NAV CWRP', newProps);
+    // console.log('------------------------------------------NAV CWRP', newProps);
     // this.setActiveField(newProps);
     // update opts
     
-    console.log(' selected length of 0 idx?', newProps.state.reducer.getIn(['searchFields', 0 , 'selected']).length);
+    // console.log(' selected length of 0 idx?', newProps.state.reducer.getIn(['searchFields', 0 , 'selected']).length);
     var isInit = (newProps.state.reducer.getIn(['searchFields', 0 , 'selected']).length === 0) ? true: false;
     console.log('isInit>>' , isInit);
     this.setState({ init: isInit});
+    if(isInit) { 
+      this.refs.multiSelect.clearDisabledOpts();
+    }
+
+
     
     var newPropLine = this.getActiveFieldFromProp(newProps);
     //console.log('NAV CWRP newPropLine', newPropLine);
@@ -455,6 +478,8 @@ var MultiSelectField = React.createClass({
       this.props.clearAll();
       this.setNavState(0);
       this.setState({ init: true});
+
+      this.refs.multiSelect.clearDisabledOpts();
       this.refs.multiSelect.setState({ value: ''});
       this.refs.multiSelect.setFocus();
 
