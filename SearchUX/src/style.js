@@ -6,7 +6,6 @@ export default {
       fontWeight: 'bold',
       borderRadius: '5px',
       borderWidth: '1px',
-      borderColor: '#4cae4c',
       borderStyle: 'solid',
       margin: '10px',
       padding: '10px',
@@ -14,9 +13,11 @@ export default {
     },
 	resultsBoxGreen: {
       backgroundColor : '#5cb85c',
+      borderColor: '#4cae4c',
 	},
 	resultsBoxRed: {
-	  backgroundColor: 'red'
+	  backgroundColor: 'red',
+    borderColor: '#a94442'
 	},
     hidden: { 
      visibility: 'hidden' 
