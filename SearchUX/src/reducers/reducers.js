@@ -27,8 +27,8 @@ const init = new Map({
     Map({ id: 'Year', navLabel: 'year', label: 'year', idx: 2, isActive: false, opts: [], metaMulti: true, selected: [] }),
     Map({ id: 'Country', navLabel: 'country', label: 'country', idx: 3, isActive: false, opts: [], metaMulti: true, selected: [] }),
     Map({ id: 'Transmission', navLabel: 'trans', label: 'transmission', idx: 4, isActive: false, opts: [], metaMulti: true, selected: [] }),
-    Map({ id: 'Ext1', navLabel: 'ext color', label: 'exterior color', idx: 5, isActive: false, opts: [], metaMulti: true, selected: [] }),
-    Map({ id: 'Int1', navLabel: 'int color', label: 'interior color', idx: 6, isActive: false, opts: [], metaMulti: true, selected: [] }),
+    Map({ id: 'ExtLabel', navLabel: 'ext color', label: 'exterior color', idx: 5, isActive: false, opts: [], metaMulti: true, selected: [] }),
+    Map({ id: 'IntLabel', navLabel: 'int color', label: 'interior color', idx: 6, isActive: false, opts: [], metaMulti: true, selected: [] }),
     Map({ id: 'Opts', navLabel: 'options', label: 'options', idx: 7, isActive: false, opts: [], metaMulti: true, selected: [] }),
   ])
 });
@@ -55,6 +55,8 @@ export default function reducer (state = init, action) {
       return state.set('resultsCount', action.payload.count);
     case 'RECEIVE_FIELDS':
 
+
+      console.log('RECIEVE_FIELDS');
       var objId = state.getIn(['searchFields']).filter( f=>{
         if (f.get('id') === action.payload.field){
           return true;
@@ -65,7 +67,20 @@ export default function reducer (state = init, action) {
       
       //convert to multiselect object and strings?
       var optObjs = action.payload.values.map( o => {
-            return { label: o.toString(), value: o.toString()} 
+            if (action.payload.field === 'Opts') {
+              console.log('mod these labels...', o.indexOf(' '));
+
+              var code = o.substring(0,o.indexOf(' '));
+              
+              console.log('WTFWTF', code);
+              
+              var label = o.substring(o.indexOf(' ') +1 ) + ' ' + code;
+
+              console.log('mod this field', label);
+            } else {
+              var label=o.toString();
+            }
+            return { label: label, value: o.toString()} 
       });
       
       console.log('RECEIVEFIELDS this is multi? ', objId.toJS()[0].multi);
@@ -74,8 +89,6 @@ export default function reducer (state = init, action) {
         optObjs.unshift({ label: 'All', value: 'all'});
       }
       console.log('RECEIVEFIELDS arr?', optObjs);
-       
-
       //console.log('receive fields idx', objId.toJS()[0].idx);
       return state.setIn(['searchFields',objId.toJS()[0].idx,'opts'],optObjs);
       
