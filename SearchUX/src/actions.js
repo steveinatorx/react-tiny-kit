@@ -172,6 +172,7 @@ export function fetchFields(objectFieldId, queryObj) {
             queryObj: queryObj,
           }).then(res => {
             //console.log('RESRESRESRESRESRESRESRES', res);
+            
             dispatch(receiveFields(objectFieldId, res.data.values));
             dispatch(receiveCount(res.data.count));
           }).catch(err => {
