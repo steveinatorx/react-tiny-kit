@@ -1,5 +1,8 @@
 import { List, Map } from 'immutable';
 import { LOCATION_CHANGE } from 'react-router-redux';
+import { sortBy } from 'lodash';
+
+
 
 const init = new Map({
   email: null,
@@ -55,7 +58,6 @@ export default function reducer (state = init, action) {
       return state.set('resultsCount', action.payload.count);
     case 'RECEIVE_FIELDS':
 
-
       console.log('RECIEVE_FIELDS');
       var objId = state.getIn(['searchFields']).filter( f=>{
         if (f.get('id') === action.payload.field){
@@ -64,24 +66,23 @@ export default function reducer (state = init, action) {
           return false;
         }
       });
-      
       //convert to multiselect object and strings?
       var optObjs = action.payload.values.map( o => {
             if (action.payload.field === 'Opts') {
               console.log('mod these labels...', o.indexOf(' '));
-
               var code = o.substring(0,o.indexOf(' '));
-              
               console.log('WTFWTF', code);
-              
               var label = o.substring(o.indexOf(' ') +1 ) + ' ' + code;
-
               console.log('mod this field', label);
             } else {
               var label=o.toString();
             }
             return { label: label, value: o.toString()} 
       });
+      //sort lexi
+      
+      optObjs = sortBy(optObjs);
+      console.log('in REDUCER', optObjs);
       
       console.log('RECEIVEFIELDS this is multi? ', objId.toJS()[0].multi);
       if ((action.payload.field !== 'Opts') && (objId.toJS()[0].metaMulti === true) && ( action.payload.values.length > 1 )) {

@@ -14,15 +14,12 @@ var classNames = require('classnames');
 import './css/react-select.css';
 var Radium = require('radium');
 
-
-
-
 var SelectionTable = React.createClass({
 	getInitialState () {
     var keys = this.props.state.reducer.getIn(['searchFields']).map (f =>  {
     });
     return ({
-      selections: [],
+      selected: [],
       count: 0,
       activeIdx: 0,     
     });
@@ -38,14 +35,23 @@ var SelectionTable = React.createClass({
     return ret;
   },
   componentWillReceiveProps (newProps) {
-    //console.log('in SELECTIONTABLE CWRP', newProps.state.reducer);    
+    console.log('in SELECTIONTABLE CWRP', newProps.state.reducer);    
     var activeLine=this.getActiveFieldFromProp(newProps);    
-    this.setState({ selections: this.props.state.reducer.getIn(['searchFields'])});
+    
+    console.log('activeLINLINELINE', activeLine);
+    
+    this.setState({ selected: activeLine.selected });
     this.setState({ activeIdx: activeLine.idx});
     this.setState({ count: newProps.state.reducer.get('resultsCount')});
   },
   getResultsBoxStyle : function getResultsBoxStyle(){
-    if (this.state.activeIdx ===0 && this.state.count === 0 ) {
+    if (this.state.activeIdx === 0 && this.state.selected.length === 0 ) {
+     return styles.hidden;
+    }
+    if (this.state.activeIdx === 0  && this.state.count === 0) {
+     return styles.hidden;
+    }
+    if (this.state.count === 15843) {
      return styles.hidden;
     }
     return (this.state.count > 0) ? Object.assign({},styles.resultsBox,styles.resultsBoxGreen) : Object.assign({},styles.resultsBox,styles.resultsBoxRed);
@@ -188,13 +194,7 @@ var MultiSelectField = React.createClass({
            return obj['disabled']=false;
          });
          this.setState({options: newOpts});
-         
-
-          
         }
-
-        
-
       this.props.setFieldSelectionAndFetchData(activeIdx, []); 
     }
 
@@ -223,15 +223,31 @@ var MultiSelectField = React.createClass({
   componentWillReceiveProps (newProps) {
     // console.log('SELECT CWRP', newProps);
     var newPropLine = this.getActiveFieldFromProp(newProps);
-    console.log('SELECT CWRP newPropLine', newPropLine);
+    //console.log('SELECT CWRP newPropLine', newPropLine);
     
     var oldPropLine = this.getActiveFieldFromProp(this.props);
     
-    if (newPropLine.id !== 'Year') {    
-      var sortedOpts= _.sortBy(newPropLine.opts, 'label');
+    if (newPropLine.id === 'Year') { 
+    var tmpOpts= _.sortBy(newPropLine.opts, 'label');
+        var lastOpt=tmpOpts.pop();
+        console.log('LAST OP', lastOpt.label);
+        if (lastOpt.label === 'All'){
+          var sortedOpts = tmpOpts;
+          sortedOpts.unshift(lastOpt);
+        }      
     } else {
-      var sortedOpts=newPropLine.opts;
-    }
+      
+      
+      var sortedOpts= _.sortBy(newPropLine.opts, 'label');
+
+    }   
+      
+      
+    //} else {
+    //  var sortedOpts=newPropLine.opts;
+   // }
+    
+    
 
     if (typeof newPropLine.selected[0] !== 'undefined' && newPropLine.selected[0].match(',')){
       var selectedArr=newPropLine.selected[0].split(',');
