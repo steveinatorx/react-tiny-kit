@@ -2,12 +2,16 @@
 
 import axios from 'axios';
 export const SET_ACTIVE_FIELD = 'SET_ACTIVE_FIELD';
+import { EventTypes } from 'redux-segment';
 var __CONFIG__ = require('__CONFIG__');
 
 export function setActiveField(idx) {
   return {
     type: 'SET_ACTIVE_FIELD',
-    payload: idx
+    payload: idx,
+    meta: {
+      analytics: EventTypes.track,
+    },
   };
 }
 
@@ -30,8 +34,6 @@ export function setFieldSelection(idx,selection) {
     });
   }
 }
-
-
 
 var buildQueryObj = function buildQueryObj(state){
     //console.log('in buildQ actions', state.reducer);
