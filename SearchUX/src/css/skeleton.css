@@ -223,6 +223,44 @@ input[type="button"].button-primary:focus {
   border-color: #1EAEDB; }
 
 
+/* custom */
+.button.button-success,
+button.button-success,
+input[type="submit"].button-success:enabled,
+input[type="reset"].button-success:enabled,
+input[type="button"].button-success:enabled {
+  color: #FFF;
+  background-color: #5cb85c;
+  border-color: #4cae4c; }
+input[type="submit"].button-success:disabled,
+input[type="reset"].button-success:disabled,
+input[type="button"].button-success:disabled {
+  color: #FFF;
+  background-color: black;
+  //background-color: #A8B3A8;
+  border-color: #4cae4c; }
+.button.button-success:hover:enabled
+button.button-success:hover:enabled
+input[type="submit"].button-success:hover:enabled
+input[type="reset"].button-success:hover:enabled
+input[type="button"].button-success:hover:enabled
+.button.button-success:focus,
+button.button-success:focus,
+input[type="submit"].button-success:focus,
+input[type="reset"].button-success:focus,
+input[type="button"].button-success:focus {
+  color: #FFF;
+  background-color: #3B733B;
+  border-color: #3B733B; }
+  
+  
+  
+
+
+
+
+
+
 /* Forms
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 input[type="email"],

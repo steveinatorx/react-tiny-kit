@@ -230,7 +230,7 @@ var MultiSelectField = React.createClass({
     if (newPropLine.id === 'Year') { 
     var tmpOpts= _.sortBy(newPropLine.opts, 'label');
         var lastOpt=tmpOpts.pop();
-        //console.log('LAST OP', lastOpt.label);
+        //onsole.log('LAST OP', lastOpt.label);
         if (lastOpt.label === 'All'){
           var sortedOpts = tmpOpts;
           sortedOpts.unshift(lastOpt);
@@ -305,15 +305,12 @@ var MultiSelectField = React.createClass({
   constructor(props) {
     super(props);
     this.props.getUUID();
-    // const { searchFields, setActiveField } = props;
-    //const clickField = id => event => setActiveField(id);      
-    //console.log('PROPS', props);
     var theListSize = props.state.reducer.getIn(['searchFields']).size;
-    // console.log('activeFObj', activeFieldObj);
     this.state = {
       showPreviousBtn: false,
       showNextBtn: false,
       showMatchBtn: false,
+      disabledMatchBtn: false,
       compState: 0,
       navState: this.getNavStates(0, theListSize),
       init: true,
@@ -330,15 +327,11 @@ var MultiSelectField = React.createClass({
     this.controlBoxStyle = {
       height: '30px' 
     };
-    
-
-    //this.handleOnClick = this.handleOnClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.next = this.next.bind(this);
     this.previous = this.previous.bind(this);
     this.startOver = this.startOver.bind(this);
     this.getActiveFieldFromProp = this.getActiveFieldFromProp.bind(this);
-    //this.getActiveSearchField = this.getActiveSearchField.bind(this);
   }
   getActiveFieldFromProp(theProps){
             var ret=null;
@@ -350,41 +343,33 @@ var MultiSelectField = React.createClass({
              return ret;
   }
   componentWillReceiveProps (newProps) {
-    // console.log('------------------------------------------NAV CWRP', newProps);
-    // this.setActiveField(newProps);
-    // update opts
-    
-    // console.log(' selected length of 0 idx?', newProps.state.reducer.getIn(['searchFields', 0 , 'selected']).length);
-    var isInit = (newProps.state.reducer.getIn(['searchFields', 0 , 'selected']).length === 0) ? true: false;
+        var isInit = (newProps.state.reducer.getIn(['searchFields', 0 , 'selected']).length === 0) ? true: false;
     console.log('isInit>>' , isInit);
     this.setState({ init: isInit});
+    this.setState({ count: newProps.state.reducer.get('resultsCount')});
     if(isInit) { 
       this.refs.multiSelect.clearDisabledOpts();
     }
-
-
     
     var newPropLine = this.getActiveFieldFromProp(newProps);
-    //console.log('NAV CWRP newPropLine', newPropLine);
-    
     var oldPropLine = this.getActiveFieldFromProp(this.props);
-    // console.log('NAV CWRP oldPropLine', oldPropLine.idx);
-
-    //move to new nav?
     if (newPropLine.idx != oldPropLine.idx) {
             console.log('new active field'); 
             this.setNavState(newPropLine.idx);
     }
-    
-    //console.log('NAV CWRPPPPPPPPPPPPPPPPPPPPPPPP--------> is anything selected?', typeof newPropLine.selected[0] !== 'undefined');       
-    //console.log('NAV CWRPPPPPPPPPPPPPPPPPPPPPPPP--------> is anything selected?', newPropLine.selected);       
     if (typeof newPropLine.selected[0] !=='undefined') {
-      //console.log('SHOW NEXT BTN');
-      this.setState({ showNextBtn: true}); 
+      console.log('SHOW NEXT BTN');
+      if(newPropLine.idx !== 7){
+        this.setState({ showNextBtn: true}); 
+        this.setState({ showMatchBtn: false}); 
+      } else {
+        this.setState({ showMatchBtn: true}); 
+        this.setState({ showNextBtn: false}); 
+      }
     } else {
-
       //console.log('HIDE NEXT BTN');
        this.setState({ showNextBtn: false}); 
+       this.setState({ showMatchBtn: false}); 
     }
   }
 
@@ -431,8 +416,6 @@ var MultiSelectField = React.createClass({
   }
 
   setNavState(next) {
-    // console.log('in setNavState i want to move to:', next);
-    // console.log('in setNavState i want to move to:', this.props);
     var theListSize = this.props.state.reducer.getIn(['searchFields']).size;
     
      this.props.setActiveField(next); 
@@ -450,17 +433,6 @@ var MultiSelectField = React.createClass({
       this.next()
     }
   }
-
-  /*handleOnClick (evt) {
-    console.log('in hClick', evt.currentTarget.value);
-    if (evt.currentTarget.value === (this.props.state.reducer.size - 1) &&
-      this.state.compState === (this.props.state.reducer.size - 1)) {
-      this.setNavState(this.props.state.reducer.size)
-    }
-    else {
-      this.setNavState(evt.currentTarget.value)
-    }
-  }*/
 
   next() {
     this.setNavState(this.state.compState + 1);
@@ -486,6 +458,20 @@ var MultiSelectField = React.createClass({
       this.refs.multiSelect.setState({ value: ''});
       this.refs.multiSelect.setFocus();
 
+  }
+  
+  getMatchBtnStyle() {
+    console.log('in gmbs');
+    
+    var style={};
+    
+    var propLine = this.getActiveFieldFromProp(this.props);
+    //display
+    if (propLine.idx !== 7){
+      
+    }
+
+    
   }
 
   getClassName(className, i){
@@ -523,8 +509,12 @@ var MultiSelectField = React.createClass({
                    <button style={this.state.showNextBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--next button-primary u-pull-right"
                             onClick={this.next}>Next</button>
-                   </MediaQuery>
+            <button style={this.state.showMatchBtn ? {} : this.noDisplayStyle}
+                            className="multistep__btn--next button-success u-pull-right"
+                            disabled={this.state.disabledMatchBtn}
+                            onClick={this.next}>Submit2</button>
 
+            </MediaQuery>
             <MediaQuery query='(min-width: 401px)'>
             <MediaQuery query='(max-width:800px)'>
                    <button style={Object.assign({}, this.state.showStartOverBtn ? {} : this.noDisplayStyle ,this.btnStyle)}
@@ -537,6 +527,10 @@ var MultiSelectField = React.createClass({
                    <button style={this.state.showNextBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--next button-primary u-pull-right"
                             onClick={this.next}>&gt;</button>
+              <button style={this.state.showMatchBtn ? {} : this.noDisplayStyle}
+                            className="multistep__btn--next button-success u-pull-right"
+                            disabled={this.state.disabledMatchBtn}
+                            onClick={this.next}>go</button>
             </MediaQuery>
             </MediaQuery>
              <MediaQuery query='(min-width: 801px)'>
@@ -551,12 +545,10 @@ var MultiSelectField = React.createClass({
                    <button style={this.state.showNextBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--next button-primary u-pull-right"
                             onClick={this.next}>Next</button>
-           
-            
-            
-            
-            
-            
+                    <button style={this.state.showMatchBtn ? {} : this.noDisplayStyle}
+                            className="multistep__btn--next button-success u-pull-right"
+                            disabled={this.state.count > 0}
+                            onClick={this.next}>Submit</button>
             </MediaQuery>
             </MediaQuery>
             <MediaQuery query='(min-width: 1200px)'>
@@ -570,6 +562,10 @@ var MultiSelectField = React.createClass({
                    <button style={this.state.showNextBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--next button-primary u-pull-right"
                             onClick={this.next}>Next Field</button>
+                   <button style={this.state.showMatchBtn ? {} : this.noDisplayStyle}
+                            className="multistep__btn--next button-success u-pull-right"
+                            disabled={true}
+                            onClick={this.next}>Get Matches</button>
             </MediaQuery>
 
 
