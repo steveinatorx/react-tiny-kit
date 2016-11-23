@@ -3,6 +3,8 @@
 import axios from 'axios';
 export const SET_ACTIVE_FIELD = 'SET_ACTIVE_FIELD';
 import { EventTypes } from 'redux-segment';
+import cookie from 'react-cookie';
+
 var __CONFIG__ = require('__CONFIG__');
 
 export function setActiveField(idx) {
@@ -197,11 +199,18 @@ export function fetchCount(queryObj) {
 
 export function getUUID() {
   console.log('in getUUID');
-    return dispatch =>
+    if (!cookie.load('PCNALocator')){
+      console.log('no cookie found - get uuid and set cookie and state uuid');
+      return dispatch =>
         axios.get( __CONFIG__.apiHost + '/api/uuid').then(res => {
             //console.log('RESRESRESRESRESRESRESRES', res);
             dispatch(receiveUUID(res.data.uuid));
           }).catch(err => {
             dispatch(apiError(err));
           });
+    } else {
+        console.log('cookie set@!');
+        cookie.save('PCNALocator', cookie.load('PCNALocator', { path: '/' });)
+        dispatch(receiveUUID(res.data.uuid));
+    }
 }
