@@ -20,7 +20,10 @@ export function setActiveField(idx) {
 export const CLEAR_ALL = 'CLEAR_ALL';
 export function clearAll() {
   return {
-    type: 'CLEAR_ALL'
+    type: 'CLEAR_ALL',
+    meta: {
+      analytics: EventTypes.track,
+    },
   };
 }
 
@@ -28,11 +31,25 @@ export const SET_FIELD_SELECTION = 'SET_FIELD_SELECTION';
 export function setFieldSelection(idx,selection) {
   return dispatch => {
     dispatch({
-    type: 'SET_FIELD_SELECTION',
-    payload: {
-      idx: idx,
-      selection: selection
-    }
+      type: 'SET_FIELD_SELECTION',
+      payload: {
+        idx: idx,
+        selection: selection
+      },
+      meta: {
+          analytics: [
+           {
+             eventType: EventTypes.track,
+             eventPayload: {
+               event: 'SET_FIELD_SELECTION',
+               properties:  {
+                idx: idx, 
+                selection: selection                  
+               }
+             }
+           }   
+          ]
+      }
     });
   }
 }
@@ -197,20 +214,40 @@ export function fetchCount(queryObj) {
           });
 }
 
+export const SET_UUID = 'SET_UUID';
+export function setUUID(uuid) {
+  console.log('in setUUID');
+  return {
+      type: SET_UUID,
+      payload: {
+        uuid: uuid,
+      },
+      meta: {
+        analytics: EventTypes.track
+      },
+  }
+}
+
+export function receiveUUID(uuid) {    
+   console.log('setting cookie', uuid);
+   cookie.save('PCNALocator', uuid, { path: '/' });
+   dispatch(setUUID(uuid));
+}
+
 export function getUUID() {
   console.log('in getUUID');
     if (!cookie.load('PCNALocator')){
       console.log('no cookie found - get uuid and set cookie and state uuid');
       return dispatch =>
         axios.get( __CONFIG__.apiHost + '/api/uuid').then(res => {
-            //console.log('RESRESRESRESRESRESRESRES', res);
-            dispatch(receiveUUID(res.data.uuid));
+            console.log('RESRESRESRESRESRESRESRES', res);
+            dispatch(receiveUUID(res.data));
           }).catch(err => {
             dispatch(apiError(err));
           });
     } else {
-        console.log('cookie set@!');
-        cookie.save('PCNALocator', cookie.load('PCNALocator', { path: '/' });)
-        dispatch(receiveUUID(res.data.uuid));
+        console.log('retrieved cookie!!!', cookie.load('PCNALocator', { path: '/' }));
+        //cookie.save('PCNALocator', cookie.load('PCNALocator', { path: '/' }));
+       return dispatch => (setUUID(cookie.load('PCNALocator', { path: '/' })));
     }
 }
