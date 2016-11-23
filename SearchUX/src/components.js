@@ -234,6 +234,9 @@ var MultiSelectField = React.createClass({
         if (lastOpt.label === 'All'){
           var sortedOpts = tmpOpts;
           sortedOpts.unshift(lastOpt);
+        } else {
+          //single opts in Year
+          var sortedOpts=newPropLine.opts;
         }      
     } else {
       
@@ -241,7 +244,7 @@ var MultiSelectField = React.createClass({
       var sortedOpts= _.sortBy(newPropLine.opts, 'label');
 
     }   
-      
+     console.log('using sortedOpts', sortedOpts); 
       
     //} else {
     //  var sortedOpts=newPropLine.opts;
@@ -310,6 +313,7 @@ var MultiSelectField = React.createClass({
     this.state = {
       showPreviousBtn: false,
       showNextBtn: false,
+      showMatchBtn: false,
       compState: 0,
       navState: this.getNavStates(0, theListSize),
       init: true,
