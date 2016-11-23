@@ -301,6 +301,7 @@ var MultiSelectField = React.createClass({
 @Radium export default class SearchListNav extends React.Component {
   constructor(props) {
     super(props);
+    this.props.getUUID();
     // const { searchFields, setActiveField } = props;
     //const clickField = id => event => setActiveField(id);      
     //console.log('PROPS', props);

@@ -10,8 +10,11 @@ import { routerMiddleware, syncHistoryWithStore } from 'react-router-redux';
 import thunk from 'redux-thunk';
 import {browserHistory} from 'react-router';
 
+import cookie from 'react-cookie';
 import { createTracker } from 'redux-segment';
 var __CONFIG__ = require('__CONFIG__');
+
+
 
 /*import { createDevTools } from 'redux-devtools'
 import LogMonitor from 'redux-devtools-log-monitor'
@@ -59,8 +62,3 @@ render(
   </Provider>,
   document.getElementById('app')
 );
-
-/* render(
-  <h1> foo </h1>, 
-  document.getElementById('app')
-); */

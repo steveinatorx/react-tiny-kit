@@ -164,8 +164,6 @@ export function fetchFields(objectFieldId, queryObj) {
   /*console.log('in fetchFields', objectFieldId );
   console.log('in fetchFields', queryObj );
   console.log( __CONFIG__ );*/
-  
-  
 
     return dispatch =>
         axios.post( __CONFIG__.apiHost + '/api/pcnacarsmeta', 
@@ -192,6 +190,17 @@ export function fetchCount(queryObj) {
           }).then(res => {
             //console.log('RESRESRESRESRESRESRESRES', res);
             dispatch(receiveCount(res.data.count));
+          }).catch(err => {
+            dispatch(apiError(err));
+          });
+}
+
+export function getUUID() {
+  console.log('in getUUID');
+    return dispatch =>
+        axios.get( __CONFIG__.apiHost + '/api/uuid').then(res => {
+            //console.log('RESRESRESRESRESRESRESRES', res);
+            dispatch(receiveUUID(res.data.uuid));
           }).catch(err => {
             dispatch(apiError(err));
           });

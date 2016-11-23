@@ -2,9 +2,8 @@ import { List, Map } from 'immutable';
 import { LOCATION_CHANGE } from 'react-router-redux';
 import { sortBy } from 'lodash';
 
-
-
 const init = new Map({
+  uuid: null,
   email: null,
   searchCode: null,
   resultsCount: 0,
