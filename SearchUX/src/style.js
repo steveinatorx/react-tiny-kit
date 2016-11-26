@@ -12,8 +12,8 @@ export default {
       color: 'white',
     },
 	resultsBoxGreen: {
-      backgroundColor : '#5cb85c',
-      borderColor: '#4cae4c',
+      backgroundColor : 'blue',
+      borderColor: 'blue'
 	},
 	resultsBoxRed: {
 	  backgroundColor: 'red',
