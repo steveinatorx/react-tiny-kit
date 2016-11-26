@@ -357,19 +357,16 @@ var MultiSelectField = React.createClass({
             console.log('new active field'); 
             this.setNavState(newPropLine.idx);
     }
-    if (typeof newPropLine.selected[0] !=='undefined') {
-      console.log('SHOW NEXT BTN');
-      if(newPropLine.idx !== 7){
+    
+    console.log('SHOW NEXT BTN' ,typeof newPropLine.selected !== undefined);
+    console.log('SHOW NEXT BTN' ,newPropLine.idx !== 7); 
+    if (typeof newPropLine.selected !=='undefined' && newPropLine.idx !== 7) {
         this.setState({ showNextBtn: true}); 
         this.setState({ showMatchBtn: false}); 
-      } else {
-        this.setState({ showMatchBtn: true}); 
-        this.setState({ showNextBtn: false}); 
-      }
     } else {
       //console.log('HIDE NEXT BTN');
        this.setState({ showNextBtn: false}); 
-       this.setState({ showMatchBtn: false}); 
+       this.setState({ showMatchBtn: true}); 
     }
   }
 
