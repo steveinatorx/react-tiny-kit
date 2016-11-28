@@ -359,14 +359,19 @@ var MultiSelectField = React.createClass({
     }
     
     console.log('SHOW NEXT BTN' ,typeof newPropLine.selected !== undefined);
+    console.log('SHOW NEXT BTN' , newPropLine.selected.length);
     console.log('SHOW NEXT BTN' ,newPropLine.idx !== 7); 
-    if (typeof newPropLine.selected !=='undefined' && newPropLine.idx !== 7) {
+    if (typeof newPropLine.selected !=='undefined' && newPropLine.selected.length>0 && newPropLine.idx !== 7) {
+      console.log('show next');
         this.setState({ showNextBtn: true}); 
         this.setState({ showMatchBtn: false}); 
-    } else {
-      //console.log('HIDE NEXT BTN');
+    } else if (newPropLine.idx===7) {
+      console.log('HIDE NEXT BTN');
        this.setState({ showNextBtn: false}); 
        this.setState({ showMatchBtn: true}); 
+    } else {
+        this.setState({ showNextBtn: false}); 
+       this.setState({ showMatchBtn: false}); 
     }
   }
 
