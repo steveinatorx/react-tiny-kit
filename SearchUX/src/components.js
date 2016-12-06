@@ -1,7 +1,7 @@
 import React from 'react';
 import sortBy from 'lodash'; 
 import {Form, Field} from 'simple-react-forms';
-
+var ReCAPTCHA = require("react-google-recaptcha");
 
 import Dialog from 'rc-dialog';
 import Animate from 'rc-animate';
@@ -42,11 +42,9 @@ var SelectionTable = React.createClass({
     return ret;
   },
   componentWillReceiveProps (newProps) {
-    console.log('in SELECTIONTABLE CWRP', newProps.state.reducer);    
+    //console.log('in SELECTIONTABLE CWRP', newProps.state.reducer);    
     var activeLine=this.getActiveFieldFromProp(newProps);    
-    
-    console.log('activeLINLINELINE', activeLine);
-    
+    //console.log('activeLINLINELINE', activeLine);
     this.setState({ selected: activeLine.selected });
     this.setState({ activeIdx: activeLine.idx});
     this.setState({ count: newProps.state.reducer.get('resultsCount')});
@@ -178,8 +176,6 @@ var MultiSelectField = React.createClass({
         this.setState({ value }); 
         
         if (activeIdx === 0){
-         console.log('selected model - disable opts?');
-         console.log(this.state.options);
          var newOpts=this.state.options.map(function(obj){
            return obj['disabled']=true;
          });
@@ -189,14 +185,9 @@ var MultiSelectField = React.createClass({
     }
 
     if (value === "" || typeof value === 'undefined') {
-      console.log('SELECTED {}{}{}{}{}{}{}{}{}NULL{}{}{}{}{}{}{}{}');
-      console.log('in settingFIeldSelection block SETTING REDUCER STATE TO', [] );
-      console.log('this.state.multi', this.state.multi);
         this.setState({ value:''});
 
         if (activeIdx === 0){
-         console.log('selected model - disable opts?');
-         console.log(this.state.options);
          var newOpts=this.state.options.map(function(obj){
            return obj['disabled']=false;
          });
@@ -207,7 +198,6 @@ var MultiSelectField = React.createClass({
 
     // on remove dont set fields?   
     if (value !=="" && value !== null) {
-      console.log('in settingFIeldSelection block SETTING REDUCER STATE TO ', [value]);
       this.props.setFieldSelectionAndFetchData(activeIdx, [value]); 
      
       /*if ((activeIdx!=7) && (value != null) && (this.getActiveFieldFromProp(this.props).metaMulti != true)) {
@@ -262,7 +252,6 @@ var MultiSelectField = React.createClass({
     if (typeof newPropLine.selected[0] !== 'undefined' && newPropLine.selected[0].match(',')){
       var selectedArr=newPropLine.selected[0].split(',');
       if(selectedArr.length > 0 && selectedArr.length === (sortedOpts.length -1)){
-        console.log('remove all from opts');
         sortedOpts = sortedOpts.filter( function(obj) {
           return obj.label != 'All'
         });
@@ -338,6 +327,9 @@ var MultiSelectField = React.createClass({
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.next = this.next.bind(this);
     this.openDialog = this.openDialog.bind(this);
+    this.verifyCallback = this.verifyCallback.bind(this);
+    this.captchaCallback = this.captchaCallback.bind(this);
+    this.onCaptchaChange= this.onCaptchaChange.bind(this);
     this.previous = this.previous.bind(this);
     this.startOver = this.startOver.bind(this);
     this.getActiveFieldFromProp = this.getActiveFieldFromProp.bind(this);
@@ -353,7 +345,7 @@ var MultiSelectField = React.createClass({
   }
   componentWillReceiveProps (newProps) {
         var isInit = (newProps.state.reducer.getIn(['searchFields', 0 , 'selected']).length === 0) ? true: false;
-    console.log('isInit>>' , isInit);
+   // console.log('isInit>>' , isInit);
     this.setState({ init: isInit});
     this.setState({ count: newProps.state.reducer.get('resultsCount')});
     if(isInit) { 
@@ -363,19 +355,19 @@ var MultiSelectField = React.createClass({
     var newPropLine = this.getActiveFieldFromProp(newProps);
     var oldPropLine = this.getActiveFieldFromProp(this.props);
     if (newPropLine.idx != oldPropLine.idx) {
-            console.log('new active field'); 
+            // console.log('new active field'); 
             this.setNavState(newPropLine.idx);
     }
     
-    console.log('SHOW NEXT BTN' ,typeof newPropLine.selected !== undefined);
-    console.log('SHOW NEXT BTN' , newPropLine.selected.length);
-    console.log('SHOW NEXT BTN' ,newPropLine.idx !== 7); 
+    //console.log('SHOW NEXT BTN' ,typeof newPropLine.selected !== undefined);
+    //console.log('SHOW NEXT BTN' , newPropLine.selected.length);
+    //console.log('SHOW NEXT BTN' ,newPropLine.idx !== 7); 
     if (typeof newPropLine.selected !=='undefined' && newPropLine.selected.length>0 && newPropLine.idx !== 7) {
-      console.log('show next');
+     // console.log('show next');
         this.setState({ showNextBtn: true}); 
         this.setState({ showMatchBtn: false}); 
     } else if (newPropLine.idx===7) {
-      console.log('HIDE NEXT BTN');
+      //console.log('HIDE NEXT BTN');
        this.setState({ showNextBtn: false}); 
        this.setState({ showMatchBtn: true}); 
     } else {
@@ -444,7 +436,15 @@ var MultiSelectField = React.createClass({
       this.next()
     }
   }
-
+  verifyCallback(res){
+    console.log(res);
+  }
+  captchaCallback(){
+    console.log('asdfsdafsadfsdaf');
+  }
+  onCaptchaChange(val){
+    console.log(val);
+  }
   next() {
     this.setNavState(this.state.compState + 1);
     this.refs.multiSelect.setFocus();
@@ -505,6 +505,7 @@ var MultiSelectField = React.createClass({
   render() {
       return (
         <div className="container" onKeyDown={this.handleKeyDown}>
+        
           <ol className="progtrckr">
             {this.renderSteps()}
           </ol>
@@ -605,7 +606,12 @@ var MultiSelectField = React.createClass({
                     'required'
                     ]}
               /> 
-              </Form>     
+              </Form>
+              <ReCAPTCHA
+                ref="recaptcha"
+                sitekey="6Lf0EQ4UAAAAAAEJ-IqRP0Z6deGwS8vkl-W0YNhw"
+                onChange={this.onCaptchaChange}
+              />
                 <button onClick={this._submitDialog} className="button-primary">Submit</button>
               </Dialog>     
       </div>
