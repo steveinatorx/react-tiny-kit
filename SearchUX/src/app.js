@@ -14,8 +14,6 @@ import cookie from 'react-cookie';
 import { createTracker } from 'redux-segment';
 var __CONFIG__ = require('__CONFIG__');
 
-
-
 /*import { createDevTools } from 'redux-devtools'
 import LogMonitor from 'redux-devtools-log-monitor'
 import DockMonitor from 'redux-devtools-dock-monitor'

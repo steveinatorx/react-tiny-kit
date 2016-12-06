@@ -24,5 +24,8 @@ export default {
     },
 	selectionTd: {
 	 color: 'silver'	
-	}
+	},
+  dialogStyle: {
+    width: '20em'
+  }
 };

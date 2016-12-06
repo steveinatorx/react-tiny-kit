@@ -1,5 +1,12 @@
 import React from 'react';
 import sortBy from 'lodash'; 
+import {Form, Field} from 'simple-react-forms';
+
+
+import Dialog from 'rc-dialog';
+import Animate from 'rc-animate';
+
+import 'rc-dialog/assets/index.css';
 import './css/skeleton.css';
 import './css/prog-tracker.css';
 import './css/custom.css';
@@ -314,6 +321,7 @@ var MultiSelectField = React.createClass({
       compState: 0,
       navState: this.getNavStates(0, theListSize),
       init: true,
+      dialogVisible: false
     };
     this.hiddenStyle = {
       visibility: 'hidden'
@@ -329,6 +337,7 @@ var MultiSelectField = React.createClass({
     };
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.next = this.next.bind(this);
+    this.openDialog = this.openDialog.bind(this);
     this.previous = this.previous.bind(this);
     this.startOver = this.startOver.bind(this);
     this.getActiveFieldFromProp = this.getActiveFieldFromProp.bind(this);
@@ -440,7 +449,10 @@ var MultiSelectField = React.createClass({
     this.setNavState(this.state.compState + 1);
     this.refs.multiSelect.setFocus();
   }
-
+  openDialog() {
+    console.log('open dialog');
+   this.setState({ dialogVisible: true }); 
+  }
   previous() {
     if (this.state.compState > 0) {
       console.log('REFS', this.refs);
@@ -513,8 +525,7 @@ var MultiSelectField = React.createClass({
                             onClick={this.next}>Next</button>
             <button style={this.state.showMatchBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--next button-success u-pull-right"
-                            disabled={this.state.disabledMatchBtn}
-                            onClick={this.next}>Submit2</button>
+                            onClick={this.openDialog}>Submit2</button>
 
             </MediaQuery>
             <MediaQuery query='(min-width: 401px)'>
@@ -531,8 +542,7 @@ var MultiSelectField = React.createClass({
                             onClick={this.next}>&gt;</button>
               <button style={this.state.showMatchBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--next button-success u-pull-right"
-                            disabled={this.state.disabledMatchBtn}
-                            onClick={this.next}>go</button>
+                            onClick={this.openDialog}>go</button>
             </MediaQuery>
             </MediaQuery>
              <MediaQuery query='(min-width: 801px)'>
@@ -549,8 +559,7 @@ var MultiSelectField = React.createClass({
                             onClick={this.next}>Next</button>
                     <button style={this.state.showMatchBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--next button-success u-pull-right"
-                            disabled={this.state.count > 0}
-                            onClick={this.next}>Submit</button>
+                            onClick={this.openDialog}>Submit</button>
             </MediaQuery>
             </MediaQuery>
             <MediaQuery query='(min-width: 1200px)'>
@@ -566,8 +575,7 @@ var MultiSelectField = React.createClass({
                             onClick={this.next}>Next Field</button>
                    <button style={this.state.showMatchBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--next button-success u-pull-right"
-                            disabled={true}
-                            onClick={this.next}>Get Matches</button>
+                            onClick={this.openDialog}>Get Matches</button>
             </MediaQuery>
 
 
@@ -580,6 +588,26 @@ var MultiSelectField = React.createClass({
                <SelectionTable {...this.props} />
               </div>
             </div>
+           <Dialog
+                visible={this.state.dialogVisible}
+                wrapClassName="center"
+                animation="zoom"
+                maskAnimation="fade"
+                onClose={this._onCloseDialog}
+                style={styles.dialogStyle}
+              > 
+              <Form ref="simpleForm">
+                  <Field
+                    name='Type'
+                    placeholder='Enter Type'
+                    type='text'
+                    validators= {[
+                    'required'
+                    ]}
+              /> 
+              </Form>     
+                <button onClick={this._submitDialog} className="button-primary">Submit</button>
+              </Dialog>     
       </div>
     );
   }
