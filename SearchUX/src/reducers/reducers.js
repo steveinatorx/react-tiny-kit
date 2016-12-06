@@ -59,7 +59,6 @@ export default function reducer (state = init, action) {
       return state.set('resultsCount', action.payload.count);
     case 'RECEIVE_FIELDS':
 
-      console.log('RECIEVE_FIELDS');
       var objId = state.getIn(['searchFields']).filter( f=>{
         if (f.get('id') === action.payload.field){
           return true;
@@ -70,34 +69,26 @@ export default function reducer (state = init, action) {
       //convert to multiselect object and strings?
       var optObjs = action.payload.values.map( o => {
             if (action.payload.field === 'Opts') {
-              console.log('mod these labels...', o.indexOf(' '));
               var code = o.substring(0,o.indexOf(' '));
-              console.log('WTFWTF', code);
               var label = o.substring(o.indexOf(' ') +1 ) + ' ' + code;
-              console.log('mod this field', label);
             } else {
               var label=o.toString();
             }
             return { label: label, value: o.toString()} 
       });
       //sort lexi
-      
       optObjs = sortBy(optObjs);
-      console.log('in REDUCER', optObjs);
       
-      console.log('RECEIVEFIELDS this is multi? ', objId.toJS()[0].multi);
       if ((action.payload.field !== 'Opts') && (objId.toJS()[0].metaMulti === true) && ( action.payload.values.length > 1 )) {
         //console.log('detected MULTI so add "all" to selections');
         optObjs.unshift({ label: 'All', value: 'all'});
       }
-      console.log('RECEIVEFIELDS arr?', optObjs);
       //console.log('receive fields idx', objId.toJS()[0].idx);
       return state.setIn(['searchFields',objId.toJS()[0].idx,'opts'],optObjs);
       
     case 'SET_FIELD_SELECTION':
       const selection=action.payload.selection;
       const idx = action.payload.idx;
-      console.log('in SFS trying to set ', action.payload.selection); 
       //gather all existing selections, get idx +1 id for distinct
       return state.setIn(['searchFields', idx, 'selected'], action.payload.selection);
       //return state;
