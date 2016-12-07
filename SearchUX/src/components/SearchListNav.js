@@ -2,8 +2,6 @@ import React from 'react';
 import sortBy from 'lodash'; 
 var ReCAPTCHA = require("react-google-recaptcha");
 
-import {Form, TextInput, Checkbox, Label} from 'react-easy-form';
-
 import Dialog from 'rc-dialog';
 import Animate from 'rc-animate';
 
@@ -26,7 +24,7 @@ var Radium = require('radium');
 
 var SelectionTable = React.createClass({
 	getInitialState () {
-    var keys = this.props.state.reducer.getIn(['searchFields']).map (f =>  {
+    var keys = this.props.state.getIn(['searchFields']).map (f =>  {
     });
     return ({
       selected: [],
@@ -36,7 +34,7 @@ var SelectionTable = React.createClass({
   },
   getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
     var ret=null;
-    theProps.state.reducer.getIn(['searchFields']).map(f => {
+    theProps.state.getIn(['searchFields']).map(f => {
       if (f.get('isActive') === true ) {
         // console.log('getting ative field', f.get('id'));
         ret = f.toJS();
@@ -45,12 +43,11 @@ var SelectionTable = React.createClass({
     return ret;
   },
   componentWillReceiveProps (newProps) {
-    //console.log('in SELECTIONTABLE CWRP', newProps.state.reducer);    
     var activeLine=this.getActiveFieldFromProp(newProps);    
     //console.log('activeLINLINELINE', activeLine);
     this.setState({ selected: activeLine.selected });
     this.setState({ activeIdx: activeLine.idx});
-    this.setState({ count: newProps.state.reducer.get('resultsCount')});
+    this.setState({ count: newProps.state.get('resultsCount')});
   },
   getResultsBoxStyle : function getResultsBoxStyle(){
     if (this.state.activeIdx === 0 && this.state.selected.length === 0 ) {
@@ -84,7 +81,7 @@ var SelectionTable = React.createClass({
       </thead>
       <tbody>
 
-  { this.props.state.reducer.getIn(['searchFields']).map(f => {
+  { this.props.state.getIn(['searchFields']).map(f => {
         return (
         <tr key={f.get('idx')}>
           <td style={styles.selectionTd}>{f.get('label')}</td>
@@ -102,13 +99,12 @@ var SelectionTable = React.createClass({
 var MultiSelectField = React.createClass({
 	displayName: 'MultiSelectField',
 	getInitialState () {
-    //console.log(' in gIS MSF:', this.props.state.reducer.getIn(['searchFields', 0, 'id']));
 		return {
       multi: true,
 			disabled: false,
-			options: this.props.state.reducer.getIn(['searchFields', 0, 'opts']),
+			options: this.props.state.getIn(['searchFields', 0, 'opts']),
 			value: null,
-      placeholder: "select " + this.props.state.reducer.getIn(['searchFields',0, 'label']),
+      placeholder: "select " + this.props.state.getIn(['searchFields',0, 'label']),
 		};
 	},
   setFocus : function setFocus() {
@@ -116,7 +112,7 @@ var MultiSelectField = React.createClass({
   },
   getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
     var ret=null;
-    theProps.state.reducer.getIn(['searchFields']).map(f => {
+    theProps.state.getIn(['searchFields']).map(f => {
       if (f.get('isActive') === true ) {
         // console.log('getting ative field', f.get('id'));
         ret = f.toJS();
@@ -132,9 +128,9 @@ var MultiSelectField = React.createClass({
     this.setState({options: newOpts});
   },
   getSelected : function getSelected(){
-    console.log('in selected', this.props.state.reducer.getIn(['searchFields']));
+    console.log('in selected', this.props.state.getIn(['searchFields']));
     var selected=[]; 
-    this.props.state.reducer.getIn(['searchFields']).map(f => {
+    this.props.state.getIn(['searchFields']).map(f => {
       
               var thisSegment={};
               console.log(f.get('id') + ' selected length ', f.get('selected'));
@@ -304,7 +300,10 @@ var MultiSelectField = React.createClass({
   constructor(props) {
     super(props);
     this.props.getUUID();
-    var theListSize = props.state.reducer.getIn(['searchFields']).size;
+    
+    console.log(props.state);
+    
+    var theListSize = props.state.getIn(['searchFields']).size;
     this.state = {
       showPreviousBtn: false,
       showNextBtn: false,
@@ -331,18 +330,16 @@ var MultiSelectField = React.createClass({
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.next = this.next.bind(this);
     this.openDialog = this.openDialog.bind(this);
-    this.verifyCallback = this.verifyCallback.bind(this);
     this.captchaCallback = this.captchaCallback.bind(this);
     this.onCaptchaChange= this.onCaptchaChange.bind(this);
     this.previous = this.previous.bind(this);
     this.startOver = this.startOver.bind(this);
     this.getActiveFieldFromProp = this.getActiveFieldFromProp.bind(this);
-    this.updateEmail = this.updateEmail.bind(this);
     this.onCloseDialog = this.onCloseDialog.bind(this);
 }
   getActiveFieldFromProp(theProps){
             var ret=null;
-            theProps.state.reducer.getIn(['searchFields']).map(f => {
+            theProps.state.getIn(['searchFields']).map(f => {
               if (f.get('isActive') === true ) {
                 ret = f.toJS();
               }
@@ -350,10 +347,10 @@ var MultiSelectField = React.createClass({
              return ret;
   }
   componentWillReceiveProps (newProps) {
-        var isInit = (newProps.state.reducer.getIn(['searchFields', 0 , 'selected']).length === 0) ? true: false;
+        var isInit = (newProps.state.getIn(['searchFields', 0 , 'selected']).length === 0) ? true: false;
    // console.log('isInit>>' , isInit);
     this.setState({ init: isInit});
-    this.setState({ count: newProps.state.reducer.get('resultsCount')});
+    this.setState({ count: newProps.state.get('resultsCount')});
     if(isInit) { 
       this.refs.multiSelect.clearDisabledOpts();
     }
@@ -399,9 +396,8 @@ var MultiSelectField = React.createClass({
   }
 
   checkNavState(currentStep){
-   // console.log('in cNavSt', this.props.state.reducer.size);
     // if(currentStep > 0 && currentStep !== this.props.steps.length - 1){
-   if(currentStep > 0 && currentStep !== this.props.state.reducer.getIn(['searchFields']).size - 1){
+   if(currentStep > 0 && currentStep !== this.props.state.getIn(['searchFields']).size - 1){
       this.setState({
         showPreviousBtn: true,
         showNextBtn: true,
@@ -425,7 +421,7 @@ var MultiSelectField = React.createClass({
   }
 
   setNavState(next) {
-    var theListSize = this.props.state.reducer.getIn(['searchFields']).size;
+    var theListSize = this.props.state.getIn(['searchFields']).size;
     
      this.props.setActiveField(next); 
     
@@ -442,10 +438,7 @@ var MultiSelectField = React.createClass({
       this.next()
     }
   }
-  verifyCallback(res){
-    console.log(res);
-  }
-  captchaCallback(){
+   captchaCallback(){
     console.log('asdfsdafsadfsdaf');
   }
   onCaptchaChange(val){
@@ -491,20 +484,13 @@ var MultiSelectField = React.createClass({
   getClassName(className, i){
     return className + "-" + this.state.navState.styles[i];
   }
-  updateEmail(e){
-    console.log('heyo');
-    console.log(e.value());
-  }
-  submitSearchForm(data) {
-   console.log('submit!!!!!!!!!!!', data); 
-  }
   onCloseDialog(){
     console.log('closeD');
     this.setState({ dialogVisible: false }); 
 
   }
   renderSteps() {
-      return this.props.state.reducer.getIn(['searchFields']).map (f => (
+      return this.props.state.getIn(['searchFields']).map (f => (
       /* <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}> */
       <li className={this.getClassName("progtrckr", f.get('idx'))} key={f.get('idx')} value={f.get('id')}>
         <em>{f.get('idx')+1}</em>
@@ -607,36 +593,6 @@ var MultiSelectField = React.createClass({
                 onClose={this.onCloseDialog}
                 style={styles.dialogStyle}
               >
-              <Form ref="searchForm" onSubmit={this.submitSearchForm}>
-              <p>Enter Your Contact Information:</p>
-                <TextInput className="u-full-width formMargins" name="firstName" placeholder="Enter Your First Name" required/> 
-                <TextInput className="u-full-width formMargins" name="lastName" placeholder="Enter Your Last Name" required/> 
-                <TextInput className="u-full-width formMargins"	name="email" type="email"
-                     placeholder="Enter Your Email Address" required /> <br/>
-                <TextInput 	
-                  className="u-full-width formMargins" 
-                  name="email_repeat" 
-                  type="email"
-                  placeholder="Repeat Email Address" 
-                  onChange={this.updateEmail} 
-                  required/>
-                  <p>Enter Your Contact Information:</p>
-                        <Label className="noBold">
-                            <Checkbox name="opt1" title="info" /> I am researching millennial Porsche vehicles
-                        </Label>
-                        <Label className="noBold">
-                            <Checkbox name="opt2" title="info" />I am looking to buy a millennial Porsche vehicle
-                        </Label>                          
-                <Center>
-                <ReCAPTCHA
-                  ref="recaptcha"
-                  sitekey="6Lf0EQ4UAAAAAAEJ-IqRP0Z6deGwS8vkl-W0YNhw"
-                  onChange={this.onCaptchaChange}
-                />
-                </Center>
-
-              <button onClick={this._submitDialog} className="button-primary">Submit</button>
-              </Form>
               </Dialog>     
       </div>
     );
