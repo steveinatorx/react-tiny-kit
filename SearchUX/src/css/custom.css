@@ -280,3 +280,11 @@ table tbody th {
   line-height: 0.1rem;
   margin-top: 6rem;
 }
+
+.noBold {
+  font-weight: 400
+}
+
+.formMargins {
+  margin-bottom: '20px !important';
+}

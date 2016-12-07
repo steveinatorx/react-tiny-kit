@@ -26,6 +26,7 @@ export default {
 	 color: 'silver'	
 	},
   dialogStyle: {
-    width: '20em'
-  }
+    width: '40em'
+  },
+
 };

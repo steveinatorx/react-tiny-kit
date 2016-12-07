@@ -1,24 +1,27 @@
 import React from 'react';
 import sortBy from 'lodash'; 
-import {Form, Field} from 'simple-react-forms';
 var ReCAPTCHA = require("react-google-recaptcha");
+
+import {Form, TextInput, Checkbox, Label} from 'react-easy-form';
 
 import Dialog from 'rc-dialog';
 import Animate from 'rc-animate';
 
 import 'rc-dialog/assets/index.css';
-import './css/skeleton.css';
-import './css/prog-tracker.css';
-import './css/custom.css';
-import './css/normalize.css';
-import './css/skeleton-alerts.css';
+import '../css/skeleton.css';
+import '../css/prog-tracker.css';
+import '../css/custom.css';
+//import './css/normalize.css';
+import '../css/skeleton-alerts.css';
 var MediaQuery = require('react-responsive');
 
-import styles from './style.js';
+import styles from '../style.js';
 
 import Select from 'react-select';
+import Center from 'react-center';
+
 var classNames = require('classnames');
-import './css/react-select.css';
+import '../css/react-select.css';
 var Radium = require('radium');
 
 var SelectionTable = React.createClass({
@@ -310,7 +313,8 @@ var MultiSelectField = React.createClass({
       compState: 0,
       navState: this.getNavStates(0, theListSize),
       init: true,
-      dialogVisible: false
+      dialogVisible: false,
+      test: 'foo'
     };
     this.hiddenStyle = {
       visibility: 'hidden'
@@ -333,7 +337,9 @@ var MultiSelectField = React.createClass({
     this.previous = this.previous.bind(this);
     this.startOver = this.startOver.bind(this);
     this.getActiveFieldFromProp = this.getActiveFieldFromProp.bind(this);
-  }
+    this.updateEmail = this.updateEmail.bind(this);
+    this.onCloseDialog = this.onCloseDialog.bind(this);
+}
   getActiveFieldFromProp(theProps){
             var ret=null;
             theProps.state.reducer.getIn(['searchFields']).map(f => {
@@ -467,31 +473,36 @@ var MultiSelectField = React.createClass({
       this.props.clearAll();
       this.setNavState(0);
       this.setState({ init: true});
-
       this.refs.multiSelect.clearDisabledOpts();
       this.refs.multiSelect.setState({ value: ''});
       this.refs.multiSelect.setFocus();
-
   }
   
   getMatchBtnStyle() {
     console.log('in gmbs');
-    
     var style={};
-    
     var propLine = this.getActiveFieldFromProp(this.props);
     //display
     if (propLine.idx !== 7){
       
     }
-
-    
   }
 
   getClassName(className, i){
     return className + "-" + this.state.navState.styles[i];
   }
+  updateEmail(e){
+    console.log('heyo');
+    console.log(e.value());
+  }
+  submitSearchForm(data) {
+   console.log('submit!!!!!!!!!!!', data); 
+  }
+  onCloseDialog(){
+    console.log('closeD');
+    this.setState({ dialogVisible: false }); 
 
+  }
   renderSteps() {
       return this.props.state.reducer.getIn(['searchFields']).map (f => (
       /* <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}> */
@@ -577,8 +588,7 @@ var MultiSelectField = React.createClass({
                    <button style={this.state.showMatchBtn ? {} : this.noDisplayStyle}
                             className="multistep__btn--next button-success u-pull-right"
                             onClick={this.openDialog}>Get Matches</button>
-            </MediaQuery>
-
+           </MediaQuery>
 
                     <span style={this.state.init ? {} : this.noDisplayStyle} className="skeleton-alert alert-warning"><strong><center>Select a Model Below to Start the Search!</center></strong></span>
               </div>
@@ -594,25 +604,39 @@ var MultiSelectField = React.createClass({
                 wrapClassName="center"
                 animation="zoom"
                 maskAnimation="fade"
-                onClose={this._onCloseDialog}
+                onClose={this.onCloseDialog}
                 style={styles.dialogStyle}
-              > 
-              <Form ref="simpleForm">
-                  <Field
-                    name='Type'
-                    placeholder='Enter Type'
-                    type='text'
-                    validators= {[
-                    'required'
-                    ]}
-              /> 
+              >
+              <Form ref="searchForm" onSubmit={this.submitSearchForm}>
+              <p>Enter Your Contact Information:</p>
+                <TextInput className="u-full-width formMargins" name="firstName" placeholder="Enter Your First Name" required/> 
+                <TextInput className="u-full-width formMargins" name="lastName" placeholder="Enter Your Last Name" required/> 
+                <TextInput className="u-full-width formMargins"	name="email" type="email"
+                     placeholder="Enter Your Email Address" required /> <br/>
+                <TextInput 	
+                  className="u-full-width formMargins" 
+                  name="email_repeat" 
+                  type="email"
+                  placeholder="Repeat Email Address" 
+                  onChange={this.updateEmail} 
+                  required/>
+                  <p>Enter Your Contact Information:</p>
+                        <Label className="noBold">
+                            <Checkbox name="opt1" title="info" /> I am researching millennial Porsche vehicles
+                        </Label>
+                        <Label className="noBold">
+                            <Checkbox name="opt2" title="info" />I am looking to buy a millennial Porsche vehicle
+                        </Label>                          
+                <Center>
+                <ReCAPTCHA
+                  ref="recaptcha"
+                  sitekey="6Lf0EQ4UAAAAAAEJ-IqRP0Z6deGwS8vkl-W0YNhw"
+                  onChange={this.onCaptchaChange}
+                />
+                </Center>
+
+              <button onClick={this._submitDialog} className="button-primary">Submit</button>
               </Form>
-              <ReCAPTCHA
-                ref="recaptcha"
-                sitekey="6Lf0EQ4UAAAAAAEJ-IqRP0Z6deGwS8vkl-W0YNhw"
-                onChange={this.onCaptchaChange}
-              />
-                <button onClick={this._submitDialog} className="button-primary">Submit</button>
               </Dialog>     
       </div>
     );
