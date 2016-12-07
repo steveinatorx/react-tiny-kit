@@ -55,10 +55,9 @@ export function setFieldSelection(idx,selection) {
 }
 
 var buildQueryObj = function buildQueryObj(state){
-    //console.log('in buildQ actions', state.reducer);
 
  var queryRoot = {};
-          state.reducer.getIn(['searchFields']).map(f => {
+          state.getIn(['searchFields']).map(f => {
           //console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
           //console.log('i&&^&^&^&^&^^&^& ujsingField', f.get('id'));
           var theValue = f.get('selected');
@@ -125,7 +124,7 @@ export function setFieldSelectionAndFetchData(idx,selection){
     var qObj = buildQueryObj(state);
 
     //only get new count on Opts selection
-    var nextFieldMap = state.reducer.getIn(['searchFields',idx+1]);
+    var nextFieldMap = state.getIn(['searchFields',idx+1]);
     if (idx!=7){
       var nextId = nextFieldMap.get('id');
       //console.log('now fetch fields for ->', nextId);
