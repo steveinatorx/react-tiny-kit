@@ -24,21 +24,18 @@ const Radium = require('radium');
 
 import * as FormElements from './FormElements';
 
-const SelectionTable = React.createClass({
-	getInitialState () {
-    let keys = this.props.state.getIn(['searchFields']).map (f =>  {
-    });
-    
-    // mystery why this renders as either js or List... 
-    
+export class SelectionTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this._getActiveFieldLine = this._getActiveFieldLine.bind(this);
 
-    return ({
+    this.state = {
       selected: [],
-      count: this.getActiveFieldFromProp(this.props).resultsCount,
-      activeIdx: this.getActiveFieldFromProp(this.props).idx
-    });
-  },
-  getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
+      count: this.getActiveFieldLine(this.props).resultsCount,
+      activeIdx: this.getActiveFieldLine(this.props).idx
+    };
+  }
+  _getActiveFieldLine(theProps) {
     let ret=null;
     theProps.state.getIn(['searchFields']).map(f => {
       if (f.get('isActive') === true ) {
@@ -47,15 +44,16 @@ const SelectionTable = React.createClass({
       }
       });
     return ret;
-  },
+  }
   componentWillReceiveProps (newProps) {
-    var activeLine=this.getActiveFieldFromProp(newProps);    
-    //console.log('activeLINLINELINE', activeLine);
+    var activeLine=this._getActiveLine(newProps);    
+
+   console.log('CWRP res count', newProps,state,get('resultsCount'));
     this.setState({ selected: activeLine.selected });
     this.setState({ activeIdx: activeLine.idx});
     this.setState({ count: newProps.state.get('resultsCount')});
-  },
-  getResultsBoxStyle : function getResultsBoxStyle(){
+  }
+  _getResultsBoxStylee() {
     if (this.state.activeIdx === 0 && this.state.selected.length === 0 ) {
      return styles.hidden;
     }
