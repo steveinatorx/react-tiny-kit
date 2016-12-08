@@ -28,11 +28,14 @@ export class SelectionTable extends React.Component {
   constructor(props) {
     super(props);
     this._getActiveFieldLine = this._getActiveFieldLine.bind(this);
+    this._getResultsBoxStyle = this._getResultsBoxStyle.bind(this);
+
+      //console.log('ST init count', props.state.get('resultsCount'));
 
     this.state = {
       selected: [],
-      count: this.getActiveFieldLine(this.props).resultsCount,
-      activeIdx: this.getActiveFieldLine(this.props).idx
+      count: props.state.get('resultsCount'),
+      activeIdx: this._getActiveFieldLine(this.props).idx
     };
   }
   _getActiveFieldLine(theProps) {
@@ -46,14 +49,15 @@ export class SelectionTable extends React.Component {
     return ret;
   }
   componentWillReceiveProps (newProps) {
-    var activeLine=this._getActiveLine(newProps);    
+    let activeLine=this._getActiveFieldLine(newProps);    
 
-   console.log('CWRP res count', newProps,state,get('resultsCount'));
+   console.log('CWRP res count', newProps.state.get('resultsCount'));
+   console.log('CWRP res count', typeof newProps.state.get('resultsCount'));
     this.setState({ selected: activeLine.selected });
     this.setState({ activeIdx: activeLine.idx});
     this.setState({ count: newProps.state.get('resultsCount')});
   }
-  _getResultsBoxStylee() {
+  _getResultsBoxStyle() {
     if (this.state.activeIdx === 0 && this.state.selected.length === 0 ) {
      return styles.hidden;
     }
@@ -66,11 +70,11 @@ export class SelectionTable extends React.Component {
     return (this.state.count > 0) 
     ? Object.assign({},styles.resultsBox,styles.resultsBoxGreen)
     : Object.assign({},styles.resultsBox,styles.resultsBoxRed);
-  },
+  }
   render() {
         return (
           <div>
-            <div style={this.getResultsBoxStyle()} >
+            <div style={this._getResultsBoxStyle()} >
             <MediaQuery query='(max-width: 550px)'>
                 {this.state.count} Vehicles Match
               </MediaQuery>
@@ -100,7 +104,7 @@ export class SelectionTable extends React.Component {
     </div>
     )
     }  
-});//end class
+}//end class
 
 export class MultiSelectField extends React.Component {
   constructor(props) {
