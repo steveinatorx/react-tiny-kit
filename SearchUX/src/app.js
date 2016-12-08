@@ -18,6 +18,7 @@ import adapter from 'redux-localstorage/lib/adapters/localStorage';
 // import filter from 'redux-localstorage-filter';
 import { serialize, deserialize } from 'redux-localstorage-immutable';
 
+import DevTools from './components/DevTools';
 
 var __CONFIG__ = require('__CONFIG__');
 
@@ -73,11 +74,22 @@ const middleware = applyMiddleware(
     devTools = [ DevTools.instrument() ]
   }*/
 //const store = createStore(rootReducer, middleware, enhancer);
-const store = createStore(reducer, middleware);
+
+const enhancer = compose(
+  // Middleware you want to use in development:
+  middleware,
+  // Required! Enable Redux DevTools with the monitors you chose
+  DevTools.instrument()
+);
+
+const store = createStore(reducer, /* initialState */ enhancer);
 
 render(
   <Provider store={store} >
+    <div>
     <SearchUXContainer />
+    <DevTools />
+    </div>
   </Provider>,
   document.getElementById('app')
 );
