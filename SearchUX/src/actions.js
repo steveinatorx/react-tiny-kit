@@ -230,7 +230,7 @@ export function setUUID(uuid) {
 export function receiveUUID(uuid) {    
    console.log('setting cookie', uuid);
    cookie.save('PCNALocator', uuid, { path: '/' });
-   dispatch(setUUID(uuid));
+   return dispatch => dispatch(setUUID(uuid));
 }
 
 export function getUUID() {
