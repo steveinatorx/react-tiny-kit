@@ -118,7 +118,7 @@ var buildQueryObj = function buildQueryObj(state){
 
 export function setFieldSelectionAndFetchData(idx,selection){
   return function (dispatch, getState) {
-    //console.log('in sFSAFD what is my selection????', selection);
+    console.log('in sFSAFD what is my selection????', selection);
     dispatch(setFieldSelection(idx,selection));
     var state=getState();
     var qObj = buildQueryObj(state);

@@ -12,6 +12,7 @@ import '../css/custom.css';
 //import './css/normalize.css';
 import '../css/skeleton-alerts.css';
 var MediaQuery = require('react-responsive');
+import Formsy from 'formsy-react';
 
 import styles from '../style.js';
 
@@ -21,6 +22,8 @@ import Center from 'react-center';
 var classNames = require('classnames');
 import '../css/react-select.css';
 var Radium = require('radium');
+
+import * as FormElements from './FormElements';
 
 var SelectionTable = React.createClass({
 	getInitialState () {
@@ -96,38 +99,59 @@ var SelectionTable = React.createClass({
     }  
 });//end class
 
-var MultiSelectField = React.createClass({
-	displayName: 'MultiSelectField',
-	getInitialState () {
-		return {
-      multi: true,
-			disabled: false,
-			options: this.props.state.getIn(['searchFields', 0, 'opts']),
-			value: null,
-      placeholder: "select " + this.props.state.getIn(['searchFields',0, 'label']),
-		};
-	},
-  setFocus : function setFocus() {
+export class MultiSelectField extends React.Component {
+  constructor(props) {
+    super(props);
+    this._getActiveFieldLine = this._getActiveFieldLine.bind(this);
+    this._setFocus = this._setFocus.bind(this);
+    this._getActiveIdx = this._getActiveIdx.bind(this);
+    this._handleSelectChange = this._handleSelectChange.bind(this);
+    
+    console.log(this._getActiveIdx());
+    console.log('1',props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']));
+    //console.log(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']).toJS());
+      this.state = {
+       multi: true,
+ 			 disabled: false,
+       options: props.state.getIn(['searchFields', this._getActiveIdx() , 'opts']),
+   		 value: null,
+       placeholder: "select " + props.state.getIn(['searchFields', this._getActiveIdx() , 'label']),
+      }
+}//constructor
+
+_setFocus() {
     this.refs.theMultiSelect.focus(); 
-  },
-  getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
+}
+
+//need to track last active line? might need to go into store
+_getActiveFieldLine(theseProps){
     var ret=null;
-    theProps.state.getIn(['searchFields']).map(f => {
+      theseProps.state.getIn(['searchFields']).map(f => {
       if (f.get('isActive') === true ) {
-        // console.log('getting ative field', f.get('id'));
+        console.log('getting ative field', f.get('id'));
         ret = f.toJS();
       }
       });
     return ret;
-  },
-  clearDisabledOpts: function () {
+}
+_getActiveIdx(){
+    let idx=null;
+    this.props.state.getIn(['searchFields']).map(f => {
+      if (f.get('isActive') === true ) {
+        console.log('getting active idx', parseInt(f.get('idx')));
+        idx = f.get('idx');
+      }
+      });
+      return idx;
+}
+_clearDisabledOpts() {
     var newOpts = this.state.options.map(function(obj){
             obj['disabled'] = false;
             return obj;
          });
     this.setState({options: newOpts});
-  },
-  getSelected : function getSelected(){
+}
+_getSelected(){
     console.log('in selected', this.props.state.getIn(['searchFields']));
     var selected=[]; 
     this.props.state.getIn(['searchFields']).map(f => {
@@ -140,18 +164,12 @@ var MultiSelectField = React.createClass({
                 selected.concat(f.get('selected'));
               }
     });
-
     return selected;    
-    
-  },
- 	handleSelectChange : function handleSelectChange(value) {
-    //console.log('THIS PROPS', this.props);
-		//console.log('You\'ve selected:', value);
+}
+_handleSelectChange(value) {
+    console.log('in selected');
     var allFlag = false;
-    var activeIdx=this.getActiveFieldFromProp(this.props).idx;
-    //console.log('trying to set field idx', activeIdx);
-     // console.log('typeof selection', typeof value);
-     // console.log('does selection === null??', value === null);
+    var activeIdx=this._getActiveIdx();
         if (value === null) {
           this.setState({ value });
         }
@@ -159,7 +177,7 @@ var MultiSelectField = React.createClass({
         else if (value.match(/^all$/) || value.match(/,all/)) {
           var allFlag = true;
           
-          value=this.getActiveFieldFromProp(this.props).opts.map( o => {
+          value=this._getActiveFieldLine(this.props).opts.map( o => {
           if (o.label !== 'All') {
             return o.label; 
         }
@@ -182,6 +200,8 @@ var MultiSelectField = React.createClass({
         }
         
     }
+    
+    console.log('aaa');
 
     if (value === "" || typeof value === 'undefined') {
         this.setState({ value:''});
@@ -198,30 +218,16 @@ var MultiSelectField = React.createClass({
     // on remove dont set fields?   
     if (value !=="" && value !== null) {
       this.props.setFieldSelectionAndFetchData(activeIdx, [value]); 
-     
-      /*if ((activeIdx!=7) && (value != null) && (this.getActiveFieldFromProp(this.props).metaMulti != true)) {
-        this.props.setActiveField(activeIdx+1);
-      } else 
-      // bump if only 1 opts
-      if ((value != null) && (this.getActiveFieldFromProp(this.props).opts.length===1)) {
-        this.props.setActiveField(activeIdx+1);
-      } else 
-      // bump if All
-      if ( allFlag === true) {
-        this.props.setActiveField(activeIdx+1);
-      }*/
     }
-	},
-  componentWillMount() {
-    // console.log('CWM state', this.state);  
-    // console.log('CWM props', this.props);  
-  },
-  componentWillReceiveProps (newProps) {
+}
+/*componentWillMount() {
+}*/
+componentWillReceiveProps (newProps) {
     // console.log('SELECT CWRP', newProps);
-    var newPropLine = this.getActiveFieldFromProp(newProps);
+    var newPropLine = this._getActiveFieldLine(newProps);
     //console.log('SELECT CWRP newPropLine', newPropLine);
     
-    var oldPropLine = this.getActiveFieldFromProp(this.props);
+    var oldPropLine = this._getActiveFieldLine(this.props);
     
     if (newPropLine.id === 'Year') { 
     var tmpOpts= _.sortBy(newPropLine.opts, 'label');
@@ -235,19 +241,8 @@ var MultiSelectField = React.createClass({
           var sortedOpts=newPropLine.opts;
         }      
     } else {
-      
-      
       var sortedOpts= _.sortBy(newPropLine.opts, 'label');
-
     }   
-     //console.log('using sortedOpts', sortedOpts); 
-      
-    //} else {
-    //  var sortedOpts=newPropLine.opts;
-   // }
-    
-    
-
     if (typeof newPropLine.selected[0] !== 'undefined' && newPropLine.selected[0].match(',')){
       var selectedArr=newPropLine.selected[0].split(',');
       if(selectedArr.length > 0 && selectedArr.length === (sortedOpts.length -1)){
@@ -269,12 +264,12 @@ var MultiSelectField = React.createClass({
     if (typeof newPropLine.selected[0] !== 'undefined') {
      this.setState({value:newPropLine.selected[0]});
     }
-     this.setFocus();
-  },
-	toggleDisabled (e) {
+     this._setFocus();
+}
+_toggleDisabled(e) {
 		this.setState({ disabled: e.target.checked });
-	},
- 	render () {
+}
+render () {
 		return (
 			<div className="section">
 				<Select simpleValue
@@ -285,7 +280,7 @@ var MultiSelectField = React.createClass({
           value={this.state.value}
           placeholder={this.state.placeholder}
           options={this.state.options}
-          onChange={this.handleSelectChange} 
+          onChange={this._handleSelectChange} 
           clearable={true}
           openAfterFocus={true}
           noResultsText={false}
@@ -294,7 +289,7 @@ var MultiSelectField = React.createClass({
 			</div>
 		);
 	}
-});
+};
 
 @Radium export default class SearchListNav extends React.Component {
   constructor(props) {
@@ -313,7 +308,7 @@ var MultiSelectField = React.createClass({
       navState: this.getNavStates(0, theListSize),
       init: true,
       dialogVisible: false,
-      test: 'foo'
+      canSubmit: false
     };
     this.hiddenStyle = {
       visibility: 'hidden'
@@ -336,6 +331,10 @@ var MultiSelectField = React.createClass({
     this.startOver = this.startOver.bind(this);
     this.getActiveFieldFromProp = this.getActiveFieldFromProp.bind(this);
     this.onCloseDialog = this.onCloseDialog.bind(this);
+    this.enableFormSubmit = this.enableFormSubmit.bind(this);
+    this.disableFormSubmit = this.disableFormSubmit.bind(this);
+    this.submit = this.submit.bind(this);
+    
 }
   getActiveFieldFromProp(theProps){
             var ret=null;
@@ -430,7 +429,7 @@ var MultiSelectField = React.createClass({
       this.setState({compState: next})
     }
     this.checkNavState(next);
-    this.refs.multiSelect.setFocus();
+    this.refs.multiSelect._setFocus();
   }
 
   handleKeyDown (evt) {
@@ -446,7 +445,7 @@ var MultiSelectField = React.createClass({
   }
   next() {
     this.setNavState(this.state.compState + 1);
-    this.refs.multiSelect.setFocus();
+    this.refs.multiSelect._setFocus();
   }
   openDialog() {
     console.log('open dialog');
@@ -498,6 +497,21 @@ var MultiSelectField = React.createClass({
       </li>           
     ))  
   }
+
+  enableFormSubmit() {
+      this.setState({
+        canSubmit: true
+      });
+  }
+  disableFormSubmit() {
+      this.setState({
+        canSubmit: false
+      });
+  }
+  submit(model) {
+      console.log('model:',model);
+  }
+
 
   render() {
       return (
@@ -593,6 +607,15 @@ var MultiSelectField = React.createClass({
                 onClose={this.onCloseDialog}
                 style={styles.dialogStyle}
               >
+              
+              <Formsy.Form onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
+                <FormElements.MyNameInput name="fistName" placeholder="enter first name" validationError="required" required/>
+                <FormElements.MyEmailInput name="secondName" placeholder="enter last name" validationError="required" required/>
+                <FormElements.MyEmailInput name="email" placeholder="enter email" validations="isEmail" validationError="invalid email" required/>
+                <FormElements.MyEmailInput name="emailRepeat" placeholder="repeat email" validations="isEmail" validationError="invalid email" required/>
+                <button type="submit" disabled={!this.state.canSubmit}>Submit</button>
+              </Formsy.Form>
+
               </Dialog>     
       </div>
     );
