@@ -5,12 +5,12 @@ import { Provider } from 'react-redux';
 import reducer from './reducers/reducers';
 // import routerReducer  from './reducers/routing';
 import { SearchUXContainer } from './containers';
-//import createHistory from 'history/createBrowserHistory'
+// import createHistory from 'history/createBrowserHistory'
 import { routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
-//import {browserHistory} from 'react-router';
+// import {browserHistory} from 'react-router';
 
-import cookie from 'react-cookie';
+// import cookie from 'react-cookie';
 import { createTracker } from 'redux-segment';
 
 import persistState, {mergePersistedState} from 'redux-localstorage';
@@ -20,17 +20,8 @@ import { serialize, deserialize } from 'redux-localstorage-immutable';
 
 import DevTools from './components/DevTools';
 
-var __CONFIG__ = require('__CONFIG__');
+let __CONFIG__ = require('__CONFIG__');
 
-/*import { createDevTools } from 'redux-devtools'
-import LogMonitor from 'redux-devtools-log-monitor'
-import DockMonitor from 'redux-devtools-dock-monitor'
-
-export const DevTools = createDevTools(
-  <DockMonitor toggleVisibilityKey="ctrl-h" changePositionKey="ctrl-q">
-    <LogMonitor theme="tomorrow" preserveScrollTop={false} />
-  </DockMonitor>
-)*/
 
 
     !function(){var
@@ -48,41 +39,38 @@ export const DevTools = createDevTools(
 
 const tracker = createTracker(); 
 
-/*const rootReducer = compose(
+const rootReducer = compose(
  // apply deserialize from redux-localstorage-immutable
   mergePersistedState(deserialize)
-)(reducer);*/
+)(reducer);
 
-/*const storage = compose(
+const storage = compose(
   // apply serialize from redux-localstorage-immutable
   serialize
   //filter('data')
-)(adapter(window.localStorage));*/
+)(adapter(window.localStorage));
 
-//console.log(storage);
-
-/*const enhancer = compose(
+console.log('storage', storage);
+/*
+const enhancer = compose(
   persistState(storage, 'tableDemo')
-);*/
+);
+*/
 
 const middleware = applyMiddleware(
   thunk,
   tracker
 );
-  /*let devTools = []
-  if (typeof document !== 'undefined') {
-    devTools = [ DevTools.instrument() ]
-  }*/
-//const store = createStore(rootReducer, middleware, enhancer);
+
+// const store = createStore(rootReducer, middleware, enhancer);
 
 const enhancer = compose(
-  // Middleware you want to use in development:
   middleware,
-  // Required! Enable Redux DevTools with the monitors you chose
+  persistState(storage, 'porscheLocator'),
   DevTools.instrument()
 );
 
-const store = createStore(reducer, /* initialState */ enhancer);
+const store = createStore(rootReducer, /* initialState */ enhancer);
 
 render(
   <Provider store={store} >
