@@ -1,17 +1,16 @@
 import React from 'react';
 import sortBy from 'lodash'; 
-var ReCAPTCHA = require("react-google-recaptcha");
+const ReCAPTCHA = require("react-google-recaptcha");
 
 import Dialog from 'rc-dialog';
-import Animate from 'rc-animate';
-
+// import Animate from 'rc-animate';
 import 'rc-dialog/assets/index.css';
 import '../css/skeleton.css';
 import '../css/prog-tracker.css';
 import '../css/custom.css';
-//import './css/normalize.css';
+// import './css/normalize.css';
 import '../css/skeleton-alerts.css';
-var MediaQuery = require('react-responsive');
+const MediaQuery = require('react-responsive');
 import Formsy from 'formsy-react';
 
 import styles from '../style.js';
@@ -19,24 +18,28 @@ import styles from '../style.js';
 import Select from 'react-select';
 import Center from 'react-center';
 
-var classNames = require('classnames');
+// const classNames = require('classnames');
 import '../css/react-select.css';
-var Radium = require('radium');
+const Radium = require('radium');
 
 import * as FormElements from './FormElements';
 
-var SelectionTable = React.createClass({
+const SelectionTable = React.createClass({
 	getInitialState () {
-    var keys = this.props.state.getIn(['searchFields']).map (f =>  {
+    let keys = this.props.state.getIn(['searchFields']).map (f =>  {
     });
+    
+    // mystery why this renders as either js or List... 
+    
+
     return ({
       selected: [],
-      count: 0,
-      activeIdx: 0,     
+      count: this.getActiveFieldFromProp(this.props).resultsCount,
+      activeIdx: this.getActiveFieldFromProp(this.props).idx
     });
   },
   getActiveFieldFromProp : function getActiveFieldFromProp(theProps){
-    var ret=null;
+    let ret=null;
     theProps.state.getIn(['searchFields']).map(f => {
       if (f.get('isActive') === true ) {
         // console.log('getting ative field', f.get('id'));
@@ -62,9 +65,11 @@ var SelectionTable = React.createClass({
     if (this.state.count === 15843) {
      return styles.hidden;
     }
-    return (this.state.count > 0) ? Object.assign({},styles.resultsBox,styles.resultsBoxGreen) : Object.assign({},styles.resultsBox,styles.resultsBoxRed);
- },  
-  render () {
+    return (this.state.count > 0) 
+    ? Object.assign({},styles.resultsBox,styles.resultsBoxGreen)
+    : Object.assign({},styles.resultsBox,styles.resultsBoxRed);
+  },
+  render() {
         return (
           <div>
             <div style={this.getResultsBoxStyle()} >
@@ -106,14 +111,24 @@ export class MultiSelectField extends React.Component {
     this._setFocus = this._setFocus.bind(this);
     this._getActiveIdx = this._getActiveIdx.bind(this);
     this._handleSelectChange = this._handleSelectChange.bind(this);
+    console.log('active idx===', this._getActiveIdx());
+
+    console.log('to', Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts'])));
+    console.log(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']));
+    //this is a complete fucking mystery as to why this hydrates as an immut List or an array - localstorage 
+    let thisOpts = (Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']))) 
+    ?  props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']) 
+    : props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']).toJS();
     
-    console.log(this._getActiveIdx());
+    
     console.log('1',props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']));
+    
+    
     //console.log(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']).toJS());
       this.state = {
        multi: true,
  			 disabled: false,
-       options: props.state.getIn(['searchFields', this._getActiveIdx() , 'opts']),
+       options: thisOpts,
    		 value: null,
        placeholder: "select " + props.state.getIn(['searchFields', this._getActiveIdx() , 'label']),
       }
@@ -128,7 +143,7 @@ _getActiveFieldLine(theseProps){
     var ret=null;
       theseProps.state.getIn(['searchFields']).map(f => {
       if (f.get('isActive') === true ) {
-        console.log('getting ative field', f.get('id'));
+        // console.log('getting ative field', f.get('id'));
         ret = f.toJS();
       }
       });
@@ -138,7 +153,7 @@ _getActiveIdx(){
     let idx=null;
     this.props.state.getIn(['searchFields']).map(f => {
       if (f.get('isActive') === true ) {
-        console.log('getting active idx', parseInt(f.get('idx')));
+        // console.log('getting active idx', parseInt(f.get('idx')));
         idx = f.get('idx');
       }
       });
@@ -294,18 +309,21 @@ render () {
 @Radium export default class SearchListNav extends React.Component {
   constructor(props) {
     super(props);
-    this.props.getUUID();
+    props.getUUID();
+    let theListSize = props.state.getIn(['searchFields']).size;
     
-    console.log(props.state);
-    
-    var theListSize = props.state.getIn(['searchFields']).size;
+    let activeLine = this.getActiveFieldFromProp(props);
+
+    console.log('sLN active line', activeLine);
+
     this.state = {
       showPreviousBtn: false,
       showNextBtn: false,
       showMatchBtn: false,
       disabledMatchBtn: false,
       compState: 0,
-      navState: this.getNavStates(0, theListSize),
+      //first param is current index
+      navState: this.getNavStates(activeLine.idx, theListSize),
       init: true,
       dialogVisible: false,
       canSubmit: false
