@@ -47,7 +47,7 @@ export const MyEmailInput = React.createClass({
       const errorMessage = this.getErrorMessage();
       return (
         <div className={className}>
-          <input type="text" placeholder={placeholder} onChange={this.changeValue} value={this.getValue()}/>
+          <input type="text" onChange={this.changeValue} value={this.getValue()}/>
           <span>{errorMessage}</span>
         </div>
       );

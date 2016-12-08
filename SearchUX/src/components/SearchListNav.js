@@ -351,7 +351,7 @@ render () {
     this.setState({ init: isInit});
     this.setState({ count: newProps.state.get('resultsCount')});
     if(isInit) { 
-      this.refs.multiSelect.clearDisabledOpts();
+      this.refs.multiSelect._clearDisabledOpts();
     }
     
     var newPropLine = this.getActiveFieldFromProp(newProps);
@@ -454,7 +454,7 @@ render () {
   previous() {
     if (this.state.compState > 0) {
       console.log('REFS', this.refs);
-      this.refs.multiSelect.handleSelectChange('');
+      this.refs.multiSelect._handleSelectChange('');
       this.setNavState(this.state.compState - 1);
       this.refs.multiSelect.setFocus();
     }
@@ -465,9 +465,9 @@ render () {
       this.props.clearAll();
       this.setNavState(0);
       this.setState({ init: true});
-      this.refs.multiSelect.clearDisabledOpts();
+      this.refs.multiSelect._clearDisabledOpts();
       this.refs.multiSelect.setState({ value: ''});
-      this.refs.multiSelect.setFocus();
+      this.refs.multiSelect._setFocus();
   }
   
   getMatchBtnStyle() {
