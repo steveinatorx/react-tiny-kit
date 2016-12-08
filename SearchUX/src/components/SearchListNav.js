@@ -33,7 +33,7 @@ export class SelectionTable extends React.Component {
       //console.log('ST init count', props.state.get('resultsCount'));
 
     this.state = {
-      selected: [],
+      selected: [this._getActiveFieldLine(this.props).selected],
       count: props.state.get('resultsCount'),
       activeIdx: this._getActiveFieldLine(this.props).idx
     };
@@ -51,8 +51,8 @@ export class SelectionTable extends React.Component {
   componentWillReceiveProps (newProps) {
     let activeLine=this._getActiveFieldLine(newProps);    
 
-   console.log('CWRP res count', newProps.state.get('resultsCount'));
-   console.log('CWRP res count', typeof newProps.state.get('resultsCount'));
+   // console.log('CWRP res count', newProps.state.get('resultsCount'));
+   // console.log('CWRP res count', typeof newProps.state.get('resultsCount'));
     this.setState({ selected: activeLine.selected });
     this.setState({ activeIdx: activeLine.idx});
     this.setState({ count: newProps.state.get('resultsCount')});
@@ -121,17 +121,30 @@ export class MultiSelectField extends React.Component {
     let thisOpts = (Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']))) 
     ?  props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']) 
     : props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']).toJS();
-    
-    
-    console.log('1',props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']));
-    
-    
+
+    let initValue = (Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']))) 
+    ?  props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']) 
+    : props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']).toJS();
+    console.log('init selected', initValue);    
+    console.log('init array?', Array.isArray(initValue));    
+    console.log('init array len?', initValue.length);    
+      if (Array.isArray(initValue) && initValue.length === 0) {
+        console.log('hohohohohoho');
+       initValue=''; 
+      } 
+      if (Array.isArray(initValue) && initValue.length === 1) {
+       initValue=initValue[0]; 
+      }
+    console.log('treat selected', initValue);    
     //console.log(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']).toJS());
       this.state = {
+       // first init flag 
+       init: true, 
        multi: true,
  			 disabled: false,
        options: thisOpts,
-   		 value: null,
+       value: [],
+       initValue: initValue,
        placeholder: "select " + props.state.getIn(['searchFields', this._getActiveIdx() , 'label']),
       }
 }//constructor
@@ -184,7 +197,7 @@ _getSelected(){
     return selected;    
 }
 _handleSelectChange(value) {
-    console.log('in selected');
+    console.log('in selected', value);
     var allFlag = false;
     var activeIdx=this._getActiveIdx();
         if (value === null) {
@@ -217,9 +230,6 @@ _handleSelectChange(value) {
         }
         
     }
-    
-    console.log('aaa');
-
     if (value === "" || typeof value === 'undefined') {
         this.setState({ value:''});
 
@@ -237,8 +247,15 @@ _handleSelectChange(value) {
       this.props.setFieldSelectionAndFetchData(activeIdx, [value]); 
     }
 }
-/*componentWillMount() {
-}*/
+componentWillMount() {
+  console.log('in CWM');
+  if (this.state.init === true) {
+    this.setState({init: false});
+    this._handleSelectChange(this.state.initValue);       
+  } 
+  
+  
+}
 componentWillReceiveProps (newProps) {
     // console.log('SELECT CWRP', newProps);
     var newPropLine = this._getActiveFieldLine(newProps);
@@ -317,9 +334,11 @@ render () {
     let activeLine = this.getActiveFieldFromProp(props);
 
     console.log('sLN active line', activeLine);
+    console.log('sLN active selected', activeLine.selected.length);
 
     this.state = {
-      showPreviousBtn: false,
+      showPreviousBtn: (activeLine.idx > 0),
+      showStartOverBtn: (activeLine.idx > 0 || activeLine.selected.length > 0),
       showNextBtn: false,
       showMatchBtn: false,
       disabledMatchBtn: false,
