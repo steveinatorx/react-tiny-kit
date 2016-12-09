@@ -1,7 +1,7 @@
 import React from 'react';
 import Formsy from 'formsy-react';
 
-export const MyEmailInput = React.createClass({
+export const MyInput = React.createClass({
     // Add the Formsy Mixin
     mixins: [Formsy.Mixin],
     // setValue() will set the value of the component, which in
@@ -9,47 +9,52 @@ export const MyEmailInput = React.createClass({
     changeValue(event) {
       this.setValue(event.currentTarget.value);
     },
-    render() {
-      // Set a specific className based on the validation
-      // state of this component. showRequired() is true
-      // when the value is empty and the required prop is
-      // passed to the input. showError() is true when the
-      // value typed is invalid
-      const className = this.showRequired() ? 'required' : this.showError() ? 'error' : null;
-      // An error message is returned ONLY if the component is invalid
-      // or the server has returned an error message
-      const errorMessage = this.getErrorMessage();
-      return (
-        <div className={className}>
-          <input type="text" onChange={this.changeValue} value={this.getValue()}/>
-          <span>{errorMessage}</span>
-        </div>
-      );
+  render() {
+    const errorMessage = this.getErrorMessage();
+    return (
+      <div>
+        <label htmlFor={this.props.name}>{this.props.title}</label>
+          <input
+            type={this.props.type || 'text'}
+            name={this.props.name}
+            title={this.props.title}
+            placeholder={this.props.placeholder}
+            onChange={this.changeValue}
+            value={this.getValue()}
+          />
+          <span className='validation-error'>{errorMessage}</span>
+      </div>
+     );
     }
   });
-  export const MyNameInput = React.createClass({
+
+ export const MyCheck = React.createClass({
     // Add the Formsy Mixin
     mixins: [Formsy.Mixin],
     // setValue() will set the value of the component, which in
     // turn will validate it and the rest of the form
     changeValue(event) {
-      this.setValue(event.currentTarget.value);
+      console.log('change val', event.currentTarget.value);
+        let target = event.currentTarget;
+        this.setValue(target.checked);
+        //this.props.onChange(this.props.name, target.checked);
     },
-    render() {
-      // Set a specific className based on the validation
-      // state of this component. showRequired() is true
-      // when the value is empty and the required prop is
-      // passed to the input. showError() is true when the
-      // value typed is invalid
-      const className = this.showRequired() ? 'required' : this.showError() ? 'error' : null;
-      // An error message is returned ONLY if the component is invalid
-      // or the server has returned an error message
-      const errorMessage = this.getErrorMessage();
-      return (
-        <div className={className}>
-          <input type="text" onChange={this.changeValue} value={this.getValue()}/>
-          <span>{errorMessage}</span>
-        </div>
-      );
+  render() {
+    const errorMessage = this.getErrorMessage();
+    return (
+      <div>
+        <label htmlFor={this.props.name}>
+          <input
+            type="checkbox"
+            name={this.props.name}
+            title={this.props.title}
+            checked={this.getValue() === true}
+            onChange={this.changeValue}
+          />
+          {this.props.title}</label>
+
+      </div>
+     );
     }
   });
+  
