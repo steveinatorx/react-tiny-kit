@@ -21,6 +21,7 @@ export const MyInput = React.createClass({
             placeholder={this.props.placeholder}
             onChange={this.changeValue}
             value={this.getValue()}
+            className="searchSubmit"
           />
           <span className='validation-error'>{errorMessage}</span>
       </div>
