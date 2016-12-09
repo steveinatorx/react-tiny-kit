@@ -373,7 +373,22 @@ render () {
     this.enableFormSubmit = this.enableFormSubmit.bind(this);
     this.disableFormSubmit = this.disableFormSubmit.bind(this);
     this.submit = this.submit.bind(this);
-    
+    Formsy.addValidationRule('isOneChecked', (values, checked) => {
+      console.log('VALID:value of this check', checked);
+       console.log('values:', values); 
+       console.log('values:', typeof values);
+      
+       let checksValid=false;
+       
+       for (let v in values) {
+         if (values.hasOwnProperty(v)) {
+            checksValid = (values[v] === true) ? true : checksValid; 
+         }
+
+       }
+       return checksValid;
+    });
+  
 }
   getActiveFieldFromProp(theProps){
             var ret=null;
@@ -538,11 +553,13 @@ render () {
   }
 
   enableFormSubmit() {
+    console.log('can submit !!!!');
       this.setState({
         canSubmit: true
       });
   }
   disableFormSubmit() {
+    console.log('cant submit !!!!');
       this.setState({
         canSubmit: false
       });
@@ -552,7 +569,9 @@ render () {
   }
 
 
+
   render() {
+  
       return (
         <div className="container" onKeyDown={this.handleKeyDown}>
         
@@ -647,12 +666,62 @@ render () {
                 style={styles.dialogStyle}
               >
               
-              <Formsy.Form onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
-                <FormElements.MyNameInput name="fistName" placeholder="enter first name" validationError="required" required/>
-                <FormElements.MyEmailInput name="secondName" placeholder="enter last name" validationError="required" required/>
+              <Formsy.Form onValidSubmit={this.submit} onValid={this.enableFormSubmit} onInvalid={this.disableFormSubmit}>
+                {/*<FormElements.MyNameInput name="firstName" placeholder="enter first name" validations="isExisty" validationError="first name required" required/>
+                <FormElements.MyNameInput name="secondName" placeholder="enter last name" validationError="required" required/>
                 <FormElements.MyEmailInput name="email" placeholder="enter email" validations="isEmail" validationError="invalid email" required/>
-                <FormElements.MyEmailInput name="emailRepeat" placeholder="repeat email" validations="isEmail" validationError="invalid email" required/>
-                <button type="submit" disabled={!this.state.canSubmit}>Submit</button>
+                */}
+               <FormElements.MyInput 
+                  name="firstName" 
+                  type="text" 
+                  placeholder="enter first name (required)" 
+                  validations="isExisty" 
+                  validationError="first name required" 
+                  required/>
+                 <FormElements.MyInput 
+                  name="lastName"
+                  ref="lastName" 
+                  type="text" 
+                  placeholder="enter last name (required)"
+                  validations="isExisty" 
+                  validationError="last name required"
+                  required/>
+                <FormElements.MyInput 
+                  name="email"
+                  type="email" 
+                  placeholder="enter email (required)"
+                  validations="isEmail" 
+                  validationError="invalid email"
+                  required/>
+                <FormElements.MyInput 
+                  name="repeatEmail"
+                  type="email" 
+                  placeholder="repeat email (required)"
+                  validations="equalsField:email" 
+                  validationError="email does not match"
+                  required/>
+                 <FormElements.MyCheck
+                  name="checkBuy"
+                  type="checkbox"
+                  ref="check1" 
+                  validations="isOneChecked" 
+                  validationError="must check one"
+                  title="I am interested in buying a millenial porsche"
+                  />
+                  <FormElements.MyCheck
+                  name="checkReasearch"
+                  type="checkbox"
+                  ref="check2" 
+                  validations="isOneChecked" 
+                  validationError="must check one"
+                  title="I amaaa interested in buying a millenial porsche"
+                  />
+                                    
+                  {/*style={Object.assign({}, this.state.canSubmit ? {}: this.noDisplayStyle)} */}
+                <button className="button-primary" type="submit" 
+                  disabled={!this.state.canSubmit}>
+                    Submit
+                </button>
               </Formsy.Form>
 
               </Dialog>     
