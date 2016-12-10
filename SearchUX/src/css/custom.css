@@ -288,3 +288,8 @@ table tbody th {
 .formMargins {
   margin-bottom: '20px !important';
 }
+
+.searchSubmit {
+  
+  width: 75%;
+}
