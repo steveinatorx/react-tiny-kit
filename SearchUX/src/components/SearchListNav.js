@@ -665,7 +665,9 @@ render () {
                 onClose={this.onCloseDialog}
                 style={styles.dialogStyle}
               >
-              
+              <br/>
+             <span>Simply complete and submit the request form below and we will email you your results along with details on how to locate the vehicles you are looking for. Let’s get started locating your Porsche!
+</span> 
               <Formsy.Form onValidSubmit={this.submit} onValid={this.enableFormSubmit} onInvalid={this.disableFormSubmit}>
                 {/*<FormElements.MyNameInput name="firstName" placeholder="enter first name" validations="isExisty" validationError="first name required" required/>
                 <FormElements.MyNameInput name="secondName" placeholder="enter last name" validationError="required" required/>
@@ -682,7 +684,7 @@ render () {
                   name="lastName"
                   ref="lastName" 
                   type="text" 
-                  placeholder="enter last name (required)"
+                  placeholder="enter last name (required)" 
                   validations="isExisty" 
                   validationError="last name required"
                   required/>
@@ -691,6 +693,7 @@ render () {
                   type="email" 
                   placeholder="enter email (required)"
                   validations="isEmail" 
+                  className="u-full-width"
                   validationError="invalid email"
                   required/>
                 <FormElements.MyInput 
@@ -698,25 +701,58 @@ render () {
                   type="email" 
                   placeholder="repeat email (required)"
                   validations="equalsField:email" 
+                  className="u-full-width"
                   validationError="email does not match"
                   required/>
+                  <span>Check all that apply (must check one):
+                  </span>
+
                  <FormElements.MyCheck
-                  name="checkBuy"
+                  name="check1"
                   type="checkbox"
                   ref="check1" 
                   validations="isOneChecked" 
                   validationError="must check one"
-                  title="I am interested in buying a millenial porsche"
+                  title="I am researching millennial Porsche vehicles"
                   />
                   <FormElements.MyCheck
-                  name="checkReasearch"
+                  name="check2"
                   type="checkbox"
                   ref="check2" 
                   validations="isOneChecked" 
                   validationError="must check one"
-                  title="I amaaa interested in buying a millenial porsche"
+                  title="I am looking to buy a millenial porsche"
                   />
-                                    
+                  <FormElements.MyCheck
+                  name="check3"
+                  type="checkbox"
+                  ref="check3" 
+                  validations="isOneChecked" 
+                  validationError="must check one"
+                  title="I am interested in selling a millennial Porsche vehicle"
+                  />
+                  <FormElements.MyCheck
+                  name="check4"
+                  type="checkbox"
+                  ref="check4" 
+                  validations="isOneChecked" 
+                  validationError="must check one"
+                  title="I am a licensed dealer or broker"
+                  />
+                  <FormElements.MyCheck
+                  name="check5"
+                  type="checkbox"
+                  ref="check5" 
+                  validations="isOneChecked" 
+                  validationError="must check one"
+                  title="Other - Enter inquiry in comment box"
+                  />
+                  <textarea rows="4" cols="50" placeholder="comment box"/>
+                  
+
+
+
+                 
                   {/*style={Object.assign({}, this.state.canSubmit ? {}: this.noDisplayStyle)} */}
                 <button className="button-primary" type="submit" 
                   disabled={!this.state.canSubmit}>
