@@ -669,7 +669,7 @@ render () {
                 style={styles.dialogStyle}
               >
               <br/>
-             <span>Simply complete and submit the request form below and we will email you your results along with details on how to locate the vehicles you are looking for. Let’s get started locating your Porsche!
+             <span className="blueFont">Simply complete and submit the request form below and we will email you your results along with details on how to locate the vehicles you are looking for. Let’s get started locating your Porsche!
 </span> 
               <Formsy.Form onValidSubmit={this.submit} onValid={this.enableFormSubmit} onInvalid={this.disableFormSubmit}>
                 {/*<FormElements.MyNameInput name="firstName" placeholder="enter first name" validations="isExisty" validationError="first name required" required/>
@@ -677,19 +677,11 @@ render () {
                 <FormElements.MyEmailInput name="email" placeholder="enter email" validations="isEmail" validationError="invalid email" required/>
                 */}
                <FormElements.MyInput 
-                  name="firstName" 
+                  name="fullName" 
                   type="text" 
-                  placeholder="enter first name (required)" 
+                  placeholder="enter full name (required)" 
                   validations="isExisty" 
                   validationError="first name required" 
-                  required/>
-                 <FormElements.MyInput 
-                  name="lastName"
-                  ref="lastName" 
-                  type="text" 
-                  placeholder="enter last name (required)" 
-                  validations="isExisty" 
-                  validationError="last name required"
                   required/>
                 <FormElements.MyInput 
                   name="email"
@@ -707,7 +699,7 @@ render () {
                   className="u-full-width"
                   validationError="email does not match"
                   required/>
-                  <span>Check all that apply (must check one):
+                  <span className="blueFont">Check all that apply (must check one):
                   </span>
 
                  <FormElements.MyCheck
@@ -750,14 +742,13 @@ render () {
                   validationError="must check one"
                   title="Other - Enter inquiry in comment box"
                   />
-                  <textarea rows="4" cols="50" placeholder="comment box"/>
+                  <textarea className="commentBox" rows="4" cols="50" placeholder="comment box"/>
                   
-
-
-
+                  <textarea className="legalese" readOnly="true" row="3" cols="50">By clicking "Submit": I accept and agree with Concours By Appointment LLC (CBA) that a) information provided through PCNALocator may contain copyrighted material and I will not distribute any materials received by me as a result of using the application, and  b) I will not reproduce, duplicate, copy, sell, resell or exploit for any purpose, any portion of information I receive through PCNALocator, and c) CBA makes no representations, expressed or implied, as to the existence, ownership, availability for purchase or sale, accuracy, description or condition of vehicles, vehicle’s listed equipment, accessories, price or any warranties, and d) information provided through PCNALocator does not constitute an offer by CBA to buy or sell any vehicle absent a written contract between myself and CBA and e) I authorize CBA to send me email offers including vehicle information and offers from PCNALocator.
+                  </textarea>
                  
                   {/*style={Object.assign({}, this.state.canSubmit ? {}: this.noDisplayStyle)} */}
-                <button className="button-primary" type="submit" 
+                <button className="button-primary block" type="submit" 
                   disabled={!this.state.canSubmit}>
                     Submit
                 </button>
