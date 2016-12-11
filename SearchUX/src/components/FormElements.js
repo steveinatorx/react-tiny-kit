@@ -44,13 +44,14 @@ export const MyInput = React.createClass({
     const errorMessage = this.getErrorMessage();
     return (
       <div>
-        <label htmlFor={this.props.name}>
+        <label className="checkLabel" tmlFor={this.props.name}>
           <input
             type="checkbox"
             name={this.props.name}
             title={this.props.title}
             checked={this.getValue() === true}
             onChange={this.changeValue}
+            className="formCheck"
           />
           {this.props.title}</label>
 
