@@ -179,9 +179,9 @@ export function apiError(error){
 // store.dispatch(fetchPosts('reactjs'))
 
 export function fetchFields(objectFieldId, queryObj) {
-  /*console.log('in fetchFields', objectFieldId );
+  console.log('in fetchFields', objectFieldId );
   console.log('in fetchFields', queryObj );
-  console.log( __CONFIG__ );*/
+  console.log( __CONFIG__ );
 
     return dispatch =>
         axios.post( __CONFIG__.apiHost + '/api/pcnacarsmeta', 
@@ -189,8 +189,7 @@ export function fetchFields(objectFieldId, queryObj) {
             distinct: objectFieldId,
             queryObj: queryObj,
           }).then(res => {
-            //console.log('RESRESRESRESRESRESRESRES', res);
-            
+            console.log('RESRESRESRESRESRESRESRES', res);
             dispatch(receiveFields(objectFieldId, res.data.values));
             dispatch(receiveCount(res.data.count));
           }).catch(err => {
@@ -232,6 +231,30 @@ export function receiveUUID(uuid) {
    cookie.save('PCNALocator', uuid, { path: '/' });
    return dispatch => dispatch(setUUID(uuid));
 }
+
+export const OPEN_SEARCH_FORM = 'OPEN_SEARCH_FORM';
+export function openSearchForm(data) {
+  return {
+      type: OPEN_SEARCH_FORM,
+      payload: {
+        form: data,
+      },
+      meta: {
+        analytics: EventTypes.track
+      }
+  }
+}
+
+export const SUBMIT_SEARCH_FORM = 'SUBMIT_SEARCH_FORM';
+export function submitSearchForm() {
+  return {
+      type: SUBMIT_SEARCH_FORM,
+      meta: {
+        analytics: EventTypes.track
+      }
+  }
+}
+
 
 export function getUUID() {
   console.log('in getUUID');
