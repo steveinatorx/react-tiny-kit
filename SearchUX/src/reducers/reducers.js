@@ -8,6 +8,7 @@ const init = new Map({
   searchCode: null,
   resultsCount: 0,
   lastAction: null,
+  formData: {},
   searchFields: new List([
     Map({ id: 'Model', navLabel: 'model', label: 'model', idx: 0, isActive: true, opts: [
     { label: "918 Spyder", value: "918 Spyder" },
@@ -38,12 +39,14 @@ const init = new Map({
 export default function reducer (state = init, action) {
   // console.log('in reducer---->', action);
   switch (action.type) {
+    case 'SUBMIT_SEARCH_FORM':
+      return state.set('formData', action.payload.data);
     case 'CLEAR_ALL':
       return init;
     case 'SET_UUID':
       return state.set('uuid', action.payload.uuid);
     case 'SET_ACTIVE_FIELD':
-      var newSearchFields = state.getIn(['searchFields']).map(f => {
+      let newSearchFields = state.getIn(['searchFields']).map(f => {
          // console.log('mapiing reducer->', f.get('idx'));
         if(f.get('idx') === action.payload) {
            // console.log('GOOD payload match idx?', f.get('idx'));
@@ -58,8 +61,8 @@ export default function reducer (state = init, action) {
       //console.log('setting count', action.payload.count);
       return state.set('resultsCount', action.payload.count);
     case 'RECEIVE_FIELDS':
-
-      var objId = state.getIn(['searchFields']).filter( f=>{
+      console.log('in recieve fields', action.payload);
+      let objId = state.getIn(['searchFields']).filter( f=>{
         if (f.get('id') === action.payload.field){
           return true;
         } else { 
@@ -67,31 +70,30 @@ export default function reducer (state = init, action) {
         }
       });
       //convert to multiselect object and strings?
-      var optObjs = action.payload.values.map( o => {
+      let optObjs = action.payload.values.map( o => {
             if (action.payload.field === 'Opts') {
               var code = o.substring(0,o.indexOf(' '));
               var label = o.substring(o.indexOf(' ') +1 ) + ' ' + code;
             } else {
+              console.log('hello?', o.toString());
               var label=o.toString();
             }
+            console.log('returning' + label + ' val?' + o.toString());
             return { label: label, value: o.toString()} 
       });
       //sort lexi
       optObjs = sortBy(optObjs);
-      
       if ((action.payload.field !== 'Opts') && (objId.toJS()[0].metaMulti === true) && ( action.payload.values.length > 1 )) {
         //console.log('detected MULTI so add "all" to selections');
         optObjs.unshift({ label: 'All', value: 'all'});
       }
       //console.log('receive fields idx', objId.toJS()[0].idx);
       return state.setIn(['searchFields',objId.toJS()[0].idx,'opts'],optObjs);
-      
     case 'SET_FIELD_SELECTION':
       const selection=action.payload.selection;
+      console.log('in SFS reducer:', selection);
       const idx = action.payload.idx;
-      //gather all existing selections, get idx +1 id for distinct
-      return state.setIn(['searchFields', idx, 'selected'], action.payload.selection);
-      //return state;
+      return state.setIn(['searchFields', idx, 'selected'], selection);
     case 'LOCATION_CHANGE':
      const pathname = action.payload.pathname;
      // /redux-history-demo/:operation
