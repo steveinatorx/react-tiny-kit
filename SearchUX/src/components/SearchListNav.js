@@ -248,8 +248,12 @@ _handleSelectChange(value) {
     }
 }
 componentWillMount() {
-  console.log('in CWM');
-  if (this.state.init === true) {
+  console.log('in CWM', this.state.initValue);
+  
+  if ((this.state.init === true && Object.call(this.state.initValue) === '[object Array]' && this.state.initValue.length>0)
+     || 
+  ( this.state.init === true && this.state.initValue !=='')) 
+  {
     this.setState({init: false});
     this._handleSelectChange(this.state.initValue);       
   } 
@@ -504,6 +508,8 @@ render () {
   openDialog() {
     console.log('open dialog');
    this.setState({ dialogVisible: true }); 
+   //todo this should be a flag and only dipatch once per session
+   this.props.openSearchFormyy();
   }
   previous() {
     if (this.state.compState > 0) {
@@ -551,7 +557,6 @@ render () {
       </li>           
     ))  
   }
-
   enableFormSubmit() {
     console.log('can submit !!!!');
       this.setState({
@@ -566,10 +571,8 @@ render () {
   }
   submit(model) {
       console.log('model:',model);
+      
   }
-
-
-
   render() {
   
       return (
