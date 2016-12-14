@@ -122,8 +122,8 @@ export class MultiSelectField extends React.Component {
     ?  props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']) 
     : props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']).toJS();*/
     
-    let thisOpts = this._getActiveFieldLine(props).options;
-
+    let thisOpts = this._getActiveFieldLine(props).opts;
+    console.log('thisOpts', thisOpts);
     let initValue = (Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']))) 
     ?  props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']) 
     : props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']).toJS();
@@ -166,13 +166,15 @@ _setFocus() {
 
 //need to track last active line? might need to go into store
 _getActiveFieldLine(theseProps){
-    var ret=null;
+    //console.log('props',theseProps);
+    let ret=null;
       theseProps.state.getIn(['searchFields']).map(f => {
       if (f.get('isActive') === true ) {
         // console.log('getting ative field', f.get('id'));
         ret = f.toJS();
       }
       });
+      //console.log(ret);
     return ret;
 }
 _getActiveIdx(){
@@ -232,13 +234,15 @@ _handleSelectChange(value) {
         value = value.replace(/,$/,'');
         value = value.replace(/^,/,'');
         this.setState({ value }); 
+        this.props.setFieldSelectionAndFetchData(activeIdx, [value]); 
+
     }
      else if ( value === null || value === [] || value === "" || typeof value === 'undefined') {
        console.log('in untruthy select block'); 
         this.setState({ value:''});
         if (activeIdx === 0){
          var newOpts=this.state.options.map(function(obj){
-            console.log(obj);
+            //console.log(obj);
             obj.disabled=false;
            return obj;
          });
@@ -274,16 +278,17 @@ _handleSelectChange(value) {
 componentWillMount() {
   console.log('in CWM', this.state.initValue);
   
-  if ((this.state.init === true && Object.call(this.state.initValue) === '[object Array]' && this.state.initValue.length>0)
+  /*if ((this.state.init === true && Object.call(this.state.initValue) === '[object Array]' && this.state.initValue.length>0)
      || 
-  ( this.state.init === true && this.state.initValue !=='')) 
+  ( this.state.init === true && this.state.initValue !=='')) */
+  
+
+  /*if (this.state.init === true)
   {
     console.log('calling from init', this.state.initValue)
     this.setState({init: false});
     this._handleSelectChange(this.state.initValue);       
-  } 
-  
-  this.setState( {initValue: false}); 
+  } */  
 }
 componentWillReceiveProps (newProps) {
  //   console.log('SELECT CWRP', newProps);
@@ -375,8 +380,8 @@ render () {
 
     this.state = {
       showPreviousBtn: (activeLine.idx > 0),
-      showStartOverBtn: (activeLine.idx > 0 || activeLine.selected.length > 0),
-      showNextBtn: false,
+      showStartOverBtn: activeLine.selected.length > 0,
+      showNextBtn:  (activeLine.idx !== 7 && activeLine.selected.length > 0),
       showMatchBtn: false,
       disabledMatchBtn: false,
       compState: activeLine.idx,
@@ -441,33 +446,35 @@ render () {
 
   }
   componentWillReceiveProps (newProps) {
-        var isInit = (newProps.state.getIn(['searchFields', 0 , 'selected']).length === 0) ? true: false;
-   // console.log('isInit>>' , isInit);
+        let isInit = (newProps.state.getIn(['searchFields', 0 , 'selected']).size === 0) ? true: false;
+   console.log('isInit>>' , isInit);
     this.setState({ init: isInit});
     this.setState({ count: newProps.state.get('resultsCount')});
     if(isInit) { 
       this.refs.multiSelect._clearDisabledOpts();
     }
-    
-    var newPropLine = this.getActiveFieldFromProp(newProps);
-    var oldPropLine = this.getActiveFieldFromProp(this.props);
+    let newPropLine = this.getActiveFieldFromProp(newProps);
+    let oldPropLine = this.getActiveFieldFromProp(this.props);
     if (newPropLine.idx != oldPropLine.idx) {
             // console.log('new active field'); 
             this.setNavState(newPropLine.idx);
     }
-    
+    console.log('SHOW NEXT BTN' , newPropLine);
+    console.log('SHOW NEXT BTN' , newPropLine.selected);
     //console.log('SHOW NEXT BTN' ,typeof newPropLine.selected !== undefined);
-    //console.log('SHOW NEXT BTN' , newPropLine.selected.length);
-    //console.log('SHOW NEXT BTN' ,newPropLine.idx !== 7); 
-    if (typeof newPropLine.selected !=='undefined' && newPropLine.selected.length>0 && newPropLine.idx !== 7) {
-     // console.log('show next');
+    console.log('SHOW NEXT BTN' , newPropLine.selected.size);
+    console.log('SHOW NEXT BTN' ,newPropLine.idx !== 7); 
+    if (newPropLine.selected.length>0 && newPropLine.idx !== 7) {
+      console.log('show next');
         this.setState({ showNextBtn: true}); 
         this.setState({ showMatchBtn: false}); 
     } else if (newPropLine.idx===7) {
-      //console.log('HIDE NEXT BTN');
+      console.log('HIDE NEXT BTN');
        this.setState({ showNextBtn: false}); 
        this.setState({ showMatchBtn: true}); 
     } else {
+
+      console.log('HIDE NEXT and MATCH BTN');
         this.setState({ showNextBtn: false}); 
        this.setState({ showMatchBtn: false}); 
     }
