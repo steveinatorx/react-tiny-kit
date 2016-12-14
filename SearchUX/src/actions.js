@@ -59,16 +59,10 @@ var buildQueryObj = function buildQueryObj(state){
  var queryRoot = {};
           state.getIn(['searchFields']).map(f => {
           //console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
-          console.log('ITERATOR Field===', f.get('id'));
+          //console.log('ITERATOR Field===', f.get('id'));
           
-          if ( f.get('selected') && getType.toString.call(f.get('selected').toJS()) === '[object Function]'){
-             let theValue = f.get('selected').toJS();
-          }
-          else {
-             let theValue = f.get('selected');
-          }
-          
-          console.log('SELECTED', theValue);
+             let theValue = f.get('selected').toJS(); //this should always be a List 
+          //console.log('SELECTED', theValue);
           let theField = f.get('id');
           
           //console.log('bqo', theValue);
@@ -130,6 +124,7 @@ export function setFieldSelectionAndFetchData(idx,selection){
     console.log('in sFSAFD');
     dispatch(setFieldSelection(idx,selection));
     let state=getState();
+    console.log(state);
     
     let qObj = buildQueryObj(state);
     
