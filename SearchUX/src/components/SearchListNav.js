@@ -113,14 +113,16 @@ export class MultiSelectField extends React.Component {
     this._setFocus = this._setFocus.bind(this);
     this._getActiveIdx = this._getActiveIdx.bind(this);
     this._handleSelectChange = this._handleSelectChange.bind(this);
-    console.log('active idx===', this._getActiveIdx());
+    this._clearDisabledOpts = this._clearDisabledOpts.bind(this);
 
     console.log('to', Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts'])));
     console.log(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']));
     //this is a complete fucking mystery as to why this hydrates as an immut List or an array - localstorage 
-    let thisOpts = (Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']))) 
+    /*let thisOpts = (Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']))) 
     ?  props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']) 
-    : props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']).toJS();
+    : props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']).toJS();*/
+    
+    let thisOpts = this._getActiveFieldLine(props).options;
 
     let initValue = (Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']))) 
     ?  props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']) 
@@ -128,14 +130,23 @@ export class MultiSelectField extends React.Component {
     console.log('init selected', initValue);    
     console.log('init array?', Array.isArray(initValue));    
     console.log('init array len?', initValue.length);    
+    console.log('init options?', thisOpts);
       if (Array.isArray(initValue) && initValue.length === 0) {
-        console.log('hohohohohoho');
+        console.log('empty init - clear option disbleds');
+        if (this._getActiveIdx() === 0){
+          let newOpts = thisOpts.map(function(obj){
+            obj.disabled = false;
+            return obj;
+         });
+         thisOpts = newOpts; 
+        }
+        
        initValue=''; 
       } 
       if (Array.isArray(initValue) && initValue.length === 1) {
        initValue=initValue[0]; 
       }
-    console.log('treat selected', initValue);    
+    console.log('treated init selected', initValue);    
     //console.log(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']).toJS());
       this.state = {
        // first init flag 
@@ -143,7 +154,7 @@ export class MultiSelectField extends React.Component {
        multi: true,
  			 disabled: false,
        options: thisOpts,
-       value: [],
+       value: initValue,
        initValue: initValue,
        placeholder: "select " + props.state.getIn(['searchFields', this._getActiveIdx() , 'label']),
       }
@@ -175,6 +186,7 @@ _getActiveIdx(){
       return idx;
 }
 _clearDisabledOpts() {
+    console.log('clearing opts');
     var newOpts = this.state.options.map(function(obj){
             obj['disabled'] = false;
             return obj;
@@ -182,7 +194,7 @@ _clearDisabledOpts() {
     this.setState({options: newOpts});
 }
 _getSelected(){
-    console.log('in selected', this.props.state.getIn(['searchFields']));
+    console.log('in get selected', this.props.state.getIn(['searchFields']));
     var selected=[]; 
     this.props.state.getIn(['searchFields']).map(f => {
       
@@ -197,14 +209,17 @@ _getSelected(){
     return selected;    
 }
 _handleSelectChange(value) {
-    console.log('in selected', value);
+    console.log('in select change:', value);
     var allFlag = false;
     var activeIdx=this._getActiveIdx();
-        if (value === null) {
+    console.log('ACTIVE IDX', activeIdx);
+        /*if (value === null) {
+          console.log('in null selection block');
           this.setState({ value });
-        }
+        }*/
         //special case all - match all after previous selections
-        else if (value.match(/^all$/) || value.match(/,all/)) {
+      if (value.match(/^all$/) || value.match(/,all/)) {
+          console.log('in all selection block');
           var allFlag = true;
           
           value=this._getActiveFieldLine(this.props).opts.map( o => {
@@ -217,35 +232,44 @@ _handleSelectChange(value) {
         value = value.replace(/,$/,'');
         value = value.replace(/^,/,'');
         this.setState({ value }); 
-
     }
-    else {
-        this.setState({ value }); 
-        
-        if (activeIdx === 0){
-         var newOpts=this.state.options.map(function(obj){
-           return obj['disabled']=true;
-         });
-         this.setState({options: newOpts});
-        }
-        
-    }
-    if (value === "" || typeof value === 'undefined') {
+     else if ( value === null || value === [] || value === "" || typeof value === 'undefined') {
+       console.log('in untruthy select block'); 
         this.setState({ value:''});
-
         if (activeIdx === 0){
          var newOpts=this.state.options.map(function(obj){
-           return obj['disabled']=false;
+            console.log(obj);
+            obj.disabled=false;
+           return obj;
          });
+         // console.log('setting new options', newOpts);
          this.setState({options: newOpts});
+         // console.log('now state?', this.state.options);
         }
       this.props.setFieldSelectionAndFetchData(activeIdx, []); 
     }
-
     // on remove dont set fields?   
-    if (value !=="" && value !== null) {
+    /*else if (value !=="" && value !== null) {
+      this.props.setFieldSelectionAndFetchData(activeIdx, [value]); 
+    }*/
+    else {
+        console.log('in truthy select block', activeIdx);
+        this.setState({ value }); 
+        
+        if (activeIdx === 0){
+          var newOpts=this.state.options.map(function(obj){
+            // console.log(obj);
+             obj.disabled=true;
+           return obj;
+         });
+          console.log('disable opts!', newOpts);
+         this.setState({options: newOpts});
+         
+         
+        }
       this.props.setFieldSelectionAndFetchData(activeIdx, [value]); 
     }
+
 }
 componentWillMount() {
   console.log('in CWM', this.state.initValue);
@@ -254,55 +278,64 @@ componentWillMount() {
      || 
   ( this.state.init === true && this.state.initValue !=='')) 
   {
+    console.log('calling from init', this.state.initValue)
     this.setState({init: false});
     this._handleSelectChange(this.state.initValue);       
   } 
   
-  
+  this.setState( {initValue: false}); 
 }
 componentWillReceiveProps (newProps) {
-    // console.log('SELECT CWRP', newProps);
-    var newPropLine = this._getActiveFieldLine(newProps);
-    //console.log('SELECT CWRP newPropLine', newPropLine);
-    
-    var oldPropLine = this._getActiveFieldLine(this.props);
-    
-    if (newPropLine.id === 'Year') { 
-    var tmpOpts= _.sortBy(newPropLine.opts, 'label');
-        var lastOpt=tmpOpts.pop();
-        //onsole.log('LAST OP', lastOpt.label);
-        if (lastOpt.label === 'All'){
-          var sortedOpts = tmpOpts;
-          sortedOpts.unshift(lastOpt);
-        } else {
-          //single opts in Year
-          var sortedOpts=newPropLine.opts;
-        }      
-    } else {
-      var sortedOpts= _.sortBy(newPropLine.opts, 'label');
-    }   
-    if (typeof newPropLine.selected[0] !== 'undefined' && newPropLine.selected[0].match(',')){
-      var selectedArr=newPropLine.selected[0].split(',');
-      if(selectedArr.length > 0 && selectedArr.length === (sortedOpts.length -1)){
-        sortedOpts = sortedOpts.filter( function(obj) {
-          return obj.label != 'All'
-        });
+ //   console.log('SELECT CWRP', newProps);
+    let newPropLine = this._getActiveFieldLine(newProps);
+  //  console.log('SELECT CWRP newPropLine', newPropLine);
+    console.log('SELECT CWRP newPropLine IDX====', newPropLine.idx);
+    let oldPropLine = this._getActiveFieldLine(this.props);
+ //   console.log('SELECT CWRP oldPropLine IDX====', oldPropLine.idx);
+
+    //only do this stuff on an actual nav change
+    if (oldPropLine.idx !== newPropLine.idx) {
+      console.log('mounting new IDXXXXX');
+      if (newPropLine.id === 'Year') { 
+      var tmpOpts= _.sortBy(newPropLine.opts, 'label');
+          var lastOpt=tmpOpts.pop();
+          //onsole.log('LAST OP', lastOpt.label);
+          if (lastOpt.label === 'All'){
+            var sortedOpts = tmpOpts;
+            sortedOpts.unshift(lastOpt);
+          } else {
+            //single opts in Year
+            var sortedOpts=newPropLine.opts;
+          }      
+      } else {
+        var sortedOpts= _.sortBy(newPropLine.opts, 'label');
+      }   
+      if (typeof newPropLine.selected[0] !== 'undefined' && newPropLine.selected[0].match(',')){
+        var selectedArr=newPropLine.selected[0].split(',');
+        if(selectedArr.length > 0 && selectedArr.length === (sortedOpts.length -1)){
+          sortedOpts = sortedOpts.filter( function(obj) {
+            return obj.label != 'All'
+          });
+          
+        } 
+      }  
         
-      } 
-    }  
-       
-    if (typeof sortedOpts !== 'undefined') {
-      this.setState({ options: sortedOpts});
+      if (typeof sortedOpts !== 'undefined') {
+        console.log('setting opts????? if im idx==0 and no selected then disable');
+
+        this.setState({ options: sortedOpts});
+      }
+    
+      if (newPropLine.idx != oldPropLine.idx){
+          var placeMod = (newPropLine.metaMulti) ? 'one or more ' : 'one ';
+          this.setState({ placeholder : "select " + placeMod + newPropLine.label });
+      }
+      if (typeof newPropLine.selected[0] !== 'undefined') {
+      this.setState({value:newPropLine.selected[0]});
+      }
+      this._setFocus();
     }
-   
-    if (newPropLine.idx != oldPropLine.idx){
-        var placeMod = (newPropLine.metaMulti) ? 'one or more ' : 'one ';
-        this.setState({ placeholder : "select " + placeMod + newPropLine.label });
-    }
-    if (typeof newPropLine.selected[0] !== 'undefined') {
-     this.setState({value:newPropLine.selected[0]});
-    }
-     this._setFocus();
+
 }
 _toggleDisabled(e) {
 		this.setState({ disabled: e.target.checked });
@@ -346,10 +379,10 @@ render () {
       showNextBtn: false,
       showMatchBtn: false,
       disabledMatchBtn: false,
-      compState: 0,
+      compState: activeLine.idx,
       //first param is current index
       navState: this.getNavStates(activeLine.idx, theListSize),
-      init: true,
+      init: activeLine.idx === 0 && activeLine.selected.length === 0 ,
       dialogVisible: false,
       canSubmit: false
     };
@@ -402,6 +435,10 @@ render () {
               }
              });
              return ret;
+  }
+  componentWillMount(){
+    
+
   }
   componentWillReceiveProps (newProps) {
         var isInit = (newProps.state.getIn(['searchFields', 0 , 'selected']).length === 0) ? true: false;
@@ -509,19 +546,22 @@ render () {
     console.log('open dialog');
    this.setState({ dialogVisible: true }); 
    //todo this should be a flag and only dipatch once per session
-   this.props.openSearchFormyy();
+   this.props.openSearchForm();
   }
   previous() {
+    console.log('in PREVIOUS - whats my nav', this.state.compState);
+    
     if (this.state.compState > 0) {
-      console.log('REFS', this.refs);
+      // console.log('REFS', this.refs);
       this.refs.multiSelect._handleSelectChange('');
+      
       this.setNavState(this.state.compState - 1);
-      this.refs.multiSelect.setFocus();
+      //this.refs.multiSelect.setFocus();
     }
   }
   
   startOver() {
-   console.log(this.props);
+   console.log('start over????');
       this.props.clearAll();
       this.setNavState(0);
       this.setState({ init: true});
@@ -546,8 +586,13 @@ render () {
   onCloseDialog(){
     console.log('closeD');
     this.setState({ dialogVisible: false }); 
-
   }
+  submit(data){
+    console.log('submitSForm', data);
+    this.props.submitSearchForm(data);
+  }
+  
+
   renderSteps() {
       return this.props.state.getIn(['searchFields']).map (f => (
       /* <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}> */
@@ -568,10 +613,6 @@ render () {
       this.setState({
         canSubmit: false
       });
-  }
-  submit(model) {
-      console.log('model:',model);
-      
   }
   render() {
   
@@ -703,7 +744,7 @@ render () {
                   </span>
 
                  <FormElements.MyCheck
-                  name="check1"
+                  name="checkResearch"
                   type="checkbox"
                   ref="check1" 
                   validations="isOneChecked" 
@@ -711,7 +752,7 @@ render () {
                   title="I am researching millennial Porsche vehicles"
                   />
                   <FormElements.MyCheck
-                  name="check2"
+                  name="checkBuy"
                   type="checkbox"
                   ref="check2" 
                   validations="isOneChecked" 
@@ -719,7 +760,7 @@ render () {
                   title="I am looking to buy a millenial porsche"
                   />
                   <FormElements.MyCheck
-                  name="check3"
+                  name="checkSell"
                   type="checkbox"
                   ref="check3" 
                   validations="isOneChecked" 
@@ -727,7 +768,7 @@ render () {
                   title="I am interested in selling a millennial Porsche vehicle"
                   />
                   <FormElements.MyCheck
-                  name="check4"
+                  name="checkDealer"
                   type="checkbox"
                   ref="check4" 
                   validations="isOneChecked" 
@@ -735,7 +776,7 @@ render () {
                   title="I am a licensed dealer or broker"
                   />
                   <FormElements.MyCheck
-                  name="check5"
+                  name="checkOther"
                   type="checkbox"
                   ref="check5" 
                   validations="isOneChecked" 
@@ -748,7 +789,7 @@ render () {
                   </textarea>
                  
                   {/*style={Object.assign({}, this.state.canSubmit ? {}: this.noDisplayStyle)} */}
-                <button className="button-primary block" type="submit" 
+                <button className="button-primary block" onClick={this.submitSearchForm} type="submit" 
                   disabled={!this.state.canSubmit}>
                     Submit
                 </button>

@@ -59,9 +59,19 @@ var buildQueryObj = function buildQueryObj(state){
  var queryRoot = {};
           state.getIn(['searchFields']).map(f => {
           //console.log('i&&^&^&^&^&^^&^& from selected', f.get('selected'));
-          //console.log('i&&^&^&^&^&^^&^& ujsingField', f.get('id'));
-          var theValue = f.get('selected');
-          var theField = f.get('id');
+          console.log('ITERATOR Field===', f.get('id'));
+          
+          if ( f.get('selected') && getType.toString.call(f.get('selected').toJS()) === '[object Function]'){
+             let theValue = f.get('selected').toJS();
+          }
+          else {
+             let theValue = f.get('selected');
+          }
+          
+          console.log('SELECTED', theValue);
+          let theField = f.get('id');
+          
+          //console.log('bqo', theValue);
           
           if( theField !== 'Opts' && theValue.length > 0) {
              //coding around that fucking react-select API inconsistency.....
@@ -85,17 +95,16 @@ var buildQueryObj = function buildQueryObj(state){
                       year = years.map(function(v){
                         return parseInt(f);
                       });  
-                  queryRoot[f.get('id')] = years;
+                  queryRoot[theField] = years;
                   } else {
-                  queryRoot[f.get('id')] = parseInt(theValue);
+                  queryRoot[theField] = parseInt(theValue);
                   }
                   
                 } else {
-                  queryRoot[f.get('id')] = theValue;
+                  queryRoot[theField] = theValue;
                 }
               }
       } else if ( theValue.length > 0 && theField ==='Opts'){
-        console.log('detected opts', theValue);
             if (theValue[0].match(/,/)){
                 //trim damn API inconsistency
                var theObj={};
@@ -118,15 +127,17 @@ var buildQueryObj = function buildQueryObj(state){
 
 export function setFieldSelectionAndFetchData(idx,selection){
   return function (dispatch, getState) {
-    console.log('in sFSAFD what is my selection????', selection);
+    console.log('in sFSAFD');
     dispatch(setFieldSelection(idx,selection));
-    var state=getState();
-    var qObj = buildQueryObj(state);
-
+    let state=getState();
+    
+    let qObj = buildQueryObj(state);
+    
+    console.log('qObj', qObj);
     //only get new count on Opts selection
-    var nextFieldMap = state.getIn(['searchFields',idx+1]);
+    let nextFieldMap = state.getIn(['searchFields',idx+1]);
     if (idx!=7){
-      var nextId = nextFieldMap.get('id');
+      let nextId = nextFieldMap.get('id');
       //console.log('now fetch fields for ->', nextId);
       //console.log('using ->', qObj);
       dispatch(fetchFields(nextId, qObj));
@@ -234,11 +245,9 @@ export function receiveUUID(uuid) {
 
 export const OPEN_SEARCH_FORM = 'OPEN_SEARCH_FORM';
 export function openSearchForm(data) {
+  console.log('in open search form');
   return {
       type: OPEN_SEARCH_FORM,
-      payload: {
-        form: data,
-      },
       meta: {
         analytics: EventTypes.track
       }
@@ -246,29 +255,40 @@ export function openSearchForm(data) {
 }
 
 export const SUBMIT_SEARCH_FORM = 'SUBMIT_SEARCH_FORM';
-export function submitSearchForm() {
+export function submitSearchForm(data) {
+  
+  console.log('in submit search form', data);
   return {
       type: SUBMIT_SEARCH_FORM,
+       payload: {
+        data: data
+      },
       meta: {
-        analytics: EventTypes.track
+          analytics: [
+           {
+             eventType: EventTypes.track,
+             eventPayload: {
+               event: 'SUBMIT_SEARCH_FORM',
+               properties:  {
+                data: data
+               }
+             }
+           }
+          ]   
       }
   }
 }
 
 
 export function getUUID() {
-  console.log('in getUUID');
     if (!cookie.load('PCNALocator')){
-      console.log('no cookie found - get uuid and set cookie and state uuid');
       return dispatch =>
         axios.get( __CONFIG__.apiHost + '/api/uuid').then(res => {
-            console.log('RESRESRESRESRESRESRESRES', res);
             dispatch(receiveUUID(res.data));
           }).catch(err => {
             dispatch(apiError(err));
           });
     } else {
-        console.log('retrieved cookie!!!', cookie.load('PCNALocator', { path: '/' }));
         //cookie.save('PCNALocator', cookie.load('PCNALocator', { path: '/' }));
        return dispatch => (setUUID(cookie.load('PCNALocator', { path: '/' })));
     }

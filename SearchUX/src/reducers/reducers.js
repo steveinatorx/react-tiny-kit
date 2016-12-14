@@ -75,10 +75,10 @@ export default function reducer (state = init, action) {
               var code = o.substring(0,o.indexOf(' '));
               var label = o.substring(o.indexOf(' ') +1 ) + ' ' + code;
             } else {
-              console.log('hello?', o.toString());
+              //console.log('hello?', o.toString());
               var label=o.toString();
             }
-            console.log('returning' + label + ' val?' + o.toString());
+           // console.log('returning' + label + ' val?' + o.toString());
             return { label: label, value: o.toString()} 
       });
       //sort lexi
