@@ -25,14 +25,14 @@ const init = new Map({
     { label: "Turbo 3.8", value: "Turbo 3.8" },
     { label: "Turbo S 3.8", value: "Turbo S 3.8" },
   ], metaMulti: false,
-  selected: [] }),
-    Map({ id: 'Body', navLabel: 'body', label: 'body', idx: 1, isActive: false, opts: [], metaMulti: true, selected: [] }),
-    Map({ id: 'Year', navLabel: 'year', label: 'year', idx: 2, isActive: false, opts: [], metaMulti: true, selected: [] }),
-    Map({ id: 'Country', navLabel: 'country', label: 'country', idx: 3, isActive: false, opts: [], metaMulti: true, selected: [] }),
-    Map({ id: 'Transmission', navLabel: 'trans', label: 'transmission', idx: 4, isActive: false, opts: [], metaMulti: true, selected: [] }),
-    Map({ id: 'ExtLabel', navLabel: 'ext color', label: 'exterior color', idx: 5, isActive: false, opts: [], metaMulti: true, selected: [] }),
-    Map({ id: 'IntLabel', navLabel: 'int color', label: 'interior color', idx: 6, isActive: false, opts: [], metaMulti: true, selected: [] }),
-    Map({ id: 'Opts', navLabel: 'options', label: 'options', idx: 7, isActive: false, opts: [], metaMulti: true, selected: [] }),
+  selected: new List() }),
+    Map({ id: 'Body', navLabel: 'body', label: 'body', idx: 1, isActive: false, opts: [], metaMulti: true, selected: new List() }),
+    Map({ id: 'Year', navLabel: 'year', label: 'year', idx: 2, isActive: false, opts: [], metaMulti: true, selected: new List() }),
+    Map({ id: 'Country', navLabel: 'country', label: 'country', idx: 3, isActive: false, opts: [], metaMulti: true, selected: new List() }),
+    Map({ id: 'Transmission', navLabel: 'trans', label: 'transmission', idx: 4, isActive: false, opts: [], metaMulti: true, selected: new List() }),
+    Map({ id: 'ExtLabel', navLabel: 'ext color', label: 'exterior color', idx: 5, isActive: false, opts: [], metaMulti: true, selected: new List() }),
+    Map({ id: 'IntLabel', navLabel: 'int color', label: 'interior color', idx: 6, isActive: false, opts: [], metaMulti: true, selected: new List() }),
+    Map({ id: 'Opts', navLabel: 'options', label: 'options', idx: 7, isActive: false, opts: [], metaMulti: true, selected: new List() }),
   ])
 });
 
@@ -90,7 +90,7 @@ export default function reducer (state = init, action) {
       //console.log('receive fields idx', objId.toJS()[0].idx);
       return state.setIn(['searchFields',objId.toJS()[0].idx,'opts'],optObjs);
     case 'SET_FIELD_SELECTION':
-      const selection=action.payload.selection;
+      const selection=new List(action.payload.selection);
       console.log('in SFS reducer:', selection);
       const idx = action.payload.idx;
       return state.setIn(['searchFields', idx, 'selected'], selection);
