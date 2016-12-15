@@ -123,16 +123,10 @@ export class MultiSelectField extends React.Component {
     : props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']).toJS();*/
     
     let thisOpts = this._getActiveFieldLine(props).opts;
-    console.log('thisOpts', thisOpts);
     let initValue = (Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']))) 
     ?  props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']) 
     : props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']).toJS();
-    console.log('init selected', initValue);    
-    console.log('init array?', Array.isArray(initValue));    
-    console.log('init array len?', initValue.length);    
-    console.log('init options?', thisOpts);
       if (Array.isArray(initValue) && initValue.length === 0) {
-        console.log('empty init - clear option disbleds');
         if (this._getActiveIdx() === 0){
           let newOpts = thisOpts.map(function(obj){
             obj.disabled = false;
@@ -140,13 +134,21 @@ export class MultiSelectField extends React.Component {
          });
          thisOpts = newOpts; 
         }
-        
+        //remove All versus selected
+               
        initValue=''; 
-      } 
-      if (Array.isArray(initValue) && initValue.length === 1) {
-       initValue=initValue[0]; 
       }
-    console.log('treated init selected', initValue);    
+
+
+    if (Array.isArray(initValue) && initValue.length === 1) {
+      initValue = initValue[0]; 
+    }
+    console.log(' remove "all"', initValue) ;
+    if (!Array.isArray(initValue) && (thisOpts.length-1 === initValue.split(',').length )) {
+      console.log('yes remove ALL');
+      thisOpts = thisOpts.filter(opt => opt.label !== 'All');
+    }
+
     //console.log(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']).toJS());
       this.state = {
        // first init flag 
@@ -211,7 +213,7 @@ _getSelected(){
     return selected;    
 }
 _handleSelectChange(value) {
-    console.log('in select change:', value);
+    console.log('XVXVXVXVXVXVXin select change:', value);
     var allFlag = false;
     var activeIdx=this._getActiveIdx();
     console.log('ACTIVE IDX', activeIdx);
@@ -221,7 +223,7 @@ _handleSelectChange(value) {
         }*/
         //special case all - match all after previous selections
       if (value.match(/^all$/) || value.match(/,all/)) {
-          console.log('in all selection block');
+          console.log('in "all" selection block');
           var allFlag = true;
           
           value=this._getActiveFieldLine(this.props).opts.map( o => {
@@ -229,6 +231,10 @@ _handleSelectChange(value) {
             return o.label; 
         }
       }).join(',');
+      
+        //also remove all from options
+        let newOpts = this.state.options.filter(opt => opt.label !== 'All');
+        this.setState({options: newOpts});
         //not sure why this appends a closing comma
         //console.log('setting value to ----->', value.replace(/,$/,''));
         value = value.replace(/,$/,'');
@@ -246,16 +252,20 @@ _handleSelectChange(value) {
             obj.disabled=false;
            return obj;
          });
-         // console.log('setting new options', newOpts);
          this.setState({options: newOpts});
          // console.log('now state?', this.state.options);
+        } else {
+         let hasAll=this.state.options.some( o => o.label === 'All');
+         console.log('this current state options', this.state.options); 
+         if (hasAll === false && activeIdx >0 && this.state.options.length-1 > 0){
+          let allOpts = this.state.options;
+          allOpts.unshift({ label: 'All', value: 'all'});
+          this.setState({options: allOpts});
+         }
         }
       this.props.setFieldSelectionAndFetchData(activeIdx, []); 
     }
-    // on remove dont set fields?   
-    /*else if (value !=="" && value !== null) {
-      this.props.setFieldSelectionAndFetchData(activeIdx, [value]); 
-    }*/
+    //truthy block
     else {
         console.log('in truthy select block', activeIdx);
         this.setState({ value }); 
@@ -266,11 +276,32 @@ _handleSelectChange(value) {
              obj.disabled=true;
            return obj;
          });
-          console.log('disable opts!', newOpts);
+         console.log('disable opts!', newOpts);
          this.setState({options: newOpts});
-         
+        }
+        //remove "ALL" is needed
+
+         let hasAll=this.state.options.some( o => o.label === 'All');
+         console.log('hasAll val', hasAll);
+           console.log('do i need to remove all current OPtions ??????', this.state.options); 
+           console.log('do i have ALl in current opts???????', hasAll); 
+         if (hasAll && value.split(',').length > 0 && (this.state.options.length -1 === value.split(',').length)) {
+           console.log('i need to remove all!!!!');
+           let newOpts = this.state.options.filter(opt => opt.label !== 'All');
+           this.setState({options: newOpts});
+         } else {
+         console.log('do i need to add all??????', this.state.options.length-1 > 0);
+         //console.log('MAP', _.map(this.state.options,(_.pick, 'Label')));
+         if (hasAll === false && activeIdx >0 && this.state.options.length-1 > 0){
+           console.log('options has all??????', hasAll);
+             console.log('adding ALL');
+            let allOpts = this.state.options;
+            allOpts.unshift({ label: 'All', value: 'all'});
+            this.setState({options: allOpts});
+         }
          
         }
+
       this.props.setFieldSelectionAndFetchData(activeIdx, [value]); 
     }
 
@@ -326,8 +357,6 @@ componentWillReceiveProps (newProps) {
       }  
         
       if (typeof sortedOpts !== 'undefined') {
-        console.log('setting opts????? if im idx==0 and no selected then disable');
-
         this.setState({ options: sortedOpts});
       }
     
@@ -380,9 +409,9 @@ render () {
 
     this.state = {
       showPreviousBtn: (activeLine.idx > 0),
-      showStartOverBtn: activeLine.selected.length > 0,
+      showStartOverBtn: activeLine.idx > 0 || (activeLine.idx === 0 && activeLine.selected.length > 0),
       showNextBtn:  (activeLine.idx !== 7 && activeLine.selected.length > 0),
-      showMatchBtn: false,
+      showMatchBtn: (activeLine.idx === 7),
       disabledMatchBtn: false,
       compState: activeLine.idx,
       //first param is current index
@@ -416,9 +445,9 @@ render () {
     this.disableFormSubmit = this.disableFormSubmit.bind(this);
     this.submit = this.submit.bind(this);
     Formsy.addValidationRule('isOneChecked', (values, checked) => {
-      console.log('VALID:value of this check', checked);
-       console.log('values:', values); 
-       console.log('values:', typeof values);
+      //console.log('VALID:value of this check', checked);
+       //console.log('values:', values); 
+       //console.log('values:', typeof values);
       
        let checksValid=false;
        
@@ -459,11 +488,11 @@ render () {
             // console.log('new active field'); 
             this.setNavState(newPropLine.idx);
     }
-    console.log('SHOW NEXT BTN' , newPropLine);
-    console.log('SHOW NEXT BTN' , newPropLine.selected);
+    //console.log('SHOW NEXT BTN' , newPropLine);
+    //console.log('SHOW NEXT BTN' , newPropLine.selected);
     //console.log('SHOW NEXT BTN' ,typeof newPropLine.selected !== undefined);
-    console.log('SHOW NEXT BTN' , newPropLine.selected.size);
-    console.log('SHOW NEXT BTN' ,newPropLine.idx !== 7); 
+    //console.log('SHOW NEXT BTN' , newPropLine.selected.size);
+    //console.log('SHOW NEXT BTN' ,newPropLine.idx !== 7); 
     if (newPropLine.selected.length>0 && newPropLine.idx !== 7) {
       console.log('show next');
         this.setState({ showNextBtn: true}); 
