@@ -44,7 +44,7 @@ export const MyInput = React.createClass({
     const errorMessage = this.getErrorMessage();
     return (
       <div>
-        <label className="checkLabel" tmlFor={this.props.name}>
+        <label className="checkLabel" htmlFor={this.props.name}>
           <input
             type="checkbox"
             name={this.props.name}
