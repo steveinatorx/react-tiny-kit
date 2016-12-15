@@ -29,9 +29,6 @@ export class SelectionTable extends React.Component {
     super(props);
     this._getActiveFieldLine = this._getActiveFieldLine.bind(this);
     this._getResultsBoxStyle = this._getResultsBoxStyle.bind(this);
-
-      //console.log('ST init count', props.state.get('resultsCount'));
-
     this.state = {
       selected: [this._getActiveFieldLine(this.props).selected],
       count: props.state.get('resultsCount'),
@@ -161,11 +158,15 @@ export class MultiSelectField extends React.Component {
        placeholder: "select " + props.state.getIn(['searchFields', this._getActiveIdx() , 'label']),
       }
 }//constructor
-
 _setFocus() {
+    console.log('in MS focus', this.refs.theMultiSelect.state);
     this.refs.theMultiSelect.focus(); 
-}
+    this.refs.theMultiSelect.setState({isOpen: true});
+    console.log('in MS focus', this.refs.theMultiSelect.state);
+    
 
+    //this.refs.theMultiSelect.setState({isOpen: true});
+}
 //need to track last active line? might need to go into store
 _getActiveFieldLine(theseProps){
     //console.log('props',theseProps);
@@ -370,6 +371,7 @@ componentWillReceiveProps (newProps) {
       this._setFocus();
     }
 
+      this._setFocus();
 }
 _toggleDisabled(e) {
 		this.setState({ disabled: e.target.checked });
@@ -381,13 +383,11 @@ render () {
           ref="theMultiSelect"
           multi={this.state.multi} 
           autofocus={true}
-          disabled={this.state.disabled} 
           value={this.state.value}
           placeholder={this.state.placeholder}
           options={this.state.options}
           onChange={this._handleSelectChange} 
-          clearable={true}
-          openAfterFocus={true}
+          openOnFocus={true}
           noResultsText={false}
           searchable={false}
           />
@@ -622,6 +622,12 @@ render () {
   onCloseDialog(){
     console.log('closeD');
     this.setState({ dialogVisible: false }); 
+    console.log(this.refs);
+    this.refs.multiSelect._setFocus();
+   
+   //hackenstein this forces the select window back open 
+   setTimeout(() => this.refs.multiSelect._setFocus(), 200);
+
   }
   submit(data){
     console.log('submitSForm', data);
@@ -738,12 +744,12 @@ render () {
               </div>
             </div>
            <Dialog
-                visible={this.state.dialogVisible}
-                wrapClassName="center"
-                animation="zoom"
-                maskAnimation="fade"
-                onClose={this.onCloseDialog}
-                style={styles.dialogStyle}
+              visible={this.state.dialogVisible}
+              wrapClassName="center"
+              animation="zoom"
+              maskAnimation="fade"
+              onClose={this.onCloseDialog}
+              style={styles.dialogStyle}
               >
               <br/>
              <span className="blueFont">Simply complete and submit the request form below and we will email you your results along with details on how to locate the vehicles you are looking for. Let’s get started locating your Porsche!
@@ -821,7 +827,7 @@ render () {
                   />
                   <textarea className="commentBox" rows="4" cols="50" placeholder="comment box"/>
                   
-                  <textarea className="legalese" readOnly="true" row="3" cols="50">By clicking "Submit": I accept and agree with Concours By Appointment LLC (CBA) that a) information provided through PCNALocator may contain copyrighted material and I will not distribute any materials received by me as a result of using the application, and  b) I will not reproduce, duplicate, copy, sell, resell or exploit for any purpose, any portion of information I receive through PCNALocator, and c) CBA makes no representations, expressed or implied, as to the existence, ownership, availability for purchase or sale, accuracy, description or condition of vehicles, vehicle’s listed equipment, accessories, price or any warranties, and d) information provided through PCNALocator does not constitute an offer by CBA to buy or sell any vehicle absent a written contract between myself and CBA and e) I authorize CBA to send me email offers including vehicle information and offers from PCNALocator.
+                  <textarea className="legalese" readOnly="true" rows="3" cols="50">By clicking "Submit": I accept and agree with Concours By Appointment LLC (CBA) that a) information provided through PCNALocator may contain copyrighted material and I will not distribute any materials received by me as a result of using the application, and  b) I will not reproduce, duplicate, copy, sell, resell or exploit for any purpose, any portion of information I receive through PCNALocator, and c) CBA makes no representations, expressed or implied, as to the existence, ownership, availability for purchase or sale, accuracy, description or condition of vehicles, vehicle’s listed equipment, accessories, price or any warranties, and d) information provided through PCNALocator does not constitute an offer by CBA to buy or sell any vehicle absent a written contract between myself and CBA and e) I authorize CBA to send me email offers including vehicle information and offers from PCNALocator.
                   </textarea>
                  
                   {/*style={Object.assign({}, this.state.canSubmit ? {}: this.noDisplayStyle)} */}
@@ -830,7 +836,6 @@ render () {
                     Submit
                 </button>
               </Formsy.Form>
-
               </Dialog>     
       </div>
     );
