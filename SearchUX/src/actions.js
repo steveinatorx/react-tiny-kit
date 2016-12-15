@@ -185,9 +185,9 @@ export function apiError(error){
 // store.dispatch(fetchPosts('reactjs'))
 
 export function fetchFields(objectFieldId, queryObj) {
-  console.log('in fetchFields', objectFieldId );
-  console.log('in fetchFields', queryObj );
-  console.log( __CONFIG__ );
+  //console.log('in fetchFields', objectFieldId );
+  //console.log('in fetchFields', queryObj );
+  //console.log( __CONFIG__ );
 
     return dispatch =>
         axios.post( __CONFIG__.apiHost + '/api/pcnacarsmeta', 
