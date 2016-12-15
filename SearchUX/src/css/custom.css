@@ -325,3 +325,7 @@ table tbody th {
 .block {
   display: block !important;
 }
+
+.Select--multi .Select-value .Select-aria-only {
+      width: auto !important;
+    }
