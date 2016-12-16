@@ -475,11 +475,12 @@ render () {
 
   }
   componentWillReceiveProps (newProps) {
-        let isInit = (newProps.state.getIn(['searchFields', 0 , 'selected']).size === 0) ? true: false;
-   console.log('isInit>>' , isInit);
+    let isInit = (newProps.state.getIn(['searchFields', 0 , 'selected']).size === 0) ? true: false;
+    console.log('isInit>>' , isInit);
     this.setState({ init: isInit});
     this.setState({ count: newProps.state.get('resultsCount')});
-    if(isInit) { 
+    this.setState({ disabledMatchBtn: (newProps.state.get('resultsCount') > 0 )}); 
+    if (isInit) { 
       this.refs.multiSelect._clearDisabledOpts();
     }
     let newPropLine = this.getActiveFieldFromProp(newProps);
@@ -730,6 +731,7 @@ render () {
                             className="multistep__btn--next button-primary u-pull-right"
                             onClick={this.next}>Next Field</button>
                    <button style={this.state.showMatchBtn ? {} : this.noDisplayStyle}
+                            disabled={!this.state.disabledMatchBtn}
                             className="multistep__btn--next button-success u-pull-right"
                             onClick={this.openDialog}>Get Matches</button>
            </MediaQuery>
@@ -752,8 +754,8 @@ render () {
               style={styles.dialogStyle}
               >
               <br/>
-             <span className="blueFont">Simply complete and submit the request form below and we will email you your results along with details on how to locate the vehicles you are looking for. Let’s get started locating your Porsche!
-</span> 
+             <span className="blueFont">Complete and submit the request form below and we will email you your matches. 
+Let’s get started locating your Porsche! </span>
               <Formsy.Form onValidSubmit={this.submit} onValid={this.enableFormSubmit} onInvalid={this.disableFormSubmit}>
                 {/*<FormElements.MyNameInput name="firstName" placeholder="enter first name" validations="isExisty" validationError="first name required" required/>
                 <FormElements.MyNameInput name="secondName" placeholder="enter last name" validationError="required" required/>
@@ -782,6 +784,21 @@ render () {
                   className="u-full-width"
                   validationError="email does not match"
                   required/>
+                <FormElements.MyInput 
+                  name="companyName"
+                  type="text" 
+                  placeholder="company name (optional)"
+                  className="u-full-width"
+                  />
+                <FormElements.MyInput 
+                  name="phoneNumber"
+                  type="text" 
+                  placeholder="phone number"
+                  validations="isNumeric" 
+                  className="u-full-width"
+                  validationError="not a valid phone number"
+                  required/>
+
                   <span className="blueFont">Check all that apply (must check one):
                   </span>
 
@@ -799,7 +816,7 @@ render () {
                   ref="check2" 
                   validations="isOneChecked" 
                   validationError="must check one"
-                  title="I am looking to buy a millenial porsche"
+                  title="I am looking to buy a millenial Porsche vehicle"
                   />
                   <FormElements.MyCheck
                   name="checkSell"
@@ -831,7 +848,7 @@ render () {
                   </textarea>
                  
                   {/*style={Object.assign({}, this.state.canSubmit ? {}: this.noDisplayStyle)} */}
-                <button className="button-primary block" onClick={this.submitSearchForm} type="submit" 
+                <button className="button-success block" onClick={this.submitSearchForm} type="submit" 
                   disabled={!this.state.canSubmit}>
                     Submit
                 </button>
