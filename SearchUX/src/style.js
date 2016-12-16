@@ -9,11 +9,12 @@ export default {
       borderStyle: 'solid',
       margin: '10px',
       padding: '10px',
-      color: 'white',
+      color: 'silver',
     },
 	resultsBoxGreen: {
-      backgroundColor : 'blue',
-      borderColor: 'blue'
+      backgroundColor : '#042EA1',
+      borderColor:  '#042EA1'
+
 	},
 	resultsBoxRed: {
 	  backgroundColor: 'red',
