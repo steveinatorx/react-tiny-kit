@@ -173,7 +173,8 @@ input[type="button"] {
   display: inline-block;
   height: 38px;
   padding: 0 30px;
-  color: #555;
+  /* custom */
+  color: silver !important;
   text-align: center;
   font-size: 11px;
   font-weight: 600;
@@ -215,7 +216,7 @@ button.button-primary,
 input[type="submit"].button-primary,
 input[type="reset"].button-primary,
 input[type="button"].button-primary {
-  color: #FFF;
+  color: black !important;
   background-color: #33C3F0;
   border-color: #33C3F0; }
 .button.button-primary:hover,
@@ -248,15 +249,8 @@ button.button-success,
 input[type="submit"].button-success:enabled,
 input[type="reset"].button-success:enabled,
 input[type="button"].button-success:enabled {
-  color: #FFF;
+  color: #FFF !important;
   background-color: #5cb85c;
-  border-color: #4cae4c; }
-input[type="submit"].button-success:disabled,
-input[type="reset"].button-success:disabled,
-input[type="button"].button-success:disabled {
-  color: #FFF;
-  background-color: black;
-  //background-color: #A8B3A8;
   border-color: #4cae4c; }
 .button.button-success:hover:enabled
 button.button-success:hover:enabled
@@ -268,10 +262,19 @@ button.button-success:focus,
 input[type="submit"].button-success:focus,
 input[type="reset"].button-success:focus,
 input[type="button"].button-success:focus {
-  color: #FFF;
+  color: #FFF !important;
   background-color: #3B733B;
   border-color: #3B733B; }
-  
+.button.button-success:disabled,
+button.button-success:disabled,
+input[type="submit"].button-success:disabled,
+input[type="reset"].button-success:disabled,
+input[type="button"].button-success:disabled {
+  color: #FFF !important;
+  cursor: not-allowed;
+  opacity: .65;}
+
+ 
 /*
 //todo: add a disabled style
 .button.button-primary:disabled,
