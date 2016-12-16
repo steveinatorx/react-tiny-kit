@@ -2,6 +2,17 @@
 html {
   overflow-y: scroll;
 }
+
+body {
+  background-color: #2d2d2d;
+  color: silver;
+}
+.Select-control {
+  background-color: #faffbd !important;
+}
+ol.progtrckr li span  {
+  color: silver;
+}
 /* Shared */
 .button {
   border-radius: 100px;
@@ -304,8 +315,9 @@ table tbody th {
 }
 
 .blueFont {
-  color: #33C3F0;
-  font-weight: 600  
+ /* color:#042EA1;*/
+  color: silver;
+  font-weight: 600;  
 }
 
 .validation-error {
@@ -329,3 +341,12 @@ table tbody th {
 .Select--multi .Select-value .Select-aria-only {
       width: auto !important;
     }
+    .Select-menu{
+      /*background-color: lightslategray;*/
+    }
+.rc-dialog-body {
+  background-color:#2d2d2d !important;
+  border-radius: 10px;
+  border:2px solid silver;
+  color: silver !important;
+}
