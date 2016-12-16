@@ -840,11 +840,11 @@ Let’s get started locating your Porsche! </span>
                   ref="check5" 
                   validations="isOneChecked" 
                   validationError="must check one"
-                  title="Other - Enter inquiry in comment box"
+                  title="Other - enter inquiry in comment box"
                   />
                   <textarea className="commentBox" rows="4" cols="50" placeholder="comment box"/>
                   
-                  <textarea className="legalese" readOnly="true" rows="3" cols="50">By clicking "Submit": I accept and agree with Concours By Appointment LLC (CBA) that a) information provided through PCNALocator may contain copyrighted material and I will not distribute any materials received by me as a result of using the application, and  b) I will not reproduce, duplicate, copy, sell, resell or exploit for any purpose, any portion of information I receive through PCNALocator, and c) CBA makes no representations, expressed or implied, as to the existence, ownership, availability for purchase or sale, accuracy, description or condition of vehicles, vehicle’s listed equipment, accessories, price or any warranties, and d) information provided through PCNALocator does not constitute an offer by CBA to buy or sell any vehicle absent a written contract between myself and CBA and e) I authorize CBA to send me email offers including vehicle information and offers from PCNALocator.
+                  <textarea className="legalese" readOnly="true" rows="3" cols="50">By clicking "Submit": I accept and agree with Concours By Appointment LLC (CBA) that a) information provided through PCNALocator may contain copyrighted material and I will not distribute any materials received by me as a result of using the application, and  b) I will not reproduce, duplicate, copy, sell, resell or exploit for any purpose, any portion of information I receive through PCNALocator, and c) CBA makes no representations, expressed or implied, as to the existence, ownership, availability for purchase or sale, accuracy, description or condition of vehicles, vehicle’s listed equipment, accessories, price or any warranties, and d) information provided through PCNALocator does not constitute an offer by CBA to buy or sell any vehicle absent a written contract between myself and CBA and e) I authorize CBA to send me email offers including vehicle information.
                   </textarea>
                  
                   {/*style={Object.assign({}, this.state.canSubmit ? {}: this.noDisplayStyle)} */}
