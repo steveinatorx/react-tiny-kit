@@ -18,6 +18,10 @@ import adapter from 'redux-localstorage/lib/adapters/localStorage';
 // import filter from 'redux-localstorage-filter';
 import { serialize, deserialize } from 'redux-localstorage-immutable';
 
+import { Router, Route, IndexRoute, browserHistory } from 'react-router'
+import { syncHistoryWithStore } from 'react-router-redux'
+
+
 import DevTools from './components/DevTools';
 
 let __CONFIG__ = require('__CONFIG__');
@@ -38,6 +42,11 @@ let __CONFIG__ = require('__CONFIG__');
     }}();
 
 const tracker = createTracker(); 
+
+/*const mainReducer = combineReducers({
+  reducer,
+  routing: routerReducer
+});*/
 
 const rootReducer = compose(
  // apply deserialize from redux-localstorage-immutable
