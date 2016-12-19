@@ -4,6 +4,7 @@ import { sortBy } from 'lodash';
 
 const init = new Map({
   uuid: null,
+  locationBeforeTransitions: null,
   email: null,
   searchCode: null,
   resultsCount: 0,
@@ -39,6 +40,8 @@ const init = new Map({
 export default function reducer (state = init, action) {
   // console.log('in reducer---->', action);
   switch (action.type) {
+    case 'LOCATION_CHANGE':
+      return state.set('locationBeforeTransitions', action.payload);
     case 'SUBMIT_SEARCH_FORM':
       return state.set('formData', action.payload.data);
     case 'CLEAR_ALL':
