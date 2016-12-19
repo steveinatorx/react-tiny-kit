@@ -400,6 +400,9 @@ render () {
   constructor(props) {
     super(props);
     props.getUUID();
+    
+    console.log('where my data?', props);
+    
     let theListSize = props.state.getIn(['searchFields']).size;
     
     let activeLine = this.getActiveFieldFromProp(props);
