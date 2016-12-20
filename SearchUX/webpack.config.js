@@ -3,6 +3,10 @@ var webpack = require('webpack');
 
 module.exports = {
   devtool: 'source-map',
+  devServer: {
+        inline:true,
+        port: 8001 
+  },
   entry: {
     app: ['./src/root.js']
   },
