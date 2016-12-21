@@ -1,5 +1,4 @@
 import { List, Map } from 'immutable';
-import { LOCATION_CHANGE } from 'react-router-redux';
 import { sortBy } from 'lodash';
 
 const init = new Map({
@@ -40,8 +39,8 @@ const init = new Map({
 export default function reducer (state = init, action) {
   // console.log('in reducer---->', action);
   switch (action.type) {
-    case 'LOCATION_CHANGE':
-      return state.set('locationBeforeTransitions', action.payload);
+    /*case 'LOCATION_CHANGE':
+      return state.set('locationBeforeTransitions', action.payload);*/
     case 'SUBMIT_SEARCH_FORM':
       return state.set('formData', action.payload.data);
     case 'CLEAR_ALL':
@@ -97,11 +96,6 @@ export default function reducer (state = init, action) {
       console.log('in SFS reducer:', selection);
       const idx = action.payload.idx;
       return state.setIn(['searchFields', idx, 'selected'], selection);
-    case 'LOCATION_CHANGE':
-     const pathname = action.payload.pathname;
-     // /redux-history-demo/:operation
-     const [_, operation = ""] = pathname.split('/');
-     return operation;
     default:
       return state;
   }
