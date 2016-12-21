@@ -3,8 +3,9 @@ import { render } from 'react-dom';
 import { compose, applyMiddleware, createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import reducer from './reducers/reducers';
-// import routerReducer  from './reducers/routing';
-import { SearchUXContainer } from './containers';
+import routerReducer  from './reducers/routing';
+import { SearchUXContainer } from './containers/SearchUXContainer';
+// import { SellUXContainer } from './containers/SellUXContainer';
 // import createHistory from 'history/createBrowserHistory'
 import { routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
@@ -26,8 +27,6 @@ import DevTools from './components/DevTools';
 
 let __CONFIG__ = require('__CONFIG__');
 
-
-
     !function(){var
   analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","page","once","off","on"];analytics.factory=function(t){
     return function(){var
@@ -43,15 +42,15 @@ let __CONFIG__ = require('__CONFIG__');
 
 const tracker = createTracker(); 
 
-/*const mainReducer = combineReducers({
+const mainReducer = combineReducers({
   reducer,
   routing: routerReducer
-});*/
+});
 
 const rootReducer = compose(
  // apply deserialize from redux-localstorage-immutable
   mergePersistedState(deserialize)
-)(reducer);
+)(mainReducer);
 
 const storage = compose(
   // apply serialize from redux-localstorage-immutable
@@ -80,12 +79,17 @@ const enhancer = compose(
 );
 
 const store = createStore(rootReducer, /* initialState */ enhancer);
+const history = syncHistoryWithStore(browserHistory, store)
 
 render(
-  <Provider store={store} >
+  <Provider store={store}>
     <div>
-    <SearchUXContainer />
-    <DevTools />
+      <Router history={history}>
+        <Route path="/" component={SearchUXContainer}>
+          <IndexRoute component={SearchUXContainer}/>
+        </Route>
+      </Router>
+      <DevTools />
     </div>
   </Provider>,
   document.getElementById('app')
