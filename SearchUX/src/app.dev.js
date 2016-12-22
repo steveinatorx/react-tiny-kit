@@ -1,13 +1,14 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { compose, applyMiddleware, createStore, combineReducers } from 'redux';
+import { compose, applyMiddleware, createStore } from 'redux';
+import { combineReducers } from 'redux-immutable';
 import { Provider } from 'react-redux';
 import reducer from './reducers/reducers';
-import routerReducer  from './reducers/routing';
+import routerReducer from './reducers/routing';
 import { SearchUXContainer } from './containers/SearchUXContainer';
-// import { SellUXContainer } from './containers/SellUXContainer';
+import { SellUXContainer } from './containers/SellUXContainer';
 // import createHistory from 'history/createBrowserHistory'
-import { routerMiddleware } from 'react-router-redux';
+// import { routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
 // import {browserHistory} from 'react-router';
 
@@ -21,7 +22,7 @@ import { serialize, deserialize } from 'redux-localstorage-immutable';
 
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
-
+import filter from 'redux-localstorage-filter';
 
 import DevTools from './components/DevTools';
 
@@ -42,55 +43,43 @@ let __CONFIG__ = require('__CONFIG__');
 
 const tracker = createTracker(); 
 
-const mainReducer = combineReducers({
+
+const combinedReducer = combineReducers({
   reducer,
   routing: routerReducer
 });
 
+
 const rootReducer = compose(
- // apply deserialize from redux-localstorage-immutable
-  mergePersistedState(deserialize)
-)(mainReducer);
-
+  // apply deserialize from redux-localstorage-immutable
+   mergePersistedState(deserialize)
+)(combinedReducer);
+ 
 const storage = compose(
-  // apply serialize from redux-localstorage-immutable
-  serialize
-  //filter('data')
-)(adapter(window.localStorage));
+   // apply serialize from redux-localstorage-immutable
+   serialize
+   //filter('data')
+ )(adapter(window.localStorage));
+ 
+ console.log('storage', storage);
+ const middleware = applyMiddleware(
+   thunk,
+   tracker
+ );
+ 
+ const enhancer = compose(
+   middleware,
+   persistState(storage, 'porscheLocator'),
+   DevTools.instrument()
+ );
+ const store = createStore(rootReducer, /* initialState */ enhancer);
 
-console.log('storage', storage);
-/*
-const enhancer = compose(
-  persistState(storage, 'tableDemo')
-);
-*/
-
-const middleware = applyMiddleware(
-  thunk,
-  tracker
-);
-
-// const store = createStore(rootReducer, middleware, enhancer);
-
-const enhancer = compose(
-  middleware,
-  persistState(storage, 'porscheLocator'),
-  DevTools.instrument()
-);
-
-const store = createStore(rootReducer, /* initialState */ enhancer);
-const history = syncHistoryWithStore(browserHistory, store)
-
-render(
-  <Provider store={store}>
-    <div>
-      <Router history={history}>
-        <Route path="/" component={SearchUXContainer}>
-          <IndexRoute component={SearchUXContainer}/>
-        </Route>
-      </Router>
-      <DevTools />
-    </div>
-  </Provider>,
+ render(
+   <Provider store={store} >
+     <div>
+     <SearchUXContainer />
+     <DevTools />
+     </div>
+   </Provider>,
   document.getElementById('app')
 );
