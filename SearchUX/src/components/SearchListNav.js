@@ -16,7 +16,7 @@ import Formsy from 'formsy-react';
 import styles from '../style.js';
 
 import Select from 'react-select';
-import Center from 'react-center';
+// import Center from 'react-center';
 
 // const classNames = require('classnames');
 import '../css/react-select.css';
@@ -29,15 +29,17 @@ export class SelectionTable extends React.Component {
     super(props);
     this._getActiveFieldLine = this._getActiveFieldLine.bind(this);
     this._getResultsBoxStyle = this._getResultsBoxStyle.bind(this);
+    
+    console.log('ST count:', props.state.getIn(['reducer','resultsCount']));
     this.state = {
       selected: [this._getActiveFieldLine(this.props).selected],
-      count: props.state.get('resultsCount'),
+      count: props.state.getIn(['reducer','resultsCount']),
       activeIdx: this._getActiveFieldLine(this.props).idx
     };
   }
   _getActiveFieldLine(theProps) {
     let ret=null;
-    theProps.state.getIn(['searchFields']).map(f => {
+    theProps.state.getIn(['reducer','searchFields']).map(f => {
       if (f.get('isActive') === true ) {
         // console.log('getting ative field', f.get('id'));
         ret = f.toJS();
@@ -49,10 +51,10 @@ export class SelectionTable extends React.Component {
     let activeLine=this._getActiveFieldLine(newProps);    
 
    // console.log('CWRP res count', newProps.state.get('resultsCount'));
-   // console.log('CWRP res count', typeof newProps.state.get('resultsCount'));
+    console.log('CWRP res count', typeof newProps.state.getIn(['reducer','resultsCount']));
     this.setState({ selected: activeLine.selected });
     this.setState({ activeIdx: activeLine.idx});
-    this.setState({ count: newProps.state.get('resultsCount')});
+    this.setState({ count: newProps.state.getIn(['reducer','resultsCount'])});
   }
   _getResultsBoxStyle() {
     if (this.state.activeIdx === 0 && this.state.selected.length === 0 ) {
@@ -88,7 +90,7 @@ export class SelectionTable extends React.Component {
       </thead>
       <tbody>
 
-  { this.props.state.getIn(['searchFields']).map(f => {
+  { this.props.state.getIn(['reducer','searchFields']).map(f => {
         return (
         <tr key={f.get('idx')}>
           <td style={styles.selectionTd}>{f.get('label')}</td>
@@ -112,8 +114,8 @@ export class MultiSelectField extends React.Component {
     this._handleSelectChange = this._handleSelectChange.bind(this);
     this._clearDisabledOpts = this._clearDisabledOpts.bind(this);
 
-    console.log('to', Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts'])));
-    console.log(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']));
+    console.log('to', Array.isArray(props.state.getIn(['reducer','searchFields', this._getActiveIdx(), 'opts'])));
+    console.log(props.state.getIn(['reducer','searchFields', this._getActiveIdx(), 'opts']));
     //this is a complete fucking mystery as to why this hydrates as an immut List or an array - localstorage 
     /*let thisOpts = (Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']))) 
     ?  props.state.getIn(['searchFields', this._getActiveIdx(), 'opts']) 
@@ -121,8 +123,8 @@ export class MultiSelectField extends React.Component {
     
     let thisOpts = this._getActiveFieldLine(props).opts;
     let initValue = (Array.isArray(props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']))) 
-    ?  props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']) 
-    : props.state.getIn(['searchFields', this._getActiveIdx(), 'selected']).toJS();
+    ?  props.state.getIn(['reducer','searchFields', this._getActiveIdx(), 'selected']) 
+    : props.state.getIn(['reducer','searchFields', this._getActiveIdx(), 'selected']).toJS();
       if (Array.isArray(initValue) && initValue.length === 0) {
         if (this._getActiveIdx() === 0){
           let newOpts = thisOpts.map(function(obj){
@@ -155,7 +157,7 @@ export class MultiSelectField extends React.Component {
        options: thisOpts,
        value: initValue,
        initValue: initValue,
-       placeholder: "select " + props.state.getIn(['searchFields', this._getActiveIdx() , 'label']),
+       placeholder: "select " + props.state.getIn(['reducer','searchFields', this._getActiveIdx() , 'label']),
       }
 }//constructor
 _setFocus() {
@@ -171,7 +173,7 @@ _setFocus() {
 _getActiveFieldLine(theseProps){
     //console.log('props',theseProps);
     let ret=null;
-      theseProps.state.getIn(['searchFields']).map(f => {
+      theseProps.state.getIn(['reducer','searchFields']).map(f => {
       if (f.get('isActive') === true ) {
         // console.log('getting ative field', f.get('id'));
         ret = f.toJS();
@@ -182,7 +184,7 @@ _getActiveFieldLine(theseProps){
 }
 _getActiveIdx(){
     let idx=null;
-    this.props.state.getIn(['searchFields']).map(f => {
+    this.props.state.getIn(['reducer','searchFields']).map(f => {
       if (f.get('isActive') === true ) {
         // console.log('getting active idx', parseInt(f.get('idx')));
         idx = f.get('idx');
@@ -401,9 +403,9 @@ render () {
     super(props);
     props.getUUID();
     
-    console.log('where my data?', props);
+    console.log('where my data?', props.state.get('reducer'));
     
-    let theListSize = props.state.getIn(['searchFields']).size;
+    let theListSize = props.state.getIn(['reducer','searchFields']).size;
     
     let activeLine = this.getActiveFieldFromProp(props);
 
@@ -466,7 +468,8 @@ render () {
 }
   getActiveFieldFromProp(theProps){
             var ret=null;
-            theProps.state.getIn(['searchFields']).map(f => {
+            console.log('theProps?', theProps);
+            theProps.state.getIn(['reducer','searchFields']).map(f => {
               if (f.get('isActive') === true ) {
                 ret = f.toJS();
               }
@@ -478,11 +481,11 @@ render () {
 
   }
   componentWillReceiveProps (newProps) {
-    let isInit = (newProps.state.getIn(['searchFields', 0 , 'selected']).size === 0) ? true: false;
+    let isInit = (newProps.state.getIn(['reducer','searchFields', 0 , 'selected']).size === 0) ? true: false;
     console.log('isInit>>' , isInit);
     this.setState({ init: isInit});
-    this.setState({ count: newProps.state.get('resultsCount')});
-    this.setState({ disabledMatchBtn: (newProps.state.get('resultsCount') > 0 )}); 
+    this.setState({ count: newProps.state.getIn(['reducer','resultsCount'])});
+    this.setState({ disabledMatchBtn: (newProps.state.getIn(['reducer','resultsCount']) > 0 )}); 
     if (isInit) { 
       this.refs.multiSelect._clearDisabledOpts();
     }
@@ -531,7 +534,7 @@ render () {
 
   checkNavState(currentStep){
     // if(currentStep > 0 && currentStep !== this.props.steps.length - 1){
-   if(currentStep > 0 && currentStep !== this.props.state.getIn(['searchFields']).size - 1){
+   if(currentStep > 0 && currentStep !== this.props.state.getIn(['reducer','searchFields']).size - 1){
       this.setState({
         showPreviousBtn: true,
         showNextBtn: true,
@@ -555,7 +558,7 @@ render () {
   }
 
   setNavState(next) {
-    var theListSize = this.props.state.getIn(['searchFields']).size;
+    var theListSize = this.props.state.getIn(['reducer','searchFields']).size;
     
      this.props.setActiveField(next); 
     
@@ -640,7 +643,7 @@ render () {
   
 
   renderSteps() {
-      return this.props.state.getIn(['searchFields']).map (f => (
+      return this.props.state.getIn(['reducer','searchFields']).map (f => (
       /* <li className={this.getClassName("progtrckr", f.get('idx'))} onClick={this.handleOnClick} key={f.get('idx')} value={f.get('id')}> */
       <li className={this.getClassName("progtrckr", f.get('idx'))} key={f.get('idx')} value={f.get('id')}>
         <em>{f.get('idx')+1}</em>
