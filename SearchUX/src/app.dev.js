@@ -54,32 +54,61 @@ const rootReducer = compose(
   // apply deserialize from redux-localstorage-immutable
    mergePersistedState(deserialize)
 )(combinedReducer);
- 
 const storage = compose(
    // apply serialize from redux-localstorage-immutable
    serialize
    //filter('data')
  )(adapter(window.localStorage));
- 
- console.log('storage', storage);
- const middleware = applyMiddleware(
+console.log('storage', storage);
+const middleware = applyMiddleware(
    thunk,
    tracker
  );
- 
- const enhancer = compose(
+const enhancer = compose(
    middleware,
    persistState(storage, 'porscheLocator'),
    DevTools.instrument()
  );
- const store = createStore(rootReducer, /* initialState */ enhancer);
+ const createSelectLocationState = () => {
+  let prevRoutingState, prevRoutingStateJS;
+  console.log('hey in cSLS');
+  return (state) => {
+    const routingState = state.get('routing'); // or state.routing 
+    if (typeof prevRoutingState === 'undefined' || prevRoutingState !== routingState) {
+      prevRoutingState = routingState;
+      prevRoutingStateJS = routingState.toJS();
+    }
+    return prevRoutingStateJS;
+  };
+};
 
- render(
-   <Provider store={store} >
-     <div>
-     <SearchUXContainer />
-     <DevTools />
-     </div>
-   </Provider>,
+const store = createStore(rootReducer, /* initialState */ enhancer);
+const history = syncHistoryWithStore(browserHistory, store, {
+  selectLocationState: createSelectLocationState()
+});
+
+console.log('store', store);
+
+/*render(
+  <Provider store={store} >
+   <div>
+      <Router history={history}> 
+        <Route path="/" component="SearchUXContainer" />
+      </Router>
+      <DevTools />
+    </div>
+  </Provider>,
+  document.getElementById('app')
+);*/
+
+render(
+
+  <Provider store={store} >
+     <Router history={history}> 
+        <Route path="/" component={SearchUXContainer}/>
+     </Router>
+  </Provider>,
   document.getElementById('app')
 );
+
+
