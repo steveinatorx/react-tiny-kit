@@ -161,10 +161,8 @@ export class MultiSelectField extends React.Component {
       }
 }//constructor
 _setFocus() {
-    console.log('in MS focus', this.refs.theMultiSelect.state);
     this.refs.theMultiSelect.focus(); 
     this.refs.theMultiSelect.setState({isOpen: true});
-    console.log('in MS focus', this.refs.theMultiSelect.state);
     
 
     //this.refs.theMultiSelect.setState({isOpen: true});
@@ -260,7 +258,7 @@ _handleSelectChange(value) {
         } else {
          let hasAll=this.state.options.some( o => o.label === 'All');
          console.log('this current state options', this.state.options); 
-         if (hasAll === false && activeIdx >0 && this.state.options.length-1 > 0){
+         if (hasAll === false && activeIdx !==7 && activeIdx >0 && this.state.options.length-1 > 0){
           let allOpts = this.state.options;
           allOpts.unshift({ label: 'All', value: 'all'});
           this.setState({options: allOpts});
@@ -295,7 +293,7 @@ _handleSelectChange(value) {
          } else {
          console.log('do i need to add all??????', this.state.options.length-1 > 0);
          //console.log('MAP', _.map(this.state.options,(_.pick, 'Label')));
-         if (hasAll === false && activeIdx >0 && this.state.options.length-1 > 0){
+         if (hasAll === false && activeIdx !==7 && activeIdx >0 && this.state.options.length-1 > 0){
            console.log('options has all??????', hasAll);
              console.log('adding ALL');
             let allOpts = this.state.options;
@@ -411,13 +409,13 @@ render () {
 
     console.log('sLN active line', activeLine);
     console.log('sLN active selected', activeLine.selected.length);
-
+    console.log('sLN match disabled?', (props.state.getIn(['reducer','resultsCount']) > 0));
     this.state = {
       showPreviousBtn: (activeLine.idx > 0),
       showStartOverBtn: activeLine.idx > 0 || (activeLine.idx === 0 && activeLine.selected.length > 0),
       showNextBtn:  (activeLine.idx !== 7 && activeLine.selected.length > 0),
       showMatchBtn: (activeLine.idx === 7),
-      disabledMatchBtn: false,
+      disabledMatchBtn: (props.state.getIn(['reducer','resultsCount']) > 0),
       compState: activeLine.idx,
       //first param is current index
       navState: this.getNavStates(activeLine.idx, theListSize),
@@ -476,13 +474,12 @@ render () {
              });
              return ret;
   }
-  componentWillMount(){
-    
-
-  }
   componentWillReceiveProps (newProps) {
     let isInit = (newProps.state.getIn(['reducer','searchFields', 0 , 'selected']).size === 0) ? true: false;
+
     console.log('isInit>>' , isInit);
+    console.log('isMatchBtndisabled>>' , newProps.state.getIn(['reducer','resultsCount']) > 0);
+
     this.setState({ init: isInit});
     this.setState({ count: newProps.state.getIn(['reducer','resultsCount'])});
     this.setState({ disabledMatchBtn: (newProps.state.getIn(['reducer','resultsCount']) > 0 )}); 
