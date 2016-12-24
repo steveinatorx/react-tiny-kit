@@ -251,29 +251,31 @@ export function openSearchForm(data) {
 
 export const SUBMIT_SEARCH_FORM = 'SUBMIT_SEARCH_FORM';
 export function submitSearchForm(data) {
-  
-  console.log('in submit search form', data);
-  return {
-      type: SUBMIT_SEARCH_FORM,
-       payload: {
-        data: data
-      },
-      meta: {
-          analytics: [
-           {
-             eventType: EventTypes.track,
-             eventPayload: {
-               event: 'SUBMIT_SEARCH_FORM',
-               properties:  {
-                data: data
-               }
-             }
-           }
-          ]   
-      }
+ return (dispatch, getState) => {
+
+    console.log('in submit search form');
+    let state=getState();
+    console.log(state);
+    let qObj = buildQueryObj(state);  
+    console.log('in submit search form', data);
+    console.log('in submit search form', qObj);
+    
+    console.log( __CONFIG__.apiHost + '/api/searchenquiry');
+
+      axios.post( __CONFIG__.apiHost + '/api/searchenquiry', 
+      {
+        data: data,
+        queryObj: qObj,
+      }).then(res => {
+        console.log('submit form RES::::::', res);
+        //dispatch(receiveFields(objectFieldId, res.data.values));
+        //dispatch(receiveCount(res.data.count));
+      }).catch(err => {
+
+        dispatch(apiError(err));
+    })
   }
 }
-
 
 export function getUUID() {
     if (!cookie.load('PCNALocator')){
