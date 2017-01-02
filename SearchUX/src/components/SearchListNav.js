@@ -1,6 +1,5 @@
 import React from 'react';
 import sortBy from 'lodash'; 
-const ReCAPTCHA = require("react-google-recaptcha");
 
 import Dialog from 'rc-dialog';
 // import Animate from 'rc-animate';
@@ -760,10 +759,6 @@ render () {
              <span className="blueFont">Complete and submit the request form below and we will email you your matches. 
 Let’s get started locating your Porsche! </span>
               <Formsy.Form onValidSubmit={this.submit} onValid={this.enableFormSubmit} onInvalid={this.disableFormSubmit}>
-                {/*<FormElements.MyNameInput name="firstName" placeholder="enter first name" validations="isExisty" validationError="first name required" required/>
-                <FormElements.MyNameInput name="secondName" placeholder="enter last name" validationError="required" required/>
-                <FormElements.MyEmailInput name="email" placeholder="enter email" validations="isEmail" validationError="invalid email" required/>
-                */}
                <FormElements.MyInput 
                   name="fullName" 
                   type="text" 
@@ -788,13 +783,13 @@ Let’s get started locating your Porsche! </span>
                   validationError="email does not match"
                   required/>
                 <FormElements.MyInput 
-                  name="companyName"
+                  name="Company"
                   type="text" 
                   placeholder="company name (optional)"
                   className="u-full-width"
                   />
                 <FormElements.MyInput 
-                  name="phoneNumber"
+                  name="Phone"
                   type="text" 
                   placeholder="phone number"
                   validations="isNumeric" 
