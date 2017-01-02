@@ -42,13 +42,10 @@ let __CONFIG__ = require('__CONFIG__');
     }}();
 
 const tracker = createTracker(); 
-
-
 const combinedReducer = combineReducers({
   reducer,
   routing: routerReducer
 });
-
 
 const rootReducer = compose(
   // apply deserialize from redux-localstorage-immutable
@@ -69,40 +66,24 @@ const enhancer = compose(
    persistState(storage, 'porscheLocator'),
    DevTools.instrument()
  );
- const createSelectLocationState = () => {
+const createSelectLocationState = () => {
   let prevRoutingState, prevRoutingStateJS;
-  console.log('hey in cSLS');
-  return (state) => {
-    const routingState = state.get('routing'); // or state.routing 
-    if (typeof prevRoutingState === 'undefined' || prevRoutingState !== routingState) {
-      prevRoutingState = routingState;
-      prevRoutingStateJS = routingState.toJS();
-    }
-    return prevRoutingStateJS;
+   return (state) => {
+     const routingState = state.get('routing'); // or state.routing 
+     if (typeof prevRoutingState === 'undefined' || prevRoutingState !== routingState) {
+       prevRoutingState = routingState;
+       prevRoutingStateJS = routingState.toJS();
+     }
+     return prevRoutingStateJS;
   };
 };
 
-const store = createStore(rootReducer, /* initialState */ enhancer);
+const store = createStore(rootReducer, enhancer);
 const history = syncHistoryWithStore(browserHistory, store, {
   selectLocationState: createSelectLocationState()
 });
 
-console.log('store', store);
-
-/*render(
-  <Provider store={store} >
-   <div>
-      <Router history={history}> 
-        <Route path="/" component="SearchUXContainer" />
-      </Router>
-      <DevTools />
-    </div>
-  </Provider>,
-  document.getElementById('app')
-);*/
-
 render(
-
   <Provider store={store} >
      <Router history={history}> 
         <Route path="/" component={SearchUXContainer}/>
