@@ -21,9 +21,9 @@ import adapter from 'redux-localstorage/lib/adapters/localStorage';
 // import filter from 'redux-localstorage-filter';
 import { serialize, deserialize } from 'redux-localstorage-immutable';
 
-import { Router, Route, IndexRoute, browserHistory } from 'react-router'
+import { Router, Route, browserHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
-import filter from 'redux-localstorage-filter';
+// import filter from 'redux-localstorage-filter';
 
 import DevTools from './components/DevTools';
 
@@ -87,8 +87,8 @@ const history = syncHistoryWithStore(browserHistory, store, {
 render(
   <Provider store={store} >
      <Router history={history}> 
-        <Route path="/" component={SearchUXContainer}/>
-        <Route path="tracker" component={EmailTrackerContainer}/>
+        <Route path="/" component={SearchUXContainer} />
+        <Route path="tracker/:id" component={EmailTrackerContainer}/>
         <Route path="foo" component={SearchUXContainer}/>
      </Router>
   </Provider>,
