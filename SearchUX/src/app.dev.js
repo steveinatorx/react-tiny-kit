@@ -6,7 +6,8 @@ import { Provider } from 'react-redux';
 import reducer from './reducers/reducers';
 import routerReducer from './reducers/routing';
 import { SearchUXContainer } from './containers/SearchUXContainer';
-import { SellUXContainer } from './containers/SellUXContainer';
+//import { SellUXContainer } from './containers/SellUXContainer';
+import { EmailTrackerContainer } from './containers/SellUXContainer';
 // import createHistory from 'history/createBrowserHistory'
 // import { routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
@@ -87,6 +88,8 @@ render(
   <Provider store={store} >
      <Router history={history}> 
         <Route path="/" component={SearchUXContainer}/>
+        <Route path="tracker" component={EmailTrackerContainer}/>
+        <Route path="foo" component={SearchUXContainer}/>
      </Router>
   </Provider>,
   document.getElementById('app')
