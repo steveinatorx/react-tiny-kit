@@ -5,7 +5,8 @@ module.exports = {
   devtool: 'source-map',
   devServer: {
         inline:true,
-        port: 8001 
+        port: 8001,
+        historyApiFallback: true 
   },
   entry: {
     app: ['./src/root.js']
