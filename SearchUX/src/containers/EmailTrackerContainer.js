@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { EmailTrackerComponent } from '../components/EmailTrackerComponent';
 import { 
   searchEmailView
-  } from '../actions/EmailTrackerComponentActions';
+  } from '../actions/EmailTrackerActions';
 
 export const EmailTrackerContainer = connect(
   function mapStateToProps (state) {
