@@ -4,7 +4,7 @@ var webpack = require('webpack');
 module.exports = {
   devtool: 'source-map',
   devServer: {
-        inline:true,
+        inline:false,
         port: 8001,
         historyApiFallback: true 
   },
@@ -12,9 +12,9 @@ module.exports = {
     app: ['./src/root.js']
   },
   output: {
-          path: path.resolve(__dirname, "dist"),
-          publicPath: '/dist/',
-          filename: 'SearchUXBundle.js'
+          path: "/dist",
+          publicPath: '/',
+          filename: '/dist/SearchUXBundle.js'
     },
   module: {
     loaders: [
@@ -24,7 +24,7 @@ module.exports = {
         loader: 'babel',
         query: {
           retainLines: true,
-          cacheDirectory: true,
+          cacheDirectory: true
         }
       },
       {
