@@ -7,7 +7,7 @@ import reducer from './reducers/reducers';
 import routerReducer from './reducers/routing';
 import { SearchUXContainer } from './containers/SearchUXContainer';
 //import { SellUXContainer } from './containers/SellUXContainer';
-import { EmailTrackerContainer } from './containers/SellUXContainer';
+import { EmailTrackerContainer } from './containers/EmailTrackerContainer';
 // import createHistory from 'history/createBrowserHistory'
 // import { routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
