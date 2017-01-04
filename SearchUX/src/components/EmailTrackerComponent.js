@@ -3,7 +3,7 @@ import React from 'react';
 export class EmailTrackerComponent extends React.Component {
   constructor(props) {
     super(props);
-    console.log('hello');
+    console.log('hello', props.location.pathname);
   }
   componentWillReceiveProps (newProps) {
     console.log('CWRP new props', newProps);
